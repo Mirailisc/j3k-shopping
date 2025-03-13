@@ -30,9 +30,9 @@ async function bootstrap() {
 
   app.use(cookieParser())
   app.enableCors({
-    origin: ['https://j3k.arius.cloud', 'http://localhost:3000'],
+    origin: '*',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: true,
+    credentials: false,
   })
   await app.listen(process.env.PORT ?? DEFAULT_PORT)
 }
