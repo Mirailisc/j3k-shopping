@@ -4,7 +4,7 @@
     {
       "source": "/api/v2/(.*)",
       "headers": [
-        { "key": "Access-Control-Allow-Credentials", "value": "false" },
+        { "key": "Access-Control-Allow-Credentials", "value": "true" },
         { "key": "Access-Control-Allow-Origin", "value": "https://j3k.arius.cloud" },
         { "key": "Access-Control-Allow-Methods", "value": "GET,OPTIONS,PATCH,DELETE,POST,PUT" },
         {
