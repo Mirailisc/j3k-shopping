@@ -1,0 +1,36 @@
+# Ignore node_modules
+node_modules
+
+# Ignore logs
+npm-debug.log
+yarn-error.log
+*.log
+
+# Ignore build directories
+dist
+build
+tmp
+.next
+.esbuild
+
+# Ignore editor and OS-specific files
+.vscode
+.idea
+.DS_Store
+Thumbs.db
+ehthumbs.db
+
+# Ignore git files
+.git
+.gitignore
+
+# Ignore environment files
+.env
+.env.local
+.env.*.local
+
+# Ignore sensitive or unnecessary files
+secrets/
+credentials/
+*.pem
+*.key

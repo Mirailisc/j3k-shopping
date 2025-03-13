@@ -2,12 +2,12 @@
   "name": "j3k-shopping",
   "version": "1.0.0",
   "description": "",
-  "packageManager": "pnpm@9.15.4",
-  "scripts": {
-    "fe:dev": "pnpm --filter=frontend run dev",
-    "be:dev": "pnpm --filter=backend run dev"
-  },
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
   "keywords": [],
-  "author": "",
+  "author": "Mirailisc",
+  "private": true,
   "license": "ISC"
 }

@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   db:
     image: mysql
@@ -10,6 +12,25 @@ services:
       - MYSQL_DATABASE=chinese-scam
     volumes:
       - db:/var/lib/mysql
+    networks:
+      - default
+  
+  app:
+    depends_on:
+      - db
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:4000"
+    environment:
+      - FRONTEND_URL=http://localhost:8000
+      - DATABASE_URL=mysql://root:maozedong@db:3306/chinese-scam-prod
+    networks:
+      - default
 
 volumes:
   db:
+
+networks:
+  default:

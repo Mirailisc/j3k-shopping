@@ -2,9 +2,12 @@ import { NestFactory } from '@nestjs/core'
 import { AppModule } from './app.module'
 import { DEFAULT_PORT } from './config/env'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
+import { NestExpressApplication } from '@nestjs/platform-express'
+import * as cookieParser from 'cookie-parser'
+import { join } from 'path'
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule)
+  const app = await NestFactory.create<NestExpressApplication>(AppModule)
 
   const config = new DocumentBuilder()
     .setTitle('Chinese Scammer API')
@@ -22,8 +25,10 @@ async function bootstrap() {
   const documentFactory = () => SwaggerModule.createDocument(app, config)
   SwaggerModule.setup('api', app, documentFactory)
 
+  app.useStaticAssets(join(__dirname, '..', 'public'))
+  app.use(cookieParser())
   app.enableCors({
-    origin: true,
+    origin: [process.env.FRONTEND_URL ?? 'http://localhost:3000'],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   })

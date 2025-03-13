@@ -4,21 +4,15 @@ This project is part of CPE241 DATABASE SYSTEMS final project.
 
 ## Pre-requisites
 
-- Node.js with pnpm installed
+- [Bun](https://bun.sh/)
 - MySQL
-- Docker *optional*
+- [Docker *optional*](https://www.docker.com/)
 
 ## Setup
 
 ### Env
 
 Create `.env` file inside `frontend` and `backend`
-
-for `frontend`
-
-```env
-VITE_API_URL=http://localhost:3000
-```
 
 for `backend`
 
@@ -31,21 +25,29 @@ DATABASE_URL=mysql://root@localhost:3306/j3k
 Install dependencies
 
 ```bash
-pnpm install
+bun install
 ```
 
 Generate Database
 
 ```bash
-cd backend && pnpx prisma db push
+cd backend && bun prisma db push
 ```
 
 Generate types for Prisma
 
 ```bash
-cd backend && pnpx prisma generate
+cd backend && bun prisma generate
 ```
 
+Run Frontend
+
 ```bash
-pnpm dev
+cd frontend && bun run dev
+```
+
+Run Backend
+
+```bash
+cd backend && bun run start:dev
 ```
