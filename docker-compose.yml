@@ -1,0 +1,15 @@
+services:
+  db:
+    image: mysql
+    container_name: mysql
+    ports:
+      - '3306:3306'
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=maozedong
+      - MYSQL_DATABASE=chinese-scam
+    volumes:
+      - db:/var/lib/mysql
+
+volumes:
+  db:

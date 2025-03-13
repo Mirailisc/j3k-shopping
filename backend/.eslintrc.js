@@ -1,0 +1,46 @@
+module.exports = {
+  root: true,
+  env: {
+    node: true,
+  },
+  parser: '@typescript-eslint/parser',
+  parserOptions: {
+    sourceType: 'module',
+  },
+  extends: [
+    'eslint:recommended',
+    'plugin:@typescript-eslint/recommended',
+    'plugin:prettier/recommended',
+  ],
+  rules: {
+    curly: 'error',
+    eqeqeq: 'error',
+    'max-classes-per-file': ['error', 1],
+    'no-console': 'warn',
+    'no-lonely-if': 'error',
+    'no-negated-condition': 'error',
+    'no-nested-ternary': 'error',
+    'no-useless-return': 'error',
+    'no-warning-comments': 'warn',
+    'require-await': 'off',
+    'spaced-comment': 'error',
+    '@typescript-eslint/interface-name-prefix': 'off',
+    '@typescript-eslint/explicit-function-return-type': 'off',
+    '@typescript-eslint/no-explicit-any': 'off',
+    '@typescript-eslint/explicit-module-boundary-types': 'off',
+    '@typescript-eslint/ban-types': 'off',
+    '@typescript-eslint/no-var-requires': 'off',
+    '@typescript-eslint/no-magic-numbers': [
+      'error',
+      {
+        ignoreArrayIndexes: true,
+        enforceConst: true,
+        ignoreEnums: true,
+        ignoreNumericLiteralTypes: true,
+        ignoreReadonlyClassProperties: true,
+        ignore: [-1, 0, 1],
+      },
+    ],
+    '@typescript-eslint/no-unused-vars': ['warn'],
+  },
+}
