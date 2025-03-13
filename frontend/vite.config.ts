@@ -34,6 +34,13 @@ export default defineConfig(({ mode }) => {
     preview: {
       host: '0.0.0.0',
       port: 8000,
+      proxy: {
+        '/api/v2': {
+          target: 'https://j3k-api.arius.cloud',
+          changeOrigin: true,
+          secure: true,
+        },
+      },
     },
   }
 })
