@@ -5,7 +5,7 @@ import { Cookies } from 'react-cookie'
 const cookies = new Cookies()
 
 export const axiosInstance = axios.create({
-  baseURL: import.meta.env.PROD ? '/api' : 'http://localhost:4000/api/v2',
+  baseURL: '/api/v2',
   headers: {
     'Content-Type': 'application/json',
   },
