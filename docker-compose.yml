@@ -24,7 +24,6 @@ services:
     ports:
       - "8000:4000"
     environment:
-      - FRONTEND_URL=http://localhost:8000
       - DATABASE_URL=mysql://root:maozedong@db:3306/chinese-scam-prod
     networks:
       - default

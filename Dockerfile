@@ -26,7 +26,6 @@ ENV DATABASE_URL=${DATABASE_URL}
 RUN cd /app/backend && bun run prisma:generate
 
 ENV NODE_ENV=production
-ENV FRONTEND_URL=${FRONTEND_URL}
 
 EXPOSE 4000
 
