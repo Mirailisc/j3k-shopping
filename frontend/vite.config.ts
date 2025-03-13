@@ -35,8 +35,8 @@ export default defineConfig(({ mode }) => {
       host: '0.0.0.0',
       port: 8000,
       proxy: {
-        '/api/v2': {
-          target: 'https://j3k-api.arius.cloud',
+        '/api': {
+          target: 'https://j3k-api.arius.cloud/api/v2',
           changeOrigin: true,
           secure: true,
         },
