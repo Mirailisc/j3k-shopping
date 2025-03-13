@@ -12,41 +12,43 @@ This project is part of CPE241 DATABASE SYSTEMS final project.
 
 ### Env
 
-Create `.env` file inside `frontend` and `backend`
-
-for `backend`
+Create `.env` file inside backend folder
 
 ```env
-DATABASE_URL=mysql://root@localhost:3306/j3k
+DATABASE_URL=mysql://<your_database_user>:<your_database_password>@localhost:3306/j3k
 ```
 
 ### Development
 
-Install dependencies
+First, you need to install dependencies in both `frontend` and `backend` by running this command
 
 ```bash
 bun install
 ```
 
-Generate Database
+and you need to run this command to create database and its tables
+
+> You must create `.env` in backend folder before running this command
 
 ```bash
 cd backend && bun prisma db push
 ```
 
-Generate types for Prisma
+then you need to generate types for Prisma
 
 ```bash
 cd backend && bun prisma generate
 ```
 
-Run Frontend
+Finally, you can run project in development mode by typing these commands.
+
+run frontend
 
 ```bash
 cd frontend && bun run dev
 ```
 
-Run Backend
+run backend
 
 ```bash
 cd backend && bun run start:dev
