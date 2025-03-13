@@ -5,6 +5,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { NestExpressApplication } from '@nestjs/platform-express'
 import * as cookieParser from 'cookie-parser'
 import { ValidationPipe } from '@nestjs/common'
+import { AllExceptionsFilter } from './exception/cors.exception'
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule)
@@ -27,12 +28,15 @@ async function bootstrap() {
 
   app.setGlobalPrefix('api/v2')
   app.useGlobalPipes(new ValidationPipe())
+  app.useGlobalFilters(new AllExceptionsFilter())
 
   app.use(cookieParser())
   app.enableCors({
     origin: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: false,
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
   })
   await app.listen(process.env.PORT ?? DEFAULT_PORT)
 }
