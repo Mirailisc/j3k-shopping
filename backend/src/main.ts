@@ -4,7 +4,6 @@ import { DEFAULT_PORT } from './config/env'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { NestExpressApplication } from '@nestjs/platform-express'
 import * as cookieParser from 'cookie-parser'
-import { join } from 'path'
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule)
@@ -23,9 +22,9 @@ async function bootstrap() {
     )
     .build()
   const documentFactory = () => SwaggerModule.createDocument(app, config)
-  SwaggerModule.setup('api', app, documentFactory)
+  SwaggerModule.setup('docs/swagger', app, documentFactory)
 
-  app.useStaticAssets(join(__dirname, '..', 'public'))
+  app.setGlobalPrefix('api/v2')
   app.use(cookieParser())
   app.enableCors({
     origin: [process.env.FRONTEND_URL ?? 'http://localhost:3000'],
