@@ -30,7 +30,7 @@ async function bootstrap() {
 
   app.use(cookieParser())
   app.enableCors({
-    origin: ['*'],
+    origin: ['https://j3k.arius.cloud', 'http://localhost:3000'],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   })
