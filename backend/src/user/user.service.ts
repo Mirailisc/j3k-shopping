@@ -18,7 +18,9 @@ export class UserService {
   constructor(private prisma: PrismaService) {}
 
   async getAllUser() {
-    return await this.prisma.$queryRaw<User[]>`SELECT * FROM User`
+    return await this.prisma.$queryRaw<User[]>`
+      SELECT id, username, email, firstName, lastName, isAdmin, isSuperAdmin, createdAt FROM User
+    `
   }
 
   async getUserById(userId: string) {

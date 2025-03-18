@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
-import { User } from '../../types/type'
+import { User } from '../../../../../types/user'
 import { useEffect } from 'react'
 
 type Props = {
@@ -47,8 +47,8 @@ export const EditUserForm: React.FC<Props> = ({ open, setOpen, user, data, setDa
     if (user) {
       form.setValue('username', user.username)
       form.setValue('email', user.email)
-      form.setValue('firstName', user.firstname || '')
-      form.setValue('lastName', user.lastname || '')
+      form.setValue('firstName', user.firstName || '')
+      form.setValue('lastName', user.lastName || '')
       form.setValue('admin', user.isAdmin || false)
       form.setValue('superAdmin', user.isSuperAdmin || false)
     }

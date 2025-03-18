@@ -13,7 +13,7 @@ import {
 } from '@tanstack/react-table'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { toast } from 'sonner'
-import { User } from './types/type'
+import { User } from '../../../types/user'
 import UserTableAlert from './components/Alert'
 import UserDataPagination from './components/Pagination'
 import UserDataController from './components/Controller'

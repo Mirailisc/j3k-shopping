@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
-import { User } from '../../types/type'
+import { User } from '../../../../../types/user'
 
 type Props = {
   open: boolean
@@ -55,8 +55,8 @@ export const CreateUserForm: React.FC<Props> = ({ open, setOpen, data, setData }
       id: crypto.randomUUID(),
       username: values.username,
       email: values.email,
-      firstname: values.firstName || '',
-      lastname: values.lastName || '',
+      firstName: values.firstName || '',
+      lastName: values.lastName || '',
       isAdmin: values.admin,
       isSuperAdmin: values.superAdmin,
       password: '********',

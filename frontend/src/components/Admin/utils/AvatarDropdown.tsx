@@ -58,7 +58,7 @@ const AvatarDropdown: React.FC = () => {
         </DropdownMenuTrigger>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
-        <Link to={PROFILE_PATH.replace(':username', user.username)}>
+        <Link to={PROFILE_PATH}>
           {user.firstName && user.lastName ? (
             <DropdownMenuItem>
               {user.firstName} {user.lastName}

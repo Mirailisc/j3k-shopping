@@ -8,7 +8,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { User } from '../types/type'
+import { User } from '../../../../types/user'
 
 type Props = {
   deleteTarget: { single?: User; multiple?: boolean } | null

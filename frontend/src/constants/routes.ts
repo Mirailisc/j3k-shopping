@@ -5,7 +5,8 @@ export const SIGN_UP_PATH = BASE_PATH + 'sign-up'
 export const SIGN_IN_PATH = BASE_PATH + 'sign-in'
 
 // User
-export const PROFILE_PATH = BASE_PATH + 'p/' + ':username'
+export const PROFILE_PATH = BASE_PATH + 'p'
+export const USER_INFO_PATH = PROFILE_PATH + '/:username'
 
 // Admin
 export const ADMIN_BASE_PATH = BASE_PATH + 'admin/'

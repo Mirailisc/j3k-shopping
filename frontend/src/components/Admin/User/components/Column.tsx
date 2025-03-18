@@ -2,7 +2,7 @@ import { ColumnDef } from '@tanstack/react-table'
 import { ArrowUpDown, Shield, ShieldCheck, MoreHorizontal, Trash, Edit, Key } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
-import { User } from '../types/type'
+import { User } from '../../../../types/user'
 import {
   DropdownMenu,
   DropdownMenuContent,

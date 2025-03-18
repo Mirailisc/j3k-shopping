@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { Table } from '@tanstack/react-table'
-import { User } from '../types/type'
+import { User } from '../../../../types/user'
 
 type Props = {
   table: Table<User>

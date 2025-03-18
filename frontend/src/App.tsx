@@ -27,13 +27,13 @@ import Order from './pages/Admin/Order'
 import Review from './pages/Admin/Review'
 import { toast, Toaster } from 'sonner'
 import { TooltipProvider } from './components/ui/tooltip'
-import Profile from './components/User/Profile'
 import AdminProtected from './components/utils/AdminProtected'
 import { useAppDispatch } from './store/store'
 import { ACCESS_TOKEN } from './constants/cookie'
 import { useCookies } from 'react-cookie'
 import { me } from './store/slice/authSlice'
 import Loading from './pages/Loading'
+import Profile from './pages/User/Profile/Profile'
 
 const Home = React.lazy(() => import('@/pages/Home'))
 

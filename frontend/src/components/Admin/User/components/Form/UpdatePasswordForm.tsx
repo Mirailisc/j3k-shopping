@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
-import { User } from '../../types/type'
+import { User } from '../../../../../types/user'
 
 type Props = {
   open: boolean
