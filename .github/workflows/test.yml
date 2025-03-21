@@ -141,8 +141,7 @@ jobs:
         run: cd frontend && bun run test:coverage
 
       - name: Upload Coverage Report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: frontend-coverage
           path: frontend/coverage/
-
