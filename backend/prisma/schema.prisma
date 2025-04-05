@@ -27,6 +27,8 @@ model User {
   Review       Review[]
   Contact      Contact?
   Social       Social?
+  Order        Order[]
+  Order_item        Order_item[]
 }
 
 model Contact {
@@ -68,6 +70,7 @@ model Product {
   updatedAt   DateTime @default(now())
   user        User     @relation(fields: [userId], references: [id])
   Review      Review[]
+  Order_item  Order_item[]
 }
 
 model Review {
@@ -80,4 +83,50 @@ model Review {
   updatedAt DateTime @default(now())
   product   Product  @relation(fields: [productId], references: [id])
   user      User     @relation(fields: [userId], references: [id])
+}
+
+//new table
+
+enum OrderStatus {
+  Pending
+  Paid
+  Shipped
+  Delivered
+  Completed
+  Cancelled
+  Refunded
+  Refunding
+}
+model Payment {
+  id        String      @id @default(uuid())
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @default(now()) @updatedAt
+  evidence  String
+  Order     Order[]
+
+}
+model Order {
+  id        String      @id @default(uuid())
+  status    OrderStatus @default(Pending) 
+  createdAt DateTime    @default(now())
+  total     Int
+  paymentId String
+  userId    String
+
+  payment   Payment     @relation(fields: [paymentId], references: [id])
+  user      User        @relation(fields: [userId], references: [id])
+  Order_item  Order_item[]
+}
+
+model Order_item {
+  id        String      @id @default(uuid())
+  orderId   String
+  productId String
+  sellerId  String
+  quantity  Int
+  price     Int
+
+  order     Order       @relation(fields: [orderId], references: [id])
+  product   Product     @relation(fields: [productId], references: [id])
+  user      User        @relation(fields: [sellerId], references: [id])
 }
