@@ -62,6 +62,7 @@ model Social {
 model Product {
   id          String   @id @default(uuid())
   name        String
+  productImg  Bytes
   description String
   price       Int
   quantity    Int
@@ -85,26 +86,25 @@ model Review {
   user      User     @relation(fields: [userId], references: [id])
 }
 
-//new table
+model Payment {
+  id        String      @id @default(uuid())
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @default(now()) @updatedAt
+  evidence  Bytes
+  Order     Order[]
+}
 
 enum OrderStatus {
   Pending
   Paid
   Shipped
-  Delivered
+  Delivering
   Completed
   Cancelled
   Refunded
   Refunding
 }
-model Payment {
-  id        String      @id @default(uuid())
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @default(now()) @updatedAt
-  evidence  String
-  Order     Order[]
 
-}
 model Order {
   id        String      @id @default(uuid())
   status    OrderStatus @default(Pending) 
