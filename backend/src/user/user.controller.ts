@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Request,
   UseGuards,
 } from '@nestjs/common'
 import { UserService } from './user.service'
@@ -51,7 +52,21 @@ export class UserController {
   @Delete(':id')
   @UseGuards(AuthGuard('jwt'), SuperAdminGuard)
   @ApiParam({ name: 'id', description: 'User ID' })
-  async deleteUser(@Param('id') id: string) {
-    return await this.userService.deleteUser(id)
+  async deleteUser(@Param('id') id: string, @Request() req) {
+    return await this.userService.deleteUser(id, req.user.userId)
+  }
+
+  @Put(':id/reset-password')
+  @UseGuards(AuthGuard('jwt'), SuperAdminGuard)
+  @ApiParam({ name: 'id', description: 'User ID' })
+  async resetPassword(
+    @Param('id') id: string,
+    @Body() resetPasswordDto: { current: string; newPassword: string },
+  ) {
+    return await this.userService.resetPassword(
+      id,
+      resetPasswordDto.current,
+      resetPasswordDto.newPassword,
+    )
   }
 }

@@ -2,7 +2,7 @@ import { ColumnDef } from '@tanstack/react-table'
 import { ArrowUpDown, Shield, ShieldCheck, MoreHorizontal, Trash, Edit, Key } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
-import { User } from '../../../../types/user'
+import { FullUserInfo } from '../../../../types/user'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,13 +16,13 @@ import { PROFILE_PATH } from '@/constants/routes'
 
 type Props = {
   isSuperAdmin: boolean | undefined
-  handleEditUser: (user: User) => void
-  handleChangePassword: (user: User) => void
-  handleDeleteUser: (user?: User) => void
+  handleEditUser: (user: FullUserInfo) => void
+  handleChangePassword: (user: FullUserInfo) => void
+  handleDeleteUser: (user?: FullUserInfo) => void
 }
 
 export const tableColumns = ({ isSuperAdmin, handleEditUser, handleChangePassword, handleDeleteUser }: Props) => {
-  const columns: ColumnDef<User>[] = [
+  const columns: ColumnDef<FullUserInfo>[] = [
     {
       id: 'select',
       header: ({ table }) => (
@@ -102,6 +102,31 @@ export const tableColumns = ({ isSuperAdmin, handleEditUser, handleChangePasswor
           )}
         </div>
       ),
+    },
+    {
+      accessorKey: 'line',
+      header: 'Line',
+      cell: ({ row }) => <div>{row.getValue('line')}</div>,
+    },
+    {
+      accessorKey: 'facebook',
+      header: 'Facebook',
+      cell: ({ row }) => <div>{row.getValue('facebook')}</div>,
+    },
+    {
+      accessorKey: 'website',
+      header: 'Website',
+      cell: ({ row }) => <div>{row.getValue('website')}</div>,
+    },
+    {
+      accessorKey: 'instagram',
+      header: 'Instagram',
+      cell: ({ row }) => <div>{row.getValue('instagram')}</div>,
+    },
+    {
+      accessorKey: 'tiktok',
+      header: 'Tiktok',
+      cell: ({ row }) => <div>{row.getValue('tiktok')}</div>,
     },
     {
       accessorKey: 'createdAt',

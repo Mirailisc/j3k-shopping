@@ -16,3 +16,5 @@ export type Social = {
   instagram: string
   tiktok: string
 }
+
+export type FullUserInfo = User & Social

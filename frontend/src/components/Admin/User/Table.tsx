@@ -13,7 +13,7 @@ import {
 } from '@tanstack/react-table'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { toast } from 'sonner'
-import { User } from '../../../types/user'
+import { FullUserInfo } from '../../../types/user'
 import UserTableAlert from './components/Alert'
 import UserDataPagination from './components/Pagination'
 import UserDataController from './components/Controller'
@@ -27,8 +27,8 @@ import { isAxiosError } from 'axios'
 import { axiosInstance } from '@/lib/axios'
 
 type Props = {
-  data: User[]
-  setData: (data: User[]) => void
+  data: FullUserInfo[]
+  setData: (data: FullUserInfo[]) => void
   fetchUsers: () => Promise<void>
 }
 
@@ -40,13 +40,13 @@ export function UsersDataTable({ data, setData, fetchUsers }: Props) {
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
   const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false)
-  const [deleteTarget, setDeleteTarget] = React.useState<{ single?: User; multiple?: boolean } | null>(null)
+  const [deleteTarget, setDeleteTarget] = React.useState<{ single?: FullUserInfo; multiple?: boolean } | null>(null)
 
   const [openCreateUserDialog, setOpenCreateUserDialog] = React.useState(false)
   const [openEditUserDialog, setOpenEditUserDialog] = React.useState(false)
   const [openUpdatePasswordDialog, setOpenUpdatePasswordDialog] = React.useState(false)
-  const [userToEdit, setUserToEdit] = React.useState<User | null>(null)
-  const [userToUpdatePassword, setUserToUpdatePassword] = React.useState<User | null>(null)
+  const [userToEdit, setUserToEdit] = React.useState<FullUserInfo | null>(null)
+  const [userToUpdatePassword, setUserToUpdatePassword] = React.useState<FullUserInfo | null>(null)
 
   const resetSelection = () => {
     setRowSelection({})
@@ -56,12 +56,12 @@ export function UsersDataTable({ data, setData, fetchUsers }: Props) {
     setOpenCreateUserDialog(true)
   }
 
-  const handleEditUser = (user: User) => {
+  const handleEditUser = (user: FullUserInfo) => {
     setUserToEdit(user)
     setOpenEditUserDialog(true)
   }
 
-  const handleDeleteUser = (user?: User) => {
+  const handleDeleteUser = (user?: FullUserInfo) => {
     if (user) {
       setDeleteTarget({ single: user })
     } else {
@@ -85,16 +85,38 @@ export function UsersDataTable({ data, setData, fetchUsers }: Props) {
       }
     } else if (deleteTarget?.multiple) {
       const selectedRows = table.getSelectedRowModel().rows
-      const selectedIds = selectedRows.map((row) => row.original.id)
+      const selectedUsers = selectedRows.map((row) => row.original)
+      const selectedIds = selectedUsers.map((user) => user.id)
+
+      const failedUsers: string[] = []
+
+      await Promise.all(
+        selectedUsers.map(async (user) => {
+          try {
+            await axiosInstance.delete(`/user/${user.id}`)
+          } catch {
+            failedUsers.push(user.username)
+          }
+        }),
+      )
+
+      const successfullyDeleted = selectedUsers.length - failedUsers.length
+      if (successfullyDeleted > 0) {
+        toast.success(`${successfullyDeleted} user(s) have been deleted`)
+      }
+      if (failedUsers.length > 0) {
+        toast.error(`Failed to delete: ${failedUsers.join(', ')}`)
+      }
+
+      // Update frontend data
       setData(data.filter((user) => !selectedIds.includes(user.id)))
-      toast.success(`${selectedRows.length} users have been deleted`)
     }
 
     setDeleteDialogOpen(false)
     resetSelection()
   }
 
-  const handleChangePassword = (user: User) => {
+  const handleChangePassword = (user: FullUserInfo) => {
     setUserToUpdatePassword(user)
     setOpenUpdatePasswordDialog(true)
   }
@@ -107,7 +129,7 @@ export function UsersDataTable({ data, setData, fetchUsers }: Props) {
 
   const isSuperAdmin = user?.isSuperAdmin
 
-  const columns: ColumnDef<User>[] = tableColumns({
+  const columns: ColumnDef<FullUserInfo>[] = tableColumns({
     isSuperAdmin,
     handleEditUser,
     handleChangePassword,

@@ -7,6 +7,10 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { User } from '../../../../../types/user'
+import { useEffect, useState } from 'react'
+import { toast } from 'sonner'
+import { axiosInstance } from '@/lib/axios'
+import { isAxiosError } from 'axios'
 
 type Props = {
   open: boolean
@@ -26,6 +30,8 @@ const formSchema = z
   })
 
 export const UpdatePasswordForm: React.FC<Props> = ({ open, setOpen, user }: Props) => {
+  const [targetUser, setTargetUser] = useState<string>('')
+
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -35,16 +41,32 @@ export const UpdatePasswordForm: React.FC<Props> = ({ open, setOpen, user }: Pro
     },
   })
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
     const updatedPassword = {
-      username: user.username,
-      currentPassword: values.currentPassword,
+      current: values.currentPassword,
       newPassword: values.newPassword,
     }
 
-    alert(JSON.stringify(updatedPassword, null, 2))
+    try {
+      await axiosInstance.put(`/user/${targetUser}/reset-password`, updatedPassword)
+      toast.success(`User ${user.username} password has been updated`)
+    } catch (error) {
+      if (isAxiosError(error)) {
+        const errorMessage = error.response?.data?.message || 'Something went wrong'
+        toast.error(errorMessage)
+      } else {
+        toast.error('An unexpected error occurred')
+      }
+    }
+
     setOpen(false)
   }
+
+  useEffect(() => {
+    if (user) {
+      setTargetUser(user.id)
+    }
+  }, [user])
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -54,7 +76,7 @@ export const UpdatePasswordForm: React.FC<Props> = ({ open, setOpen, user }: Pro
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4 mt-6">
-          <FormField
+            <FormField
               control={form.control}
               name="currentPassword"
               render={({ field }) => (

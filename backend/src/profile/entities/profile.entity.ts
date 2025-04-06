@@ -1,4 +1,5 @@
-import { Social } from './social.entity'
+import { Contact } from 'src/contact/entities/contact.entity'
+import { Social } from '../../social/entities/social.entity'
 
 export class Profile {
   username: string
@@ -6,4 +7,5 @@ export class Profile {
   lastName: string
   isAdmin: boolean
   social: Partial<Social>
+  contact: Partial<Contact>
 }

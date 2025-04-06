@@ -7,13 +7,16 @@ import { Label } from '@/components/ui/label'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
-import { User } from '../../../../../types/user'
+import { FullUserInfo } from '../../../../../types/user'
+import { axiosInstance } from '@/lib/axios'
+import { isAxiosError } from 'axios'
+import { toast } from 'sonner'
 
 type Props = {
   open: boolean
   setOpen: (open: boolean) => void
-  data: User[]
-  setData: (data: User[]) => void
+  data: FullUserInfo[]
+  setData: (data: FullUserInfo[]) => void
 }
 
 const formSchema = z
@@ -29,6 +32,11 @@ const formSchema = z
     superAdmin: z.boolean(),
     password: z.string().min(1, 'Password is required'),
     confirmPassword: z.string().min(1, 'Confirm Password is required'),
+    line: z.string().optional(),
+    facebook: z.string().optional(),
+    instagram: z.string().optional(),
+    tiktok: z.string().optional(),
+    website: z.string().optional(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
@@ -47,10 +55,15 @@ export const CreateUserForm: React.FC<Props> = ({ open, setOpen, data, setData }
       superAdmin: false,
       password: '',
       confirmPassword: '',
+      line: '',
+      facebook: '',
+      instagram: '',
+      tiktok: '',
+      website: '',
     },
   })
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
     const newUser = {
       id: crypto.randomUUID(),
       username: values.username,
@@ -60,10 +73,25 @@ export const CreateUserForm: React.FC<Props> = ({ open, setOpen, data, setData }
       isAdmin: values.admin,
       isSuperAdmin: values.superAdmin,
       password: '********',
-       createdAt: new Date().toISOString(),
+      line: values.line || '',
+      facebook: values.facebook || '',
+      instagram: values.instagram || '',
+      tiktok: values.tiktok || '',
+      website: values.website || '',
     }
 
-    setData([...data, newUser])
+    try {
+      const res = await axiosInstance.post('/user', newUser)
+      setData([...data, res.data])
+    } catch (error) {
+      if (isAxiosError(error)) {
+        const errorMessage = error.response?.data?.message || 'Something went wrong'
+        toast.error(errorMessage)
+      } else {
+        toast.error('An unexpected error occurred')
+      }
+    }
+
     setOpen(false)
   }
 
@@ -188,6 +216,84 @@ export const CreateUserForm: React.FC<Props> = ({ open, setOpen, data, setData }
                 </FormItem>
               )}
             />
+
+            <h2 className="text-xl font-bold my-4">Social</h2>
+
+            <div className="flex flex-col md:grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="line"
+                render={({ field }) => (
+                  <FormItem>
+                    <Label htmlFor="line">Line</Label>
+                    <FormControl>
+                      <Input placeholder="Line" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="facebook"
+                render={({ field }) => (
+                  <FormItem>
+                    <Label htmlFor="facebook">Facebook</Label>
+                    <FormControl>
+                      <Input placeholder="Facebook" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className="flex flex-col md:grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="instagram"
+                render={({ field }) => (
+                  <FormItem>
+                    <Label htmlFor="instagram">Instagram</Label>
+                    <FormControl>
+                      <Input placeholder="Instagram" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="tiktok"
+                render={({ field }) => (
+                  <FormItem>
+                    <Label htmlFor="tiktok">Tiktok</Label>
+                    <FormControl>
+                      <Input placeholder="Tiktok" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className="flex flex-col md:grid grid-cols-1 gap-4">
+              <FormField
+                control={form.control}
+                name="website"
+                render={({ field }) => (
+                  <FormItem>
+                    <Label htmlFor="website">Website</Label>
+                    <FormControl>
+                      <Input placeholder="Website" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
             <DialogFooter>
               <Button type="submit" size="sm">
                 Create

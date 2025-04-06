@@ -52,6 +52,11 @@ export class AuthService {
       ...registerDto,
       isAdmin: false,
       isSuperAdmin: false,
+      line: '',
+      facebook: '',
+      instagram: '',
+      tiktok: '',
+      website: '',
     })
   }
 
