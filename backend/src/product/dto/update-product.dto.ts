@@ -11,7 +11,7 @@ export class UpdateProductDto {
     description: 'The image of the product as data URL',
     example: 'data:image/png;base64,base64encodedImage',
   })
-  productImg: string
+  productImg: Buffer<ArrayBufferLike>
 
   @ApiProperty({
     description: 'The description of the product',

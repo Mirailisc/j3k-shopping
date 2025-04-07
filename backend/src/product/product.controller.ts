@@ -4,14 +4,19 @@ import {
   Delete,
   Get,
   Param,
+  Post,
   Put,
   Request,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common'
 import { ProductService } from './product.service'
 import { AuthGuard } from '@nestjs/passport'
 import { AdminGuard } from 'src/auth/admin.guard'
 import { UpdateProductDto } from './dto/update-product.dto'
+import { FileInterceptor } from '@nestjs/platform-express'
+import { CreateProductDto } from './dto/create-product.dto'
 
 @Controller('product')
 export class ProductController {
@@ -38,13 +43,51 @@ export class ProductController {
     return await this.productService.getProductBySellerId(id)
   }
 
+  @Post('seller')
+  @UseGuards(AuthGuard('jwt'))
+  @UseInterceptors(FileInterceptor('productImg'))
+  async createProductBySeller(
+    @Request() req,
+    @Body() product: Omit<CreateProductDto, 'userId'>,
+    @UploadedFile() productImg: Express.Multer.File,
+  ) {
+    if (productImg) {
+      product.productImg = productImg.buffer
+    }
+
+    return await this.productService.createProductBySeller(
+      product,
+      req.user.userId,
+    )
+  }
+
+  @Post('admin')
+  @UseGuards(AuthGuard('jwt'), AdminGuard)
+  @UseInterceptors(FileInterceptor('productImg'))
+  async createProductByAdmin(
+    @Body() product: CreateProductDto,
+    @UploadedFile() productImg: Express.Multer.File,
+  ) {
+    if (productImg) {
+      product.productImg = productImg.buffer
+    }
+
+    return await this.productService.createProductByAdmin(product)
+  }
+
   @Put('seller/:id')
   @UseGuards(AuthGuard('jwt'))
+  @UseInterceptors(FileInterceptor('productImg'))
   async updateProductBySeller(
     @Param('id') id: string,
     @Request() req,
     @Body() product: UpdateProductDto,
+    @UploadedFile() productImg: Express.Multer.File,
   ) {
+    if (productImg) {
+      product.productImg = productImg.buffer
+    }
+
     return await this.productService.updateProductBySeller(
       id,
       product,
@@ -54,10 +97,16 @@ export class ProductController {
 
   @Put('admin/:id')
   @UseGuards(AuthGuard('jwt'), AdminGuard)
+  @UseInterceptors(FileInterceptor('productImg'))
   async updateProductByAdmin(
     @Param('id') id: string,
     @Body() product: UpdateProductDto,
+    @UploadedFile() productImg: Express.Multer.File,
   ) {
+    if (productImg) {
+      product.productImg = productImg.buffer
+    }
+
     return await this.productService.updateProductByAdmin(id, product)
   }
 
