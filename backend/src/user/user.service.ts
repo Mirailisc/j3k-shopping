@@ -11,22 +11,32 @@ import { randomUUID } from 'crypto'
 import { User } from '@prisma/client'
 import { BCRYPT_SALT_ROUNDS } from 'src/config/bcrypt'
 import { Social } from 'src/social/entities/social.entity'
+import { SocialService } from 'src/social/social.service'
+import { ContactService } from 'src/contact/contact.service'
+import { Contact } from 'src/contact/entities/contact.entity'
 
-export type FullUserInfo = User & Social
+export type FullUserInfo = User & Social & Contact
 
 @Injectable()
 export class UserService {
   private logger: Logger = new Logger(UserService.name)
 
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly socialService: SocialService,
+    private readonly contactService: ContactService,
+  ) {}
 
   async getAllUser() {
     return await this.prisma.$queryRaw<FullUserInfo[]>`
       SELECT 
       U.id, U.username, U.email, U.firstName, U.lastName, U.isAdmin, U.isSuperAdmin,
-      S.line, S.facebook, S.website, S.instagram, S.tiktok, U.createdAt
+      S.line, S.facebook, S.website, S.instagram, S.tiktok,
+      C.citizenId, C.phone, C.address, C.city, C.province, C.zipCode, C.country,
+      U.createdAt
       FROM User U
       LEFT JOIN Social S ON U.id = S.userId
+      LEFT JOIN Contact C ON U.id = C.userId
     `
   }
 
@@ -34,9 +44,12 @@ export class UserService {
     const result = await this.prisma.$queryRaw<FullUserInfo[]>`
       SELECT 
       U.id, U.username, U.email, U.firstName, U.lastName, U.isAdmin, U.isSuperAdmin,
-      S.line, S.facebook, S.website, S.instagram, S.tiktok, U.createdAt
+      S.line, S.facebook, S.website, S.instagram, S.tiktok,
+      C.citizenId, C.phone, C.address, C.city, C.province, C.zipCode, C.country,
+      U.createdAt
       FROM User U
       LEFT JOIN Social S ON U.id = S.userId
+      LEFT JOIN Contact C ON U.id = C.userId
       WHERE U.id = ${userId}
     `
     if (result.length === 0) {
@@ -75,8 +88,8 @@ export class UserService {
       throw new BadRequestException('Cannot delete yourself')
     }
 
-    await this.prisma.$executeRaw`DELETE FROM Contact WHERE userId = ${id}`
-    await this.prisma.$executeRaw`DELETE FROM Social WHERE userId = ${id}`
+    await this.contactService.deleteContact(id)
+    await this.socialService.deleteSocial(id)
 
     await this.prisma.$executeRaw<User>`
       DELETE FROM User WHERE User.id = ${id}
@@ -99,6 +112,13 @@ export class UserService {
       instagram,
       tiktok,
       website,
+      citizenId,
+      phone,
+      address,
+      city,
+      province,
+      zipCode,
+      country,
     } = updateUserDto
 
     const existingUsername = await this.prisma.$queryRaw<User>`
@@ -114,8 +134,23 @@ export class UserService {
       throw new BadRequestException('Email already exists')
     }
 
-    await this.prisma
-      .$executeRaw`UPDATE Social SET line = ${line}, facebook = ${facebook}, instagram = ${instagram}, tiktok = ${tiktok}, website = ${website} WHERE userId = ${id}`
+    await this.socialService.updateSocial(id, {
+      line,
+      facebook,
+      instagram,
+      tiktok,
+      website,
+    })
+
+    await this.contactService.updateContact(id, {
+      citizenId,
+      phone,
+      address,
+      city,
+      province,
+      zipCode,
+      country,
+    })
 
     await this.prisma.$executeRaw`
       UPDATE User 
@@ -141,6 +176,13 @@ export class UserService {
       instagram,
       tiktok,
       website,
+      citizenId,
+      phone,
+      address,
+      city,
+      province,
+      zipCode,
+      country,
     } = createUserDto
 
     const hashedPassword = await bcrypt.hash(password, BCRYPT_SALT_ROUNDS)
@@ -168,7 +210,7 @@ export class UserService {
     await this.prisma
       .$executeRaw<Social>`INSERT INTO Social(id, userId, line, facebook, instagram, tiktok, website) VALUES (${socialUUID}, ${uuid}, ${line}, ${facebook}, ${instagram}, ${tiktok}, ${website})`
     await this.prisma
-      .$executeRaw`INSERT INTO Contact(id, userId) VALUES (${contactUUID}, ${uuid})`
+      .$executeRaw`INSERT INTO Contact(id, citizenId, phone, address, city, province, zipCode, country, userId) VALUES (${contactUUID}, ${citizenId}, ${phone}, ${address}, ${city}, ${province}, ${zipCode}, ${country}, ${uuid})`
 
     return await this.getFullUserById(uuid)
   }

@@ -25,5 +25,9 @@ export class UpdateSocialDto {
   })
   instagram?: string
 
+  @ApiProperty({
+    example: 'mirailisc',
+    nullable: true,
+  })
   tiktok?: string
 }

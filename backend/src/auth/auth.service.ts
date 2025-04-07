@@ -57,6 +57,13 @@ export class AuthService {
       instagram: '',
       tiktok: '',
       website: '',
+      citizenId: '',
+      phone: '',
+      address: '',
+      city: '',
+      province: '',
+      zipCode: '',
+      country: '',
     })
   }
 

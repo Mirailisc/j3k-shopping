@@ -17,4 +17,14 @@ export type Social = {
   tiktok: string
 }
 
-export type FullUserInfo = User & Social
+export type Contact = {
+  citizenId: string
+  phone: string
+  address: string
+  city: string
+  province: string
+  zipCode: string
+  country: string
+}
+
+export type FullUserInfo = User & Social & Contact

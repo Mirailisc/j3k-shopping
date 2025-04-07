@@ -37,6 +37,13 @@ const formSchema = z
     instagram: z.string().optional(),
     tiktok: z.string().optional(),
     website: z.string().optional(),
+    citizenId: z.string().optional(),
+    phone: z.string().optional(),
+    address: z.string().optional(),
+    city: z.string().optional(),
+    province: z.string().optional(),
+    zipCode: z.string().optional(),
+    country: z.string().optional(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
@@ -60,6 +67,13 @@ export const CreateUserForm: React.FC<Props> = ({ open, setOpen, data, setData }
       instagram: '',
       tiktok: '',
       website: '',
+      citizenId: '',
+      phone: '',
+      address: '',
+      city: '',
+      province: '',
+      zipCode: '',
+      country: '',
     },
   })
 
@@ -78,6 +92,13 @@ export const CreateUserForm: React.FC<Props> = ({ open, setOpen, data, setData }
       instagram: values.instagram || '',
       tiktok: values.tiktok || '',
       website: values.website || '',
+      citizenId: values.citizenId || '',
+      phone: values.phone || '',
+      address: values.address || '',
+      city: values.city || '',
+      province: values.province || '',
+      zipCode: values.zipCode || '',
+      country: values.country || '',
     }
 
     try {
@@ -97,7 +118,7 @@ export const CreateUserForm: React.FC<Props> = ({ open, setOpen, data, setData }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Create user</DialogTitle>
         </DialogHeader>
@@ -116,7 +137,6 @@ export const CreateUserForm: React.FC<Props> = ({ open, setOpen, data, setData }
                 </FormItem>
               )}
             />
-
             <FormField
               control={form.control}
               name="email"
@@ -130,7 +150,6 @@ export const CreateUserForm: React.FC<Props> = ({ open, setOpen, data, setData }
                 </FormItem>
               )}
             />
-
             <div className="flex flex-col md:grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
@@ -145,7 +164,6 @@ export const CreateUserForm: React.FC<Props> = ({ open, setOpen, data, setData }
                   </FormItem>
                 )}
               />
-
               <FormField
                 control={form.control}
                 name="lastName"
@@ -160,7 +178,6 @@ export const CreateUserForm: React.FC<Props> = ({ open, setOpen, data, setData }
                 )}
               />
             </div>
-
             <FormField
               control={form.control}
               name="admin"
@@ -174,7 +191,6 @@ export const CreateUserForm: React.FC<Props> = ({ open, setOpen, data, setData }
                 </FormItem>
               )}
             />
-
             <FormField
               control={form.control}
               name="superAdmin"
@@ -188,7 +204,6 @@ export const CreateUserForm: React.FC<Props> = ({ open, setOpen, data, setData }
                 </FormItem>
               )}
             />
-
             <FormField
               control={form.control}
               name="password"
@@ -202,7 +217,6 @@ export const CreateUserForm: React.FC<Props> = ({ open, setOpen, data, setData }
                 </FormItem>
               )}
             />
-
             <FormField
               control={form.control}
               name="confirmPassword"
@@ -233,7 +247,6 @@ export const CreateUserForm: React.FC<Props> = ({ open, setOpen, data, setData }
                   </FormItem>
                 )}
               />
-
               <FormField
                 control={form.control}
                 name="facebook"
@@ -248,7 +261,6 @@ export const CreateUserForm: React.FC<Props> = ({ open, setOpen, data, setData }
                 )}
               />
             </div>
-
             <div className="flex flex-col md:grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
@@ -263,7 +275,6 @@ export const CreateUserForm: React.FC<Props> = ({ open, setOpen, data, setData }
                   </FormItem>
                 )}
               />
-
               <FormField
                 control={form.control}
                 name="tiktok"
@@ -278,7 +289,6 @@ export const CreateUserForm: React.FC<Props> = ({ open, setOpen, data, setData }
                 )}
               />
             </div>
-
             <div className="flex flex-col md:grid grid-cols-1 gap-4">
               <FormField
                 control={form.control}
@@ -288,6 +298,108 @@ export const CreateUserForm: React.FC<Props> = ({ open, setOpen, data, setData }
                     <Label htmlFor="website">Website</Label>
                     <FormControl>
                       <Input placeholder="Website" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <h2 className="text-xl font-bold my-4">Contact</h2>
+
+            <div className="flex flex-col md:grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="citizenId"
+                render={({ field }) => (
+                  <FormItem>
+                    <Label htmlFor="citizenId">Citizen ID</Label>
+                    <FormControl>
+                      <Input placeholder="Citizen ID" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="phone"
+                render={({ field }) => (
+                  <FormItem>
+                    <Label htmlFor="phone">Phone number</Label>
+                    <FormControl>
+                      <Input placeholder="Phone number" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="flex flex-col md:grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="address"
+                render={({ field }) => (
+                  <FormItem>
+                    <Label htmlFor="address">Address</Label>
+                    <FormControl>
+                      <Input placeholder="Address" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="city"
+                render={({ field }) => (
+                  <FormItem>
+                    <Label htmlFor="city">City</Label>
+                    <FormControl>
+                      <Input placeholder="City" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="flex flex-col md:grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="province"
+                render={({ field }) => (
+                  <FormItem>
+                    <Label htmlFor="province">Province</Label>
+                    <FormControl>
+                      <Input placeholder="Province" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="zipCode"
+                render={({ field }) => (
+                  <FormItem>
+                    <Label htmlFor="zipCode">Zip Code</Label>
+                    <FormControl>
+                      <Input placeholder="Zip Code" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="flex flex-col md:grid grid-cols-1 gap-4">
+              <FormField
+                control={form.control}
+                name="country"
+                render={({ field }) => (
+                  <FormItem>
+                    <Label htmlFor="country">Country</Label>
+                    <FormControl>
+                      <Input placeholder="Country" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

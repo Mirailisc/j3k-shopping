@@ -129,6 +129,41 @@ export const tableColumns = ({ isSuperAdmin, handleEditUser, handleChangePasswor
       cell: ({ row }) => <div>{row.getValue('tiktok')}</div>,
     },
     {
+      accessorKey: 'citizenId',
+      header: 'Citizen ID',
+      cell: ({ row }) => <div>{row.getValue('citizenId')}</div>,
+    },
+    {
+      accessorKey: 'phone',
+      header: 'Phone',
+      cell: ({ row }) => <div>{row.getValue('phone')}</div>,
+    },
+    {
+      accessorKey: 'address',
+      header: 'Address',
+      cell: ({ row }) => <div>{row.getValue('address')}</div>,
+    },
+    {
+      accessorKey: 'city',
+      header: 'City',
+      cell: ({ row }) => <div>{row.getValue('city')}</div>,
+    },
+    {
+      accessorKey: 'province',
+      header: 'Province',
+      cell: ({ row }) => <div>{row.getValue('province')}</div>,
+    },
+    {
+      accessorKey: 'zipCode',
+      header: 'Zip Code',
+      cell: ({ row }) => <div>{row.getValue('zipCode')}</div>,
+    },
+    {
+      accessorKey: 'country',
+      header: 'Country',
+      cell: ({ row }) => <div>{row.getValue('country')}</div>,
+    },
+    {
       accessorKey: 'createdAt',
       header: ({ column }) => {
         return (

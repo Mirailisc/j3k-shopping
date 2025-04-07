@@ -6,6 +6,8 @@ import { PrismaService } from 'src/prisma/prisma.service'
 import { JwtModule } from '@nestjs/jwt'
 import { DEFAULT_JWT_SECRET, JWT_EXPIRE_TIME } from 'src/config/jwt'
 import { JwtStrategy } from './jwt.strategy'
+import { SocialModule } from 'src/social/social.module'
+import { ContactModule } from 'src/contact/contact.module'
 
 @Module({
   imports: [
@@ -13,6 +15,8 @@ import { JwtStrategy } from './jwt.strategy'
       secret: process.env.JWT_SECRET || DEFAULT_JWT_SECRET,
       signOptions: { expiresIn: JWT_EXPIRE_TIME },
     }),
+    SocialModule,
+    ContactModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, UserService, PrismaService, JwtStrategy],

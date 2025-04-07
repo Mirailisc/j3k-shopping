@@ -70,4 +70,39 @@ export class CreateUserDto {
     nullable: true,
   })
   website: string
+
+  @ApiProperty({
+    nullable: true,
+  })
+  citizenId: string
+
+  @ApiProperty({
+    nullable: true,
+  })
+  phone: string
+
+  @ApiProperty({
+    nullable: true,
+  })
+  address: string
+
+  @ApiProperty({
+    nullable: true,
+  })
+  city: string
+
+  @ApiProperty({
+    nullable: true,
+  })
+  province: string
+
+  @ApiProperty({
+    nullable: true,
+  })
+  zipCode: string
+
+  @ApiProperty({
+    nullable: true,
+  })
+  country: string
 }

@@ -1,27 +1,46 @@
 import { Injectable } from '@nestjs/common'
-import { Social } from '@prisma/client'
 import { PrismaService } from 'src/prisma/prisma.service'
 import { UpdateSocialDto } from './dto/update-social.dto'
+import { Social } from './entities/social.entity'
 
 @Injectable()
 export class SocialService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
-  async getSocials() {
-    return await this.prismaService.$queryRaw<Social>`SELECT * FROM Social`
+  async getSocialByUsername(username: string) {
+    const social = await this.prisma.$queryRaw<Social[]>`
+          SELECT * FROM Social WHERE userId = (
+            SELECT id FROM User WHERE username = ${username}
+          )
+        `
+
+    if (social.length === 0) {
+      throw new Error('User social not found')
+    }
+
+    return {
+      line: social[0].line,
+      facebook: social[0].facebook,
+      instagram: social[0].instagram,
+      tiktok: social[0].tiktok,
+      website: social[0].website,
+    }
   }
 
-  async getSocialByUser(userId: string) {
-    return await this.prismaService.$queryRaw`
-          SELECT * FROM Social WHERE userId = ${userId}
-        `
+  async updateSocial(id: string, social: UpdateSocialDto) {
+    return await this.prisma.$executeRaw`
+      UPDATE Social
+      SET
+      line = ${social.line},
+      facebook = ${social.facebook},
+      instagram = ${social.instagram},
+      tiktok = ${social.tiktok},
+      website = ${social.website}
+      WHERE userId = ${id}
+    `
   }
 
-  async editSocial(id: string, social: UpdateSocialDto) {
-    return await this.prismaService.$queryRaw`
-          UPDATE Social
-          SET ${social}
-          WHERE id = ${id}
-        `
+  async deleteSocial(id: string) {
+    await this.prisma.$executeRaw`DELETE FROM Social WHERE userId = ${id}`
   }
 }
