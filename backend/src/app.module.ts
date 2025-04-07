@@ -7,9 +7,10 @@ import { ConfigModule } from '@nestjs/config'
 import { ProfileModule } from './profile/profile.module';
 import { SocialModule } from './social/social.module';
 import { ContactModule } from './contact/contact.module';
+import { ProductModule } from './product/product.module';
 
 @Module({
-  imports: [AuthModule, UserModule, ConfigModule.forRoot(), ProfileModule, SocialModule, ContactModule],
+  imports: [AuthModule, UserModule, ConfigModule.forRoot(), ProfileModule, SocialModule, ContactModule, ProductModule],
   controllers: [AppController],
   providers: [AppService],
 })

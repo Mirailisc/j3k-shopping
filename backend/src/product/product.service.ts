@@ -1,0 +1,184 @@
+import { BadRequestException, Injectable } from '@nestjs/common'
+import { PrismaService } from 'src/prisma/prisma.service'
+import { Product } from './entities/product.entity'
+import { CreateProductDto } from './dto/create-product.dto'
+import { UpdateProductDto } from './dto/update-product.dto'
+import { User } from 'src/user/entities/user.entity'
+import { randomUUID } from 'crypto'
+
+@Injectable()
+export class ProductService {
+  constructor(private readonly prisma: PrismaService) {}
+
+  private toBase64(imageData: string | Uint8Array | Buffer): string {
+    let buffer: Buffer
+
+    if (typeof imageData === 'string') {
+      // If imageData is a string (e.g., Base64 string), convert it to Buffer
+      buffer = Buffer.from(imageData, 'base64')
+    } else if (Buffer.isBuffer(imageData)) {
+      // If it's already a Buffer, no need to convert
+      buffer = imageData
+    } else {
+      // Otherwise, assume it's a Uint8Array
+      buffer = Buffer.from(imageData)
+    }
+
+    // Convert to base64 string
+    return `data:image/jpeg;base64,${buffer.toString('base64')}`
+  }
+
+  async getAllProduct() {
+    const products = await this.prisma.$queryRaw<Product[]>`
+      SELECT *
+      FROM Product
+    `
+
+    return products.map((product) => ({
+      ...product,
+      productImg: this.toBase64(product.productImg),
+    }))
+  }
+
+  async searchProductByName(name: string) {
+    const products = await this.prisma.$queryRaw<Product[]>`
+      SELECT *
+      FROM Product
+      WHERE name LIKE ${name}
+    `
+
+    return products.map((product) => ({
+      ...product,
+      productImg: this.toBase64(product.productImg),
+    }))
+  }
+
+  async getProductById(id: string) {
+    const product = await this.prisma.$queryRaw<Product[]>`
+      SELECT *
+      FROM Product
+      WHERE id = ${id}
+    `
+
+    if (!product || product.length === 0) {
+      throw new Error('Product not found')
+    }
+
+    const productData = product[0]
+
+    return {
+      ...productData,
+      productImg: this.toBase64(productData.productImg),
+    }
+  }
+
+  async getProductBySellerId(sellerId: string) {
+    const products = await this.prisma.$queryRaw<Product[]>`
+      SELECT *
+      FROM Product
+      WHERE userId = ${sellerId}
+    `
+
+    return products.map((product) => ({
+      ...product,
+      productImg: this.toBase64(product.productImg),
+    }))
+  }
+
+  async createProductBySeller(
+    product: Omit<CreateProductDto, 'userId'>,
+    sellerId: string,
+  ) {
+    const uuid = randomUUID()
+    await this.prisma.$executeRaw<Product[]>`
+      INSERT INTO Product (id, name, productImg, description, price, quantity, userId)
+      VALUES (${uuid}, ${product.name}, ${product.productImg}, ${product.description}, ${product.price}, ${product.quantity}, ${sellerId})
+    `
+
+    return await this.getProductById(uuid)
+  }
+
+  async createProductByAdmin(product: CreateProductDto) {
+    const uuid = randomUUID()
+    const existingUser = await this.prisma.$queryRaw<User[]>`
+      SELECT id
+      FROM User
+      WHERE id = ${product.userId}
+    `
+
+    if (!existingUser || existingUser.length === 0) {
+      throw new BadRequestException('User not found')
+    }
+
+    await this.prisma.$executeRaw<Product[]>`
+      INSERT INTO Product (id, name, productImg, description, price, quantity, userId)
+      VALUES (${uuid}, ${product.name}, ${product.productImg}, ${product.description}, ${product.price}, ${product.quantity}, ${product.userId})
+    `
+
+    return await this.getProductById(uuid)
+  }
+
+  async updateProductBySeller(
+    id: string,
+    product: UpdateProductDto,
+    me: string,
+  ) {
+    const productInfo = await this.getProductById(id)
+
+    if (productInfo.userId !== me) {
+      throw new BadRequestException('You are not the owner of this product')
+    }
+
+    await this.prisma.$executeRaw<Product[]>`
+      UPDATE Product
+      SET name = ${product.name}, productImg = ${product.productImg}, description = ${product.description}, price = ${product.price}, quantity = ${product.quantity}
+      WHERE id = ${id}
+    `
+
+    return await this.getProductById(id)
+  }
+
+  async updateProductByAdmin(id: string, product: UpdateProductDto) {
+    await this.prisma.$executeRaw<Product[]>`
+      UPDATE Product
+      SET name = ${product.name}, productImg = ${product.productImg}, description = ${product.description}, price = ${product.price}, quantity = ${product.quantity}
+      WHERE id = ${id}
+    `
+
+    return await this.getProductById(id)
+  }
+
+  async deleteProductBySeller(id: string, me: string) {
+    const product = await this.getProductById(id)
+
+    if (product.userId !== me) {
+      throw new BadRequestException('You are not the owner of this product')
+    }
+
+    await this.prisma.$executeRaw`
+      DELETE FROM OrderItem WHERE productId = ${id}
+    `
+
+    await this.prisma.$executeRaw`
+      DELETE FROM Review WHERE productId = ${id}
+    `
+
+    return await this.prisma.$executeRaw`
+      DELETE FROM Product WHERE id = ${id}
+    `
+  }
+
+  async deleteProductByAdmin(id: string) {
+    await this.prisma.$executeRaw`
+      DELETE FROM OrderItem WHERE productId = ${id}
+    `
+
+    await this.prisma.$executeRaw`
+      DELETE FROM Review WHERE productId = ${id}
+    `
+
+    return await this.prisma.$executeRaw`
+      DELETE FROM Product WHERE id = ${id}
+    `
+  }
+}
