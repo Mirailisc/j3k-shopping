@@ -1,9 +1,9 @@
 import { Button } from '@/components/ui/button'
 import { Table } from '@tanstack/react-table'
-import { User } from '../../../../types/user'
+import { FullUserInfo } from '../../../../types/user'
 
 type Props = {
-  table: Table<User>
+  table: Table<FullUserInfo>
   selectedCount: number
 }
 

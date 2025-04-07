@@ -16,3 +16,15 @@ export type Social = {
   instagram: string
   tiktok: string
 }
+
+export type Contact = {
+  citizenId: string
+  phone: string
+  address: string
+  city: string
+  province: string
+  zipCode: string
+  country: string
+}
+
+export type FullUserInfo = User & Social & Contact

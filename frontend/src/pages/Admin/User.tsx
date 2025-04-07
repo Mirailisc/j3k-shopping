@@ -1,14 +1,14 @@
 import Sidebar from '@/components/Admin/utils/Sidebar'
 import { UsersDataTable } from '@/components/Admin/User/Table'
 import { useSidebar } from '@/context/hooks/useSidebar'
-import { User as UserType } from '@/types/user'
 import { useEffect, useState } from 'react'
 import { axiosInstance } from '@/lib/axios'
+import { FullUserInfo } from '@/types/user'
 
 const User: React.FC = () => {
   const sidebar = useSidebar()
 
-  const [data, setData] = useState<UserType[]>([])
+  const [data, setData] = useState<FullUserInfo[]>([])
 
   const fetchUsers = async () => {
     const { data } = await axiosInstance.get('/user')

@@ -9,14 +9,14 @@ import {
 import { Input } from '@/components/ui/input'
 import { Table } from '@tanstack/react-table'
 import { ChevronDown, Plus, RefreshCw, Trash } from 'lucide-react'
-import { User } from '../../../../types/user'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useSelector } from 'react-redux'
 import { RootState } from '@/store/store'
+import { FullUserInfo } from '@/types/user'
 
 type Props = {
   selectedCount: number
-  table: Table<User>
+  table: Table<FullUserInfo>
   handleRefreshData: () => void
   handleDeleteUser: () => void
   handleAddUser: () => void

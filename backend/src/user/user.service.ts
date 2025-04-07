@@ -10,17 +10,53 @@ import * as bcrypt from 'bcrypt'
 import { randomUUID } from 'crypto'
 import { User } from '@prisma/client'
 import { BCRYPT_SALT_ROUNDS } from 'src/config/bcrypt'
+import { Social } from 'src/social/entities/social.entity'
+import { SocialService } from 'src/social/social.service'
+import { ContactService } from 'src/contact/contact.service'
+import { Contact } from 'src/contact/entities/contact.entity'
+
+export type FullUserInfo = User & Social & Contact
 
 @Injectable()
 export class UserService {
   private logger: Logger = new Logger(UserService.name)
 
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly socialService: SocialService,
+    private readonly contactService: ContactService,
+  ) {}
 
   async getAllUser() {
-    return await this.prisma.$queryRaw<User[]>`
-      SELECT id, username, email, firstName, lastName, isAdmin, isSuperAdmin, createdAt FROM User
+    return await this.prisma.$queryRaw<FullUserInfo[]>`
+      SELECT 
+      U.id, U.username, U.email, U.firstName, U.lastName, U.isAdmin, U.isSuperAdmin,
+      S.line, S.facebook, S.website, S.instagram, S.tiktok,
+      C.citizenId, C.phone, C.address, C.city, C.province, C.zipCode, C.country,
+      U.createdAt
+      FROM User U
+      LEFT JOIN Social S ON U.id = S.userId
+      LEFT JOIN Contact C ON U.id = C.userId
     `
+  }
+
+  async getFullUserById(userId: string) {
+    const result = await this.prisma.$queryRaw<FullUserInfo[]>`
+      SELECT 
+      U.id, U.username, U.email, U.firstName, U.lastName, U.isAdmin, U.isSuperAdmin,
+      S.line, S.facebook, S.website, S.instagram, S.tiktok,
+      C.citizenId, C.phone, C.address, C.city, C.province, C.zipCode, C.country,
+      U.createdAt
+      FROM User U
+      LEFT JOIN Social S ON U.id = S.userId
+      LEFT JOIN Contact C ON U.id = C.userId
+      WHERE U.id = ${userId}
+    `
+    if (result.length === 0) {
+      throw new NotFoundException(`User ${userId} not found`)
+    }
+
+    return result[0]
   }
 
   async getUserById(userId: string) {
@@ -47,35 +83,83 @@ export class UserService {
     return result[0]
   }
 
-  async deleteUser(id: string) {
-    const user = await this.getUserById(id)
-
-    if (id === user.id) {
+  async deleteUser(id: string, me: string) {
+    if (id === me) {
       throw new BadRequestException('Cannot delete yourself')
     }
 
-    await this.prisma.$executeRaw`DELETE FROM Contact WHERE userId = ${id}`
-    await this.prisma.$executeRaw`DELETE FROM Social WHERE userId = ${id}`
+    await this.contactService.deleteContact(id)
+    await this.socialService.deleteSocial(id)
 
-    const result = await this.prisma
-      .$queryRaw`DELETE FROM User WHERE id = ${id}`
+    await this.prisma.$executeRaw<User>`
+      DELETE FROM User WHERE User.id = ${id}
+    `
 
     this.logger.log(`Deleted user ${id}`)
-    return result
+    return { message: `User ${id} has been deleted` }
   }
 
   async updateUser(id: string, updateUserDto: Omit<CreateUserDto, 'password'>) {
-    const { username, email, firstName, lastName, isAdmin, isSuperAdmin } =
-      updateUserDto
+    const {
+      username,
+      email,
+      firstName,
+      lastName,
+      isAdmin,
+      isSuperAdmin,
+      line,
+      facebook,
+      instagram,
+      tiktok,
+      website,
+      citizenId,
+      phone,
+      address,
+      city,
+      province,
+      zipCode,
+      country,
+    } = updateUserDto
 
-    const result = await this.prisma.$queryRaw`
+    const existingUsername = await this.prisma.$queryRaw<User>`
+      SELECT * FROM User WHERE username = ${username} AND id != ${id}`
+    const existingEmail = await this.prisma.$queryRaw<User>`
+      SELECT * FROM User WHERE email = ${email} AND id != ${id}`
+
+    if (existingUsername[0]) {
+      throw new BadRequestException('Username already exists')
+    }
+
+    if (existingEmail[0]) {
+      throw new BadRequestException('Email already exists')
+    }
+
+    await this.socialService.updateSocial(id, {
+      line,
+      facebook,
+      instagram,
+      tiktok,
+      website,
+    })
+
+    await this.contactService.updateContact(id, {
+      citizenId,
+      phone,
+      address,
+      city,
+      province,
+      zipCode,
+      country,
+    })
+
+    await this.prisma.$executeRaw`
       UPDATE User 
       SET username = ${username}, email = ${email}, firstName = ${firstName}, lastName = ${lastName}, isAdmin = ${isAdmin}, isSuperAdmin = ${isSuperAdmin}
       WHERE id = ${id}
     `
 
     this.logger.log(`Updated user ${id}`)
-    return result
+    return await this.getFullUserById(id)
   }
 
   async createUser(createUserDto: CreateUserDto) {
@@ -87,6 +171,18 @@ export class UserService {
       isAdmin,
       isSuperAdmin,
       password,
+      line,
+      facebook,
+      instagram,
+      tiktok,
+      website,
+      citizenId,
+      phone,
+      address,
+      city,
+      province,
+      zipCode,
+      country,
     } = createUserDto
 
     const hashedPassword = await bcrypt.hash(password, BCRYPT_SALT_ROUNDS)
@@ -94,16 +190,46 @@ export class UserService {
     const contactUUID = randomUUID()
     const socialUUID = randomUUID()
 
-    const result = await this.prisma.$queryRaw`
+    const existingUsername = await this.prisma.$queryRaw<User>`
+      SELECT * FROM User WHERE username = ${username}`
+    const existingEmail = await this.prisma.$queryRaw<User>`
+      SELECT * FROM User WHERE email = ${email}`
+
+    if (existingUsername[0]) {
+      throw new BadRequestException('Username already exists')
+    }
+
+    if (existingEmail[0]) {
+      throw new BadRequestException('Email already exists')
+    }
+
+    await this.prisma.$executeRaw<User>`
       INSERT INTO User(id, username, email, firstName, lastName, isAdmin, isSuperAdmin, password) 
       VALUES (${uuid}, ${username}, ${email}, ${firstName}, ${lastName}, ${isAdmin}, ${isSuperAdmin}, ${hashedPassword})
     `
     await this.prisma
-      .$executeRaw`INSERT INTO Social(id, userId) VALUES (${socialUUID}, ${uuid})`
+      .$executeRaw<Social>`INSERT INTO Social(id, userId, line, facebook, instagram, tiktok, website) VALUES (${socialUUID}, ${uuid}, ${line}, ${facebook}, ${instagram}, ${tiktok}, ${website})`
     await this.prisma
-      .$executeRaw`INSERT INTO Contact(id, userId) VALUES (${contactUUID}, ${uuid})`
+      .$executeRaw`INSERT INTO Contact(id, citizenId, phone, address, city, province, zipCode, country, userId) VALUES (${contactUUID}, ${citizenId}, ${phone}, ${address}, ${city}, ${province}, ${zipCode}, ${country}, ${uuid})`
 
-    this.logger.log(`Created user ${username}`)
-    return result
+    return await this.getFullUserById(uuid)
+  }
+
+  async resetPassword(userId: string, current: string, newPassword: string) {
+    const user = await this.getUserById(userId)
+
+    if (bcrypt.compare(current, user.password)) {
+      const hashedPassword = await bcrypt.hash(newPassword, BCRYPT_SALT_ROUNDS)
+      await this.prisma.$executeRaw`
+        UPDATE User 
+        SET password = ${hashedPassword}
+        WHERE id = ${userId}
+      `
+
+      this.logger.log(`Reset password for user ${userId}`)
+      return await this.getFullUserById(userId)
+    } else {
+      throw new BadRequestException('Current password is incorrect')
+    }
   }
 }

@@ -8,10 +8,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { User } from '../../../../types/user'
+import { FullUserInfo } from '@/types/user';
 
 type Props = {
-  deleteTarget: { single?: User; multiple?: boolean } | null
+  deleteTarget: { single?: FullUserInfo; multiple?: boolean } | null
   confirmDelete: () => void
   selectedCount: number
   deleteDialogOpen: boolean
