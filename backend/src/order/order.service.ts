@@ -22,17 +22,13 @@ export class OrderService {
     let buffer: Buffer
 
     if (typeof imageData === 'string') {
-      // If imageData is a string (e.g., Base64 string), convert it to Buffer
       buffer = Buffer.from(imageData, 'base64')
     } else if (Buffer.isBuffer(imageData)) {
-      // If it's already a Buffer, no need to convert
       buffer = imageData
     } else {
-      // Otherwise, assume it's a Uint8Array
       buffer = Buffer.from(imageData)
     }
 
-    // Convert to base64 string
     return `data:image/jpeg;base64,${buffer.toString('base64')}`
   }
 
@@ -49,14 +45,14 @@ export class OrderService {
 
   async getAllOrders() {
     const orders = await this.prisma.$queryRaw<Order[]>`
-      SELECT * FROM "Order"
+      SELECT * FROM \`Order\`
     `
     return this.transformOrders(orders)
   }
 
   async getOrderById(id: string) {
     const orders = await this.prisma.$queryRaw<Order[]>`
-      SELECT * FROM "Order" WHERE "id" = ${id}
+      SELECT * FROM \`Order\` WHERE id = ${id}
     `
 
     if (!orders || orders.length === 0) {
@@ -68,8 +64,8 @@ export class OrderService {
 
   async getOrderBySeller(id: string) {
     const orders = await this.prisma.$queryRaw<Order[]>`
-      SELECT * FROM "Order" 
-      LEFT JOIN "Product" ON "Order".productId = Product.id 
+      SELECT * FROM \`Order\` 
+      LEFT JOIN Product ON \`Order\`.productId = Product.id 
       WHERE Product.userId = ${id}
     `
     return this.transformOrders(orders)
@@ -77,7 +73,7 @@ export class OrderService {
 
   async getOrderByBuyer(id: string) {
     const orders = await this.prisma.$queryRaw<Order[]>`
-      SELECT * FROM "Order" WHERE "userId" = ${id}
+      SELECT * FROM \`Order\` WHERE userId = ${id}
     `
     return this.transformOrders(orders)
   }
@@ -91,7 +87,7 @@ export class OrderService {
     const total = this.calculateTotal(product, createOrderDto.amount)
 
     await this.prisma.$executeRaw<Order>`
-      INSERT INTO "Order" ("id", "status", "total", "userId", "productId", "amount")
+      INSERT INTO \`Order\` (id, status, total, userId, productId, amount)
       VALUES (${uuid}, ${OrderStatus.PENDING}, ${total}, ${createOrderDto.userId}, ${createOrderDto.productId}, ${createOrderDto.amount})
     `
 
@@ -100,9 +96,9 @@ export class OrderService {
 
   async uploadEvidence(id: string, evidence: Buffer) {
     await this.prisma.$executeRaw<Order>`
-      UPDATE "Order"
-      SET "evidence" = ${evidence}
-      WHERE "id" = ${id}
+      UPDATE \`Order\`
+      SET evidence = ${evidence}
+      WHERE id = ${id}
     `
 
     return await this.getOrderById(id)
@@ -120,7 +116,7 @@ export class OrderService {
     const total = this.calculateTotal(product, createOrderDto.amount)
 
     await this.prisma.$executeRaw<Order>`
-      INSERT INTO "Order" ("id", "status", "total", "userId", "productId", "amount")
+      INSERT INTO \`Order\` (id, status, total, userId, productId, amount)
       VALUES (${uuid}, ${OrderStatus.PENDING}, ${total}, ${me}, ${createOrderDto.productId}, ${createOrderDto.amount})
     `
 
@@ -134,9 +130,9 @@ export class OrderService {
     switch (status) {
       case OrderStatus.PAID:
         await this.prisma.$executeRaw<Order>`
-          UPDATE "Order"
-          SET "status" = ${status}
-          WHERE "id" = ${id}
+          UPDATE \`Order\`
+          SET status = ${status}
+          WHERE id = ${id}
         `
 
         await this.prisma.$executeRaw<Product>`
@@ -149,9 +145,9 @@ export class OrderService {
 
       case OrderStatus.REFUNDED:
         await this.prisma.$executeRaw<Order>`
-          UPDATE "Order"
-          SET "status" = ${status}
-          WHERE "id" = ${id}
+          UPDATE \`Order\`
+          SET status = ${status}
+          WHERE id = ${id}
         `
 
         await this.prisma.$executeRaw<Product>`
@@ -164,9 +160,9 @@ export class OrderService {
 
       default:
         await this.prisma.$executeRaw<Order>`
-          UPDATE "Order"
-          SET "status" = ${status}
-          WHERE "id" = ${id}
+          UPDATE \`Order\`
+          SET status = ${status}
+          WHERE id = ${id}
         `
 
         return await this.getOrderById(id)
