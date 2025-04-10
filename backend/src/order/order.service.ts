@@ -7,6 +7,8 @@ import { OrderStatus } from './enum/order.enum'
 import { ProductService } from 'src/product/product.service'
 import { Product } from 'src/product/entities/product.entity'
 
+const IMPORT_TAX_PERCENTAGE = 0.37
+
 @Injectable()
 export class OrderService {
   private logger: Logger = new Logger(OrderService.name)
@@ -39,6 +41,10 @@ export class OrderService {
       ...order,
       evidence: order.evidence ? this.toBase64(order.evidence) : null,
     }))
+  }
+
+  private calculateTotal(product: Product, amount: number) {
+    return product.price * amount * (1 + IMPORT_TAX_PERCENTAGE)
   }
 
   async getAllOrders() {
@@ -82,7 +88,7 @@ export class OrderService {
       createOrderDto.productId,
     )
 
-    const total = product.price * createOrderDto.amount
+    const total = this.calculateTotal(product, createOrderDto.amount)
 
     await this.prisma.$executeRaw<Order>`
       INSERT INTO "Order" ("id", "status", "total", "userId", "productId", "amount")
@@ -111,7 +117,7 @@ export class OrderService {
       createOrderDto.productId,
     )
 
-    const total = product.price * createOrderDto.amount
+    const total = this.calculateTotal(product, createOrderDto.amount)
 
     await this.prisma.$executeRaw<Order>`
       INSERT INTO "Order" ("id", "status", "total", "userId", "productId", "amount")
