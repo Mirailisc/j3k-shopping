@@ -41,11 +41,11 @@ export class ProductService {
   }
 
   async searchProductByName(name: string) {
-    const searchTerm = `%${name.toLowerCase()}%`
-
-    const products = await this.prisma.$queryRaw<
-      Product[]
-    >`SELECT * FROM Product WHERE LOWER("name") LIKE ${searchTerm}`
+    const products = await this.prisma.$queryRaw<Product[]>`
+      SELECT *
+      FROM Product
+      WHERE name LIKE ${name}
+    `
 
     return products.map((product) => ({
       ...product,

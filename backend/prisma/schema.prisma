@@ -14,22 +14,21 @@ datasource db {
 }
 
 model User {
-  id           String   @id @default(uuid())
-  username     String   @unique
-  email        String   @unique
+  id           String       @id @default(uuid())
+  username     String       @unique
+  email        String       @unique
   password     String
   firstName    String
   lastName     String
-  isAdmin      Boolean  @default(false)
-  isSuperAdmin Boolean  @default(false)
-  createdAt    DateTime @default(now())
-
-  Product Product[]
-  Review  Review[]
-  Contact Contact?
-  Social  Social?
-
-  orders Order[] @relation("UserOrders")
+  isAdmin      Boolean      @default(false)
+  isSuperAdmin Boolean      @default(false)
+  createdAt    DateTime     @default(now())
+  Product      Product[]
+  Review       Review[]
+  Contact      Contact?
+  Social       Social?
+  Order        Order[]
+  Order_item   Order_item[]
 }
 
 model Contact {
@@ -61,17 +60,18 @@ model Social {
 }
 
 model Product {
-  id          String   @id @default(uuid())
+  id          String       @id @default(uuid())
   name        String
   productImg  Bytes
   description String
   price       Float
   quantity    Int
   userId      String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now())
-  user        User     @relation(fields: [userId], references: [id])
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @default(now())
+  user        User         @relation(fields: [userId], references: [id])
   Review      Review[]
+  Order_item  Order_item[]
 }
 
 model Review {
@@ -84,6 +84,14 @@ model Review {
   updatedAt DateTime @default(now())
   product   Product  @relation(fields: [productId], references: [id])
   user      User     @relation(fields: [userId], references: [id])
+}
+
+model Payment {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  evidence  Bytes
+  Order     Order[]
 }
 
 enum OrderStatus {
@@ -101,11 +109,24 @@ model Order {
   id        String      @id @default(uuid())
   status    OrderStatus @default(Pending)
   createdAt DateTime    @default(now())
-  total     Float
+  total     Int
+  paymentId String
   userId    String
-  evidence  Bytes?
-  productId String
-  amount    Float
 
-  user User @relation("UserOrders", fields: [userId], references: [id])
+  payment    Payment      @relation(fields: [paymentId], references: [id])
+  user       User         @relation(fields: [userId], references: [id])
+  Order_item Order_item[]
+}
+
+model Order_item {
+  id        String @id @default(uuid())
+  orderId   String
+  productId String
+  sellerId  String
+  quantity  Int
+  price     Int
+
+  order   Order   @relation(fields: [orderId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+  user    User    @relation(fields: [sellerId], references: [id])
 }
