@@ -129,7 +129,7 @@ export const CreateOrderForm: React.FC<Props> = ({ open, setOpen, data, setData 
                   <FormItem>
                     <label htmlFor="amount">Amount</label>
                     <FormControl>
-                      <Input {...field} placeholder="Amount" inputMode="decimal" type="number" step="0.01" />
+                      <Input {...field} placeholder="Amount" inputMode="decimal" type="number" step="1" />
                     </FormControl>
                   </FormItem>
                 )}
