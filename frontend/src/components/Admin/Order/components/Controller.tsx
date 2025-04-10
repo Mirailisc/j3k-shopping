@@ -3,32 +3,23 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { Table } from '@tanstack/react-table'
-import { ChevronDown, Plus, RefreshCw, Trash } from 'lucide-react'
+import { ChevronDown, Plus, RefreshCw } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useSelector } from 'react-redux'
 import { RootState } from '@/store/store'
 import { Order } from '@/types/order'
 
 type Props = {
-  selectedCount: number
   table: Table<Order>
   handleRefreshData: () => void
-  handleDeleteOrder: () => void
   handleAddOrder: () => void
 }
 
-const OrderDataController: React.FC<Props> = ({
-  selectedCount,
-  table,
-  handleRefreshData,
-  handleDeleteOrder,
-  handleAddOrder,
-}: Props) => {
+const OrderDataController: React.FC<Props> = ({ table, handleRefreshData, handleAddOrder }: Props) => {
   const user = useSelector((state: RootState) => state.auth.user)
 
   const isSuperAdmin = user?.isSuperAdmin
@@ -55,22 +46,6 @@ const OrderDataController: React.FC<Props> = ({
       </div>
 
       <div className="flex items-center gap-2">
-        {selectedCount > 0 && isSuperAdmin && (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm">
-                Bulk Actions ({selectedCount})
-                <ChevronDown className="ml-2 h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuItem onClick={() => handleDeleteOrder()} className="text-red-600 focus:text-red-600">
-                <Trash className="mr-2 h-4 w-4" />
-                Delete selected
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        )}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" size="sm">

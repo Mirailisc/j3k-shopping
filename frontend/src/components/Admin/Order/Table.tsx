@@ -16,13 +16,10 @@ import { toast } from 'sonner'
 import {Order} from '@/types/order'
 import OrderDataController from './components/Controller'
 import { CreateOrderForm } from './components/Form/CreateOrderForm'
-import { EditOrderForm } from './components/Form/EditOrderForm'
+import { UpdateOrderStatusForm } from './components/Form/UpdateOrderStatusForm'
 import { useSelector } from 'react-redux'
 import { RootState } from '@/store/store'
 import { TableColumns } from './components/Column'
-import { isAxiosError } from 'axios'
-import { axiosInstance } from '@/lib/axios'
-import OrderTableAlert from './components/Alert'
 import OrderDataPagination from './components/Pagination'
 
 
@@ -39,8 +36,6 @@ export function OrderDataTable({ data, setData, fetchOrders }: Props) {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
-  const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false)
-  const [deleteTarget, setDeleteTarget] = React.useState<{ single?: Order; multiple?: boolean } | null>(null)
 
   const [openCreateOrderDialog, setOpenCreateOrderDialog] = React.useState(false)
   const [openEditOrderDialog, setOpenEditOrderDialog] = React.useState(false)
@@ -59,61 +54,6 @@ export function OrderDataTable({ data, setData, fetchOrders }: Props) {
     setOpenEditOrderDialog(true)
   }
 
-  const handleDeleteOrder = (order?: Order) => {
-    if (user) {
-      setDeleteTarget({ single: order })
-    } else {
-      setDeleteTarget({ multiple: true })
-    }
-    setDeleteDialogOpen(true)
-  }
-
-  const confirmDelete = async () => {
-    if (deleteTarget?.single) {
-      try {
-        await axiosInstance.delete(`/order/admin/${deleteTarget.single.id}`)
-        toast.success(`Order ${deleteTarget.single.id} has been deleted`)
-      } catch (error) {
-        if (isAxiosError(error)) {
-          const errorMessage = error.response?.data?.message || 'Something went wrong'
-          toast.error(errorMessage)
-        } else {
-          toast.error('An unexpected error occurred')
-        }
-      }
-    } else if (deleteTarget?.multiple) {
-      const selectedRows = table.getSelectedRowModel().rows
-      const selectedUsers = selectedRows.map((row) => row.original)
-      const selectedIds = selectedUsers.map((order) => order.id)
-
-      const failedUsers: string[] = []
-
-      await Promise.all(
-        selectedUsers.map(async (order) => {
-          try {
-            await axiosInstance.delete(`/user/${order.id}`)
-          } catch {
-            failedUsers.push(order.id)
-          }
-        }),
-      )
-
-      const successfullyDeleted = selectedUsers.length - failedUsers.length
-      if (successfullyDeleted > 0) {
-        toast.success(`${successfullyDeleted} user(s) have been deleted`)
-      }
-      if (failedUsers.length > 0) {
-        toast.error(`Failed to delete: ${failedUsers.join(', ')}`)
-      }
-
-      // Update frontend data
-      setData(data.filter((order) => !selectedIds.includes(order.id)))
-    }
-
-    setDeleteDialogOpen(false)
-    resetSelection()
-  }
-
 
   const handleRefreshData = async () => {
     await fetchOrders()
@@ -126,7 +66,6 @@ export function OrderDataTable({ data, setData, fetchOrders }: Props) {
   const columns: ColumnDef<Order>[] = TableColumns({
     isSuperAdmin,
     handleEditOrder,
-    handleDeleteOrder,
   })
 
   const table = useReactTable({
@@ -152,10 +91,8 @@ export function OrderDataTable({ data, setData, fetchOrders }: Props) {
   return (
     <div className="w-full">
       <OrderDataController
-        selectedCount={selectedCount}
         table={table}
         handleRefreshData={handleRefreshData}
-        handleDeleteOrder={handleDeleteOrder}
         handleAddOrder={handleAddOrder}
       />
 
@@ -195,7 +132,7 @@ export function OrderDataTable({ data, setData, fetchOrders }: Props) {
       </div>
       <CreateOrderForm open={openCreateOrderDialog} setOpen={setOpenCreateOrderDialog} data={data} setData={setData} />
       {orderToEdit && (
-        <EditOrderForm
+        <UpdateOrderStatusForm
           open={openEditOrderDialog}
           setOpen={setOpenEditOrderDialog}
           order={orderToEdit}
@@ -204,13 +141,6 @@ export function OrderDataTable({ data, setData, fetchOrders }: Props) {
         />
       )}
       <OrderDataPagination table={table} selectedCount={selectedCount} />
-      <OrderTableAlert
-        deleteTarget={deleteTarget}
-        confirmDelete={confirmDelete}
-        selectedCount={selectedCount}
-        deleteDialogOpen={deleteDialogOpen}
-        setDeleteDialogOpen={setDeleteDialogOpen}
-      />
     </div>
   )
 }

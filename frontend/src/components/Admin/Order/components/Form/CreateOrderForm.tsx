@@ -10,8 +10,7 @@ import { Order } from '@/types/order'
 import { axiosInstance } from '@/lib/axios'
 import { isAxiosError } from 'axios'
 import { toast } from 'sonner'
-import { OrderStatus, stateOption } from '../../types/orderState';
-import { useState } from 'react'
+import { OrderStatus } from '../../types/orderState'
 
 type Props = {
   open: boolean
@@ -21,19 +20,15 @@ type Props = {
 }
 
 export const formSchema = z.object({
-  status: z
-    .nativeEnum(OrderStatus, {
-      errorMap: () => ({ message: 'Invalid status selected' }),
+  status: z.nativeEnum(OrderStatus, {
+    errorMap: () => ({ message: 'Invalid status selected' }),
   }),
-  amount: z
-    .string()
-    .refine((val) => !isNaN(parseFloat(val)), 'amount must be a number'),
+  amount: z.string().refine((val) => !isNaN(parseFloat(val)), 'amount must be a number'),
   userId: z.string().min(1, 'User ID is required'),
   productId: z.string().min(1, 'Product ID is required'),
 })
 
 export const CreateOrderForm: React.FC<Props> = ({ open, setOpen, data, setData }: Props) => {
-  
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -52,8 +47,12 @@ export const CreateOrderForm: React.FC<Props> = ({ open, setOpen, data, setData 
       const res = await axiosInstance.get(`/product/${productId}`) // Adjust if your API differs
       productPrice = res.data.price // make sure your API returns it
     } catch (error) {
-      toast.error('Failed to fetch product price')
-      return
+      if (isAxiosError(error)) {
+        const errorMessage = error.response?.data?.message || 'Something went wrong'
+        toast.error(errorMessage)
+      } else {
+        toast.error('An unexpected error occurred')
+      }
     }
     const amount = parseFloat(values.amount)
     const total = productPrice * amount
@@ -91,39 +90,7 @@ export const CreateOrderForm: React.FC<Props> = ({ open, setOpen, data, setData 
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4 mt-6">
-            <div className = "flex flex-col md:grid grid-cols-2 gap-4">
-              <FormField
-                control = {form.control}
-                name = "status"
-                render = {({ field }) => (
-                  <FormItem>
-                    <label htmlFor = "status">Status</label>
-                    <FormControl>
-                    <select className = "border rounded-lg px-3 py-2 text-sm focus:bg-black text-gray-200 focus:outline-none block w-full" 
-                    value = {field.value} onChange = {field.onChange}>
-                      {stateOption.map(option => (
-                        <option key = {option.label} value = {option.label}>{option.label}</option>
-                      ))}
-                    </select>
-                    </FormControl>
-                  </FormItem>
-                )} />
-
-              <FormField
-                control = {form.control}
-                name = "amount"
-                render = {({field}) => (
-                  <FormItem> 
-                    <label htmlFor = "amount">Amount</label>
-                    <FormControl>
-                      <Input {...field} placeholder = "Amount" inputMode='decimal' type = "number" step = "0.01" />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              
-              </div>
-
+            <div className="flex flex-col md:grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
                 name="userId"
@@ -137,7 +104,7 @@ export const CreateOrderForm: React.FC<Props> = ({ open, setOpen, data, setData 
                   </FormItem>
                 )}
               />
-               <FormField
+              <FormField
                 control={form.control}
                 name="productId"
                 render={({ field }) => (
@@ -150,7 +117,41 @@ export const CreateOrderForm: React.FC<Props> = ({ open, setOpen, data, setData 
                   </FormItem>
                 )}
               />
-            
+              {/* <FormField
+                control={form.control}
+                name="status"
+                render={({ field }) => (
+                  <FormItem>
+                    <label htmlFor="status">Status</label>
+                    <FormControl>
+                      <select
+                        className="border rounded-lg px-3 py-2 text-sm focus:bg-black text-gray-200 focus:outline-none block w-full"
+                        value={field.value}
+                        onChange={field.onChange}
+                      >
+                        {stateOption.map((option) => (
+                          <option key={option.label} value={option.label}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </select>
+                    </FormControl>
+                  </FormItem>
+                )}
+              /> */}
+              <FormField
+                control={form.control}
+                name="amount"
+                render={({ field }) => (
+                  <FormItem>
+                    <label htmlFor="amount">Amount</label>
+                    <FormControl>
+                      <Input {...field} placeholder="Amount" inputMode="decimal" type="number" step="0.01" />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            </div>
             <DialogFooter>
               <Button type="submit" size="sm">
                 Create

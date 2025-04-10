@@ -1,5 +1,5 @@
 import { ColumnDef } from '@tanstack/react-table'
-import { ArrowUpDown, MoreHorizontal, Trash, Edit } from 'lucide-react'
+import { ArrowUpDown, MoreHorizontal, Edit } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Order } from '@/types/order'
@@ -24,10 +24,9 @@ import { useState } from 'react'
 type Props = {
   isSuperAdmin: boolean | undefined
   handleEditOrder: (user: Order) => void
-  handleDeleteOrder: (user?: Order) => void
 }
 
-export const TableColumns = ({ isSuperAdmin, handleEditOrder, handleDeleteOrder }: Props) => {
+export const TableColumns = ({ isSuperAdmin, handleEditOrder }: Props) => {
   const [openImage, setOpenImage] = useState<string | null>(null)
   const columns: ColumnDef<Order>[] = [
     {
@@ -56,13 +55,13 @@ export const TableColumns = ({ isSuperAdmin, handleEditOrder, handleDeleteOrder 
     },
     {
       accessorKey: 'userId',
-      header: 'userId',
-      cell: ({ row }) => <div>{row.getValue('userId')}</div>,
+      header: 'User ID',
+      cell: ({ row }) => <div className="text-xs text-muted-foreground">{row.getValue('userId')}</div>,
     },
     {
       accessorKey: 'productId',
-      header: 'productId',
-      cell: ({ row }) => <div>{row.getValue('productId')}</div>,
+      header: 'Product ID',
+      cell: ({ row }) => <div className="text-xs text-muted-foreground">{row.getValue('productId')}</div>,
     },
     {
       accessorKey: 'status',
@@ -126,19 +125,22 @@ export const TableColumns = ({ isSuperAdmin, handleEditOrder, handleDeleteOrder 
     {
       accessorKey: 'total',
       header: 'Total',
-      cell: ({ row }) => <div>{row.getValue('total')}</div>,
+      cell: ({ row }) => <div>{parseInt(row.getValue('total')).toFixed(2)} ฿</div>,
     },
     {
       accessorKey: 'createdAt',
       header: ({ column }) => {
         return (
           <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-           Created At 
+            Created At
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         )
       },
-      cell: ({ row }) => <div>{row.getValue('createdAt')}</div>,
+      cell: ({ row }) => {
+        const date = new Date(row.getValue('createdAt'))
+        return <div>{date.toLocaleDateString()}</div>
+      },
     },
     {
       id: 'actions',
@@ -162,11 +164,7 @@ export const TableColumns = ({ isSuperAdmin, handleEditOrder, handleDeleteOrder 
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => handleEditOrder(order)}>
                     <Edit className="mr-2 h-4 w-4" />
-                    Edit order
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => handleDeleteOrder(order)} className="text-red-600 focus:text-red-600">
-                    <Trash className="mr-2 h-4 w-4" />
-                    Delete order
+                    Update status
                   </DropdownMenuItem>
                 </>
               ) : null}

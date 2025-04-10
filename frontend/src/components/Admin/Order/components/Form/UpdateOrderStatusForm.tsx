@@ -33,7 +33,7 @@ export const formSchema = z.object({
 })
 
 
-export const EditOrderForm: React.FC<Props> = ({ open, setOpen, order, data, setData}: Props) => {
+export const UpdateOrderStatusForm: React.FC<Props> = ({ open, setOpen, order, data, setData}: Props) => {
   const [targetOrder, setTargetOrder] = useState<string>('')
   const form = useForm({
     resolver: zodResolver(formSchema),

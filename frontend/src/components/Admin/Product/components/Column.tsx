@@ -122,7 +122,7 @@ export const TableColumns = ({ isAdmin, handleEditProduct, handleDeleteProduct }
     {
       accessorKey: 'price',
       header: 'Price',
-      cell: ({ row }) => <div>{row.getValue('price')}</div>,
+      cell: ({ row }) => <div>{row.getValue('price')} ฿</div>,
     },
     {
       accessorKey: 'quantity',
