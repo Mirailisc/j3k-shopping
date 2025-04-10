@@ -18,7 +18,7 @@ type Props = {
   selectedCount: number
   table: Table<Product>
   handleRefreshData: () => void
-  handleDeleteUser: () => void
+  handleDeleteProduct: () => void
   handleAddProduct: () => void
 }
 
@@ -26,7 +26,7 @@ const ProductDataController: React.FC<Props> = ({
   selectedCount,
   table,
   handleRefreshData,
-  handleDeleteUser,
+  handleDeleteProduct,
   handleAddProduct,
 }: Props) => {
   const user = useSelector((state: RootState) => state.auth.user)
@@ -37,9 +37,9 @@ const ProductDataController: React.FC<Props> = ({
     <div className="flex items-center justify-between py-4">
       <div className="flex items-center gap-2">
         <Input
-          placeholder="Filter usernames..."
-          value={(table.getColumn('username')?.getFilterValue() as string) ?? ''}
-          onChange={(event) => table.getColumn('username')?.setFilterValue(event.target.value)}
+          placeholder="Filter product name..."
+          value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
+          onChange={(event) => table.getColumn('name')?.setFilterValue(event.target.value)}
           className="max-w-sm hidden md:block"
         />
         <Tooltip>
@@ -64,7 +64,7 @@ const ProductDataController: React.FC<Props> = ({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              <DropdownMenuItem onClick={() => handleDeleteUser()} className="text-red-600 focus:text-red-600">
+              <DropdownMenuItem onClick={() => handleDeleteProduct()} className="text-red-600 focus:text-red-600">
                 <Trash className="mr-2 h-4 w-4" />
                 Delete selected
               </DropdownMenuItem>
