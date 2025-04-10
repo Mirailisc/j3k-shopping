@@ -1,8 +1,23 @@
+import { OrderDataTable } from '@/components/Admin/Order/Table'
 import Sidebar from '@/components/Admin/utils/Sidebar'
 import { useSidebar } from '@/context/hooks/useSidebar'
+import { axiosInstance } from '@/lib/axios'
+import {Order as TypeOrder} from '@/types/order'
+import { useEffect, useState } from 'react'
 
 const Order: React.FC = () => {
   const sidebar = useSidebar()
+
+  const [data, setData] = useState<TypeOrder[]>([])
+
+  const fetchOrders = async  () =>{ 
+    const {data} = await axiosInstance.get('/order')
+    setData(data)
+  }
+
+  useEffect(() => {
+    fetchOrders()
+  }, [])
 
   return (
     <div>
@@ -11,7 +26,7 @@ const Order: React.FC = () => {
 
         <div className="p-4">
           <h1 className="text-4xl mt-2 font-bold">Order Management</h1>
-          <div className="bg-zinc-900 w-full h-[50vh] rounded-sm mt-4"></div>
+          <OrderDataTable data = {data} setData = {setData} fetchOrders = {fetchOrders} />
         </div>
       </div>
     </div>

@@ -3,32 +3,23 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { Table } from '@tanstack/react-table'
-import { ChevronDown, Plus, RefreshCw, Trash } from 'lucide-react'
+import { ChevronDown, Plus, RefreshCw } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useSelector } from 'react-redux'
 import { RootState } from '@/store/store'
-import { Product } from '@/types/product'
+import { Order } from '@/types/order'
 
 type Props = {
-  selectedCount: number
-  table: Table<Product>
+  table: Table<Order>
   handleRefreshData: () => void
-  handleDeleteProduct: () => void
-  handleAddProduct: () => void
+  handleAddOrder: () => void
 }
 
-const ProductDataController: React.FC<Props> = ({
-  selectedCount,
-  table,
-  handleRefreshData,
-  handleDeleteProduct,
-  handleAddProduct,
-}: Props) => {
+const OrderDataController: React.FC<Props> = ({ table, handleRefreshData, handleAddOrder }: Props) => {
   const user = useSelector((state: RootState) => state.auth.user)
 
   const isSuperAdmin = user?.isSuperAdmin
@@ -37,9 +28,9 @@ const ProductDataController: React.FC<Props> = ({
     <div className="flex items-center justify-between py-4">
       <div className="flex items-center gap-2">
         <Input
-          placeholder="Filter product name..."
-          value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
-          onChange={(event) => table.getColumn('name')?.setFilterValue(event.target.value)}
+          placeholder="Filter productId..."
+          value={(table.getColumn('id')?.getFilterValue() as string) ?? ''}
+          onChange={(event) => table.getColumn('productId')?.setFilterValue(event.target.value)}
           className="max-w-sm hidden md:block"
         />
         <Tooltip>
@@ -55,22 +46,6 @@ const ProductDataController: React.FC<Props> = ({
       </div>
 
       <div className="flex items-center gap-2">
-        {selectedCount > 0 && isSuperAdmin && (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm">
-                Bulk Actions ({selectedCount})
-                <ChevronDown className="ml-2 h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuItem onClick={() => handleDeleteProduct()} className="text-red-600 focus:text-red-600">
-                <Trash className="mr-2 h-4 w-4" />
-                Delete selected
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        )}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" size="sm">
@@ -99,12 +74,12 @@ const ProductDataController: React.FC<Props> = ({
         {isSuperAdmin ? (
           <Tooltip>
             <TooltipTrigger>
-              <Button onClick={handleAddProduct} size="sm">
+              <Button onClick={handleAddOrder} size="sm">
                 <Plus className="h-4 w-4" />
               </Button>
             </TooltipTrigger>
             <TooltipContent>
-              <p>Create Product</p>
+              <p>Create Order</p>
             </TooltipContent>
           </Tooltip>
         ) : null}
@@ -113,4 +88,4 @@ const ProductDataController: React.FC<Props> = ({
   )
 }
 
-export default ProductDataController
+export default OrderDataController

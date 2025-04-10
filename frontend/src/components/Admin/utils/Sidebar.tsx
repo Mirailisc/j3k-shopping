@@ -1,9 +1,8 @@
-import { ChartArea, CircleGauge, Package, PackageOpen, ShoppingBag, Star, UserRound } from 'lucide-react'
+import { ChartArea, CircleGauge, Package, ShoppingBag, Star, UserRound } from 'lucide-react'
 import { useSidebar } from '@/context/hooks/useSidebar'
 import { Link } from 'react-router-dom'
 import {
   DASHBOARD_PATH,
-  ORDER_ITEM_MANAGE_PATH,
   ORDER_MANAGE_PATH,
   PRODUCT_MANAGE_PATH,
   REPORT_PATH,
@@ -54,13 +53,6 @@ const Sidebar: React.FC = () => {
             >
               <Package size={16} />
               {sidebar?.isSidebarOpen && 'Orders'}
-            </Link>
-            <Link
-              to={ORDER_ITEM_MANAGE_PATH}
-              className={`p-2 rounded-sm flex items-center ${sidebar?.isSidebarOpen ? 'justify-start' : 'justify-center'} gap-2 hover:bg-zinc-800`}
-            >
-              <PackageOpen size={16} />
-              {sidebar?.isSidebarOpen && 'Order Items'}
             </Link>
             <Link
               to={REVIEW_MANAGE_PATH}
