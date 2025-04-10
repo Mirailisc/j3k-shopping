@@ -1,5 +1,5 @@
 import { ColumnDef } from '@tanstack/react-table'
-import { ArrowUpDown, MoreHorizontal, Edit } from 'lucide-react'
+import { ArrowUpDown, MoreHorizontal, Edit, Upload  } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Order } from '@/types/order'
@@ -24,9 +24,10 @@ import { useState } from 'react'
 type Props = {
   isSuperAdmin: boolean | undefined
   handleEditOrder: (user: Order) => void
+  handleUploadEvidence: (user: Order) => void
 }
 
-export const TableColumns = ({ isSuperAdmin, handleEditOrder }: Props) => {
+export const TableColumns = ({ isSuperAdmin, handleEditOrder, handleUploadEvidence }: Props) => {
   const [openImage, setOpenImage] = useState<string | null>(null)
   const columns: ColumnDef<Order>[] = [
     {
@@ -165,6 +166,10 @@ export const TableColumns = ({ isSuperAdmin, handleEditOrder }: Props) => {
                   <DropdownMenuItem onClick={() => handleEditOrder(order)}>
                     <Edit className="mr-2 h-4 w-4" />
                     Update status
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleUploadEvidence(order)}>
+                    <Upload  className="mr-2 h-4 w-4" />
+                    Upload Evidence
                   </DropdownMenuItem>
                 </>
               ) : null}

@@ -21,6 +21,7 @@ import { useSelector } from 'react-redux'
 import { RootState } from '@/store/store'
 import { TableColumns } from './components/Column'
 import OrderDataPagination from './components/Pagination'
+import { UploadOrderEvidenceForm } from './components/Form/UploadOrderEvidenceForm'
 
 
 type Props = {
@@ -40,7 +41,8 @@ export function OrderDataTable({ data, setData, fetchOrders }: Props) {
   const [openCreateOrderDialog, setOpenCreateOrderDialog] = React.useState(false)
   const [openEditOrderDialog, setOpenEditOrderDialog] = React.useState(false)
   const [orderToEdit, setOrderToEdit] = React.useState<Order | null>(null)
-
+  const [openUploadOrderEvidence, setOpenUploadOrderEvidence] = React.useState(false)
+  const [orderToUpload, setOrderToUpload] = React.useState<Order | null>(null)
   const resetSelection = () => {
     setRowSelection({})
   }
@@ -54,6 +56,10 @@ export function OrderDataTable({ data, setData, fetchOrders }: Props) {
     setOpenEditOrderDialog(true)
   }
 
+  const handleUploadEvidence = (order:Order) => {
+    setOrderToUpload(order)
+    setOpenUploadOrderEvidence(true)
+  }
 
   const handleRefreshData = async () => {
     await fetchOrders()
@@ -66,6 +72,7 @@ export function OrderDataTable({ data, setData, fetchOrders }: Props) {
   const columns: ColumnDef<Order>[] = TableColumns({
     isSuperAdmin,
     handleEditOrder,
+    handleUploadEvidence
   })
 
   const table = useReactTable({
@@ -138,6 +145,24 @@ export function OrderDataTable({ data, setData, fetchOrders }: Props) {
           order={orderToEdit}
           data={data}
           setData={setData}
+        />
+      )}
+      {orderToEdit && (
+        <UpdateOrderStatusForm
+          open={openEditOrderDialog}
+          setOpen={setOpenEditOrderDialog}
+          order={orderToEdit}
+          data={data}
+          setData={setData}
+        />
+      )}
+      {orderToUpload && (
+        <UploadOrderEvidenceForm
+          open = {openUploadOrderEvidence}
+          setOpen = {setOpenUploadOrderEvidence}
+          order = {orderToUpload}
+          data = {data}
+          setData = {setData}
         />
       )}
       <OrderDataPagination table={table} selectedCount={selectedCount} />

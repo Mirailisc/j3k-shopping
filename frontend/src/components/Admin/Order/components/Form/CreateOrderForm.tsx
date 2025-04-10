@@ -23,7 +23,7 @@ export const formSchema = z.object({
   status: z.nativeEnum(OrderStatus, {
     errorMap: () => ({ message: 'Invalid status selected' }),
   }),
-  amount: z.string().refine((val) => !isNaN(parseFloat(val)), 'amount must be a number'),
+  amount: z.string().refine((val) => !isNaN(parseInt(val)), 'amount must be a number'),
   userId: z.string().min(1, 'User ID is required'),
   productId: z.string().min(1, 'Product ID is required'),
 })
@@ -40,27 +40,10 @@ export const CreateOrderForm: React.FC<Props> = ({ open, setOpen, data, setData 
   })
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const productId = values.productId
-    let productPrice = 0
-
-    try {
-      const res = await axiosInstance.get(`/product/${productId}`) // Adjust if your API differs
-      productPrice = res.data.price // make sure your API returns it
-    } catch (error) {
-      if (isAxiosError(error)) {
-        const errorMessage = error.response?.data?.message || 'Something went wrong'
-        toast.error(errorMessage)
-      } else {
-        toast.error('An unexpected error occurred')
-      }
-    }
-    const amount = parseFloat(values.amount)
-    const total = productPrice * amount
-
+    
     const newOrder = {
       id: crypto.randomUUID(),
       status: values.status,
-      total: total,
       evidence: undefined,
       userId: values.userId,
       productId: values.productId,

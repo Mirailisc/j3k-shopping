@@ -17,6 +17,7 @@ type Props = {
   order: Order
   data: Order[]
   setData: (data: Order[]) => void
+  
 }
 
 export const formSchema = z.object({
@@ -24,25 +25,16 @@ export const formSchema = z.object({
     .nativeEnum(OrderStatus, {
       errorMap: () => ({ message: 'Invalid status selected' }),
   }),
-  amount: z
-    .string()
-    .refine((val) => !isNaN(parseFloat(val)), 'amount must be a number'),
-  evidence: z.any().refine((file) => file instanceof File, 'Payment Evidence is required'),
-  userId: z.string().min(1, 'User ID is required'),
-  productId: z.string().min(1, 'Product ID is required'),
 })
 
 
 export const UpdateOrderStatusForm: React.FC<Props> = ({ open, setOpen, order, data, setData}: Props) => {
   const [targetOrder, setTargetOrder] = useState<string>('')
+
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      status: OrderStatus.Pending,
-      amount: '',
-      evidence: undefined,
-      userId: '',
-      productId: ''
+      status: order.status,
         },
   })
 
@@ -57,12 +49,12 @@ export const UpdateOrderStatusForm: React.FC<Props> = ({ open, setOpen, order, d
   }, [order, form])
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const newOrder = {
+    const newStatus = {
       status: values.status
     }
     
     try {
-      const res = await axiosInstance.put(`/order/${targetOrder}`, newOrder)
+      const res = await axiosInstance.put(`/order/status/${targetOrder}`, newStatus)
       
       const updatedData = data.map((item) => (item.id === order.id ? { ...item, ...res.data } : item))
 
@@ -83,7 +75,7 @@ export const UpdateOrderStatusForm: React.FC<Props> = ({ open, setOpen, order, d
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Edit order</DialogTitle>
+          <DialogTitle>Update status</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4 mt-6">
@@ -94,10 +86,18 @@ export const UpdateOrderStatusForm: React.FC<Props> = ({ open, setOpen, order, d
                 <FormItem>
                   <label htmlFor = "status">Status</label>
                   <FormControl>
-                  <select className = "border rounded-lg px-3 py-2 text-sm focus:bg-black text-gray-200 focus:outline-none block w-full" 
-                   value = {field.value} onChange = {field.onChange}>
+                  <select
+                    className="border rounded-lg px-3 py-2 text-sm focus:bg-black text-gray-200 focus:outline-none block w-full"
+                    value={OrderStatus[field.value] ?? ''}
+                    onChange={(e) => {
+                      const selected = OrderStatus[e.target.value as keyof typeof OrderStatus]
+                      field.onChange(Number(selected))
+                    }}
+                  >
                     {stateOption.map((option) => (
-                      <option key = {option.label} value = {option.label}>{option.label}</option>
+                      <option key={option.label} value={option.label}>
+                        {option.label}
+                      </option>
                     ))}
                   </select>
                   </FormControl>
