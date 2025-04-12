@@ -4,7 +4,6 @@ import {
   ADMIN_BASE_PATH,
   BASE_PATH,
   DASHBOARD_PATH,
-  ORDER_ITEM_MANAGE_PATH,
   ORDER_MANAGE_PATH,
   PRODUCT_MANAGE_PATH,
   PROFILE_PATH,
@@ -22,7 +21,6 @@ import { SidebarProvider } from './context/providers/SidebarProvider'
 import Report from './pages/Admin/Report'
 import User from './pages/Admin/User'
 import Product from './pages/Admin/Products'
-import OrderItem from './pages/Admin/OrderItem'
 import Order from './pages/Admin/Order'
 import Review from './pages/Admin/Review'
 import { toast, Toaster } from 'sonner'
@@ -78,7 +76,6 @@ function App() {
               <Route path={REPORT_PATH} element={<Report />} />
               <Route path={USER_MANAGE_PATH} element={<User />} />
               <Route path={ORDER_MANAGE_PATH} element={<Order />} />
-              <Route path={ORDER_ITEM_MANAGE_PATH} element={<OrderItem />} />
               <Route path={PRODUCT_MANAGE_PATH} element={<Product />} />
               <Route path={REVIEW_MANAGE_PATH} element={<Review />} />
             </Route>

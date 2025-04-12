@@ -1,7 +1,8 @@
 import { ColumnDef } from '@tanstack/react-table'
-import { ArrowUpDown, MoreHorizontal, Trash, Edit } from 'lucide-react'
+import { ArrowUpDown, MoreHorizontal, Edit, Upload  } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
+import { Order } from '@/types/order'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,7 +11,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Product } from '@/types/product'
 import {
   Dialog,
   DialogClose,
@@ -22,15 +22,14 @@ import {
 import { useState } from 'react'
 
 type Props = {
-  isAdmin: boolean | undefined
-  handleEditProduct: (user: Product) => void
-  handleDeleteProduct: (user?: Product) => void
+  isSuperAdmin: boolean | undefined
+  handleEditOrder: (user: Order) => void
+  handleUploadEvidence: (user: Order) => void
 }
 
-export const TableColumns = ({ isAdmin, handleEditProduct, handleDeleteProduct }: Props) => {
+export const TableColumns = ({ isSuperAdmin, handleEditOrder, handleUploadEvidence }: Props) => {
   const [openImage, setOpenImage] = useState<string | null>(null)
-
-  const columns: ColumnDef<Product>[] = [
+  const columns: ColumnDef<Order>[] = [
     {
       id: 'select',
       header: ({ table }) => (
@@ -52,39 +51,44 @@ export const TableColumns = ({ isAdmin, handleEditProduct, handleDeleteProduct }
     },
     {
       accessorKey: 'id',
-      header: 'Product ID',
+      header: 'Order ID',
       cell: ({ row }) => <div className="text-xs text-muted-foreground">{row.getValue('id')}</div>,
     },
     {
       accessorKey: 'userId',
+      header: 'User ID',
+      cell: ({ row }) => <div className="text-xs text-muted-foreground">{row.getValue('userId')}</div>,
+    },
+    {
+      accessorKey: 'productId',
+      header: 'Product ID',
+      cell: ({ row }) => <div className="text-xs text-muted-foreground">{row.getValue('productId')}</div>,
+    },
+    {
+      accessorKey: 'status',
       header: ({ column }) => {
         return (
           <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-            User ID
+            Status
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         )
       },
-      cell: ({ row }) => <div className="text-xs text-muted-foreground">{row.getValue('userId')}</div>,
+      cell: ({ row }) => <div>{row.getValue('status')}</div>,
     },
     {
-      accessorKey: 'name',
-      header: 'Name',
-      cell: ({ row }) => <div>{row.getValue('name')}</div>,
-    },
-    {
-      accessorKey: 'productImg',
-      header: 'Product Image',
+      accessorKey: 'evidence',
+      header: 'Payment evidence',
       cell: ({ row }) => {
-        const productImg = row.getValue('productImg')
-        const productId = row.getValue('id') as string
+        const evidence = row.getValue('evidence')
+        const orderId = row.getValue('id') as string
 
-        if (!productImg) {
+        if (!evidence) {
           return <div>No Image</div>
         }
 
         const handleOpenDialog = () => {
-          setOpenImage(productId)
+          setOpenImage(orderId)
         }
 
         const handleCloseDialog = () => {
@@ -92,7 +96,7 @@ export const TableColumns = ({ isAdmin, handleEditProduct, handleDeleteProduct }
         }
 
         return (
-          <Dialog open={openImage === productId} onOpenChange={(open) => !open && handleCloseDialog()}>
+          <Dialog open={openImage === orderId} onOpenChange={(open) => !open && handleCloseDialog()}>
             <DialogTrigger asChild>
               <Button variant="ghost" className="text-white/50" onClick={handleOpenDialog}>
                 Click to show image
@@ -102,7 +106,7 @@ export const TableColumns = ({ isAdmin, handleEditProduct, handleDeleteProduct }
             <DialogContent>
               <DialogTitle>Product Image</DialogTitle>
               <DialogDescription>
-                <img src={productImg as string} alt="Product Image" className="w-full h-auto" />
+                <img src={evidence as string} alt="Payment evidence" className="w-full h-auto" />
               </DialogDescription>
               <DialogClose asChild>
                 <Button variant="ghost" onClick={handleCloseDialog}>
@@ -115,19 +119,14 @@ export const TableColumns = ({ isAdmin, handleEditProduct, handleDeleteProduct }
       },
     },
     {
-      accessorKey: 'description',
-      header: 'Description',
-      cell: ({ row }) => <div>{row.getValue('description')}</div>,
+      accessorKey: 'amount',
+      header: 'Amount',
+      cell: ({ row }) => <div>{row.getValue('amount')}</div>,
     },
     {
-      accessorKey: 'price',
-      header: 'Price',
-      cell: ({ row }) => <div>{row.getValue('price')} ฿</div>,
-    },
-    {
-      accessorKey: 'quantity',
-      header: 'Quantity',
-      cell: ({ row }) => <div>{row.getValue('quantity')}</div>,
+      accessorKey: 'total',
+      header: 'Total',
+      cell: ({ row }) => <div>{parseInt(row.getValue('total')).toFixed(2)} ฿</div>,
     },
     {
       accessorKey: 'createdAt',
@@ -145,25 +144,10 @@ export const TableColumns = ({ isAdmin, handleEditProduct, handleDeleteProduct }
       },
     },
     {
-      accessorKey: 'updatedAt',
-      header: ({ column }) => {
-        return (
-          <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-            Created At
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        )
-      },
-      cell: ({ row }) => {
-        const date = new Date(row.getValue('updatedAt'))
-        return <div>{date.toLocaleDateString()}</div>
-      },
-    },
-    {
       id: 'actions',
       enableHiding: false,
       cell: ({ row }) => {
-        const product = row.original
+        const order = row.original
 
         return (
           <DropdownMenu>
@@ -175,22 +159,17 @@ export const TableColumns = ({ isAdmin, handleEditProduct, handleDeleteProduct }
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem onClick={() => navigator.clipboard.writeText(product.id)}>
-                Copy product ID
-              </DropdownMenuItem>
-              {isAdmin ? (
+              <DropdownMenuItem onClick={() => navigator.clipboard.writeText(order.id)}>Copy Order ID</DropdownMenuItem>
+              {isSuperAdmin ? (
                 <>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => handleEditProduct(product)}>
+                  <DropdownMenuItem onClick={() => handleEditOrder(order)}>
                     <Edit className="mr-2 h-4 w-4" />
-                    Edit Product
+                    Update status
                   </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => handleDeleteProduct(product)}
-                    className="text-red-600 focus:text-red-600"
-                  >
-                    <Trash className="mr-2 h-4 w-4" />
-                    Delete Product
+                  <DropdownMenuItem onClick={() => handleUploadEvidence(order)}>
+                    <Upload  className="mr-2 h-4 w-4" />
+                    Upload Evidence
                   </DropdownMenuItem>
                 </>
               ) : null}

@@ -7,8 +7,15 @@ import {
   CommandList,
   CommandSeparator,
 } from '@/components/ui/command'
-import { DASHBOARD_PATH, ORDER_ITEM_MANAGE_PATH, ORDER_MANAGE_PATH, PRODUCT_MANAGE_PATH, REPORT_PATH, REVIEW_MANAGE_PATH, USER_MANAGE_PATH } from '@/constants/routes'
-import { ChartArea, CircleGauge, Package, PackageOpen, ShoppingBag, UserRound } from 'lucide-react'
+import {
+  DASHBOARD_PATH,
+  ORDER_MANAGE_PATH,
+  PRODUCT_MANAGE_PATH,
+  REPORT_PATH,
+  REVIEW_MANAGE_PATH,
+  USER_MANAGE_PATH,
+} from '@/constants/routes'
+import { ChartArea, CircleGauge, Package, ShoppingBag, UserRound } from 'lucide-react'
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 
@@ -49,10 +56,6 @@ const Command: React.FC<Props> = ({ open, setOpen }: Props) => {
           <CommandItem onSelect={() => handleCommandItemSelect(ORDER_MANAGE_PATH)}>
             <Package />
             <span>Orders</span>
-          </CommandItem>
-          <CommandItem onSelect={() => handleCommandItemSelect(ORDER_ITEM_MANAGE_PATH)}>
-            <PackageOpen />
-            <span>Order Items</span>
           </CommandItem>
           <CommandItem onSelect={() => handleCommandItemSelect(REVIEW_MANAGE_PATH)}>
             <UserRound />

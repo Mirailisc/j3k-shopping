@@ -99,7 +99,7 @@ export function ProductDataTable({ data, setData, fetchProducts }: Props) {
 
       const successfullyDeleted = selectedUsers.length - failedUsers.length
       if (successfullyDeleted > 0) {
-        toast.success(`${successfullyDeleted} user(s) have been deleted`)
+        toast.success(`${successfullyDeleted} product(s) have been deleted`)
       }
       if (failedUsers.length > 0) {
         toast.error(`Failed to delete: ${failedUsers.join(', ')}`)
@@ -154,7 +154,7 @@ export function ProductDataTable({ data, setData, fetchProducts }: Props) {
         selectedCount={selectedCount}
         table={table}
         handleRefreshData={handleRefreshData}
-        handleDeleteUser={handleDeleteProduct}
+        handleDeleteProduct={handleDeleteProduct}
         handleAddProduct={handleAddProduct}
       />
 
