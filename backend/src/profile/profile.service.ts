@@ -13,6 +13,7 @@ export class ProfileService {
         User.firstName, 
         User.lastName, 
         User.isAdmin,
+        User.isSuperAdmin,
         User.email,
         JSON_OBJECT(
             'line', Social.line, 
@@ -20,19 +21,9 @@ export class ProfileService {
             'website', Social.website, 
             'instagram', Social.instagram, 
             'tiktok', Social.tiktok
-        ) AS social,
-        JSON_OBJECT(
-            'citizenId', Contact.citizenId,
-            'phone', Contact.phone,
-            'address', Contact.address,
-            'city', Contact.city,
-            'province', Contact.province,
-            'zipCode', Contact.zipCode,
-            'country', Contact.country
-        ) as contact
+        ) AS social
     FROM User 
     LEFT JOIN Social ON Social.userId = User.id
-    LEFT JOIN Contact ON Contact.userId = User.id
     WHERE User.id = ${userId}`
     return result[0]
   }

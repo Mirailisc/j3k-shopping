@@ -1,4 +1,3 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -14,6 +13,7 @@ import { logout } from '@/store/slice/authSlice'
 import { RootState, useAppDispatch } from '@/store/store'
 import { ChevronDown, Github, LucideLogOut } from 'lucide-react'
 import { useCookies } from 'react-cookie'
+import Gravatar from 'react-gravatar'
 import { useSelector } from 'react-redux'
 import { Link, useNavigate } from 'react-router-dom'
 
@@ -42,16 +42,7 @@ const AvatarDropdown: React.FC = () => {
       <DropdownMenuTrigger asChild>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="cursor-pointer" size="sm">
-            <Avatar>
-              <AvatarImage
-                width={32}
-                height={32}
-                className="rounded-full"
-                src={`https://github.com/${user.username}.png`}
-                alt={`@${user.username}`}
-              />
-              <AvatarFallback>{user.firstName[0] + user.lastName[0]}</AvatarFallback>
-            </Avatar>
+            <Gravatar email={user.email} size={32} className="rounded-full" />
             {user.username}
             <ChevronDown className="ml-auto" />
           </Button>

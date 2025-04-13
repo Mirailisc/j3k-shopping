@@ -31,7 +31,7 @@ import { ACCESS_TOKEN } from './constants/cookie'
 import { useCookies } from 'react-cookie'
 import { me } from './store/slice/authSlice'
 import Loading from './pages/Loading'
-import Profile from './pages/User/Profile/Profile'
+import Profile from './pages/Profile'
 
 const Home = React.lazy(() => import('@/pages/Home'))
 
