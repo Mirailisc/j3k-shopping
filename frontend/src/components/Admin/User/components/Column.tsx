@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Link } from 'react-router-dom'
-import { PROFILE_PATH } from '@/constants/routes'
+import { PROFILE_PATH, USER_INFO_PATH } from '@/constants/routes'
 
 type Props = {
   isSuperAdmin: boolean | undefined
@@ -194,7 +194,7 @@ export const tableColumns = ({ isSuperAdmin, handleEditUser, handleChangePasswor
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <Link to={PROFILE_PATH.replace(':username', user.username)}>
+              <Link to={USER_INFO_PATH.replace(':username', user.username)}>
                 <DropdownMenuItem onClick={() => navigator.clipboard.writeText(user.id)}>
                   Go to profile
                 </DropdownMenuItem>
