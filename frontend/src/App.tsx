@@ -28,7 +28,7 @@ import Review from './pages/Admin/Review'
 import { toast, Toaster } from 'sonner'
 import { TooltipProvider } from './components/ui/tooltip'
 import AdminProtected from './components/utils/AdminProtected'
-import { useAppDispatch } from './store/store'
+import { RootState, useAppDispatch } from './store/store'
 import { ACCESS_TOKEN } from './constants/cookie'
 import { useCookies } from 'react-cookie'
 import { me } from './store/slice/authSlice'
@@ -42,6 +42,7 @@ import Protected from './components/utils/Protected'
 import SellerDashboard from './pages/Seller/Dashboard'
 import AdminDashboard from './pages/Admin/Dashboard'
 import NotFound from './pages/NotFound'
+import { useSelector } from 'react-redux'
 
 const Home = React.lazy(() => import('@/pages/Home'))
 
@@ -51,6 +52,7 @@ function App() {
   const location = useLocation()
 
   const [cookie, , removeCookie] = useCookies([ACCESS_TOKEN])
+  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated)
 
   const navbarRender = () => {
     if (location.pathname.includes(ADMIN_BASE_PATH)) return <AdminNavbar />
@@ -99,7 +101,7 @@ function App() {
                 <Route path={REVIEW_MANAGE_PATH} element={<Review />} />
               </Route>
 
-              {!cookie[ACCESS_TOKEN] && (
+              {!isAuthenticated && (
                 <>
                   <Route path={SIGN_UP_PATH} element={<SignUp />} />
                   <Route path={SIGN_IN_PATH} element={<SignIn />} />
