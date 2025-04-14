@@ -34,6 +34,7 @@ import { useCookies } from 'react-cookie'
 import { me } from './store/slice/authSlice'
 import Loading from './pages/Loading'
 import Profile from './pages/Profile'
+<<<<<<< HEAD
 import Protected from './components/utils/Protected'
 import Navbar from './components/User/utils/Navbar'
 import SellerDashboard from './pages/Seller/Dashboard'
@@ -41,6 +42,8 @@ import AdminDashboard from './pages/Admin/Dashboard'
 import Products from './pages/Products'
 import { AnimatePresence } from 'framer-motion'
 import UserInfo from './pages/UserInfo'
+=======
+>>>>>>> 94c1181 (ghjghj)
 import Protected from './components/utils/Protected'
 import Navbar from './components/User/utils/Navbar'
 import SellerDashboard from './pages/Seller/Dashboard'
