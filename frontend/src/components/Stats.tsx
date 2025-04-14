@@ -1,6 +1,7 @@
 import { axiosInstance } from '@/lib/axios'
 import { isAxiosError } from 'axios'
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { CircleCheck, Package, ShoppingBag, UserRound } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
@@ -10,6 +11,11 @@ import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { motion } from 'framer-motion'
 >>>>>>> dd1e2b2 (a)
+=======
+import { CircleCheck, Package, ShoppingBag, UserRound } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { toast } from 'sonner'
+>>>>>>> 8f6d3b0 (asdasd)
 import StatCard from './StatCard'
 
 interface IStats {
