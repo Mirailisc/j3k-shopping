@@ -47,6 +47,7 @@ import SellerDashboard from './pages/Seller/Dashboard'
 import AdminDashboard from './pages/Admin/Dashboard'
 import Products from './pages/Products'
 import { AnimatePresence } from 'framer-motion'
+import UserInfo from './pages/UserInfo'
 
 const Home = React.lazy(() => import('@/pages/Home'))
 
