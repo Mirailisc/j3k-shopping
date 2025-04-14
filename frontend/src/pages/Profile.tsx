@@ -6,18 +6,15 @@ import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { toast } from 'sonner'
 import Loading from './Loading'
-import { ChevronLeft, Pencil } from 'lucide-react'
+import { Pencil } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import ProfileSocial from '@/components/User/Profile/Social'
 import ProfileSocialEditForm from '@/components/User/Profile/SocialEditForm'
 import Gravatar from 'react-gravatar'
-import { useNavigate } from 'react-router-dom'
 
 const Profile: React.FC = () => {
   const [info, setInfo] = useState<ProfileType | null>(null)
   const [isEditing, setIsEditing] = useState<boolean>(false)
-
-  const navigate = useNavigate()
   const { user } = useSelector((state: RootState) => state.auth)
 
   const getProfile = async () => {
@@ -46,9 +43,6 @@ const Profile: React.FC = () => {
 
   return (
     <div className="p-10">
-      <Button variant="outline" onClick={() => navigate(-1)}>
-        <ChevronLeft /> Back
-      </Button>
       <div className="flex mt-10 flex-col gap-4">
         <div className="p-4">
           <Gravatar email={info.email} size={150} className="rounded-full" />

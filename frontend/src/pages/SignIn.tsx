@@ -6,14 +6,13 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import { Link, useNavigate } from 'react-router-dom'
-import { DASHBOARD_PATH, SIGN_UP_PATH } from '@/constants/routes'
+import { BASE_PATH, SIGN_UP_PATH } from '@/constants/routes'
 import authBg from '@/images/auth-bg.png'
 import { useCookies } from 'react-cookie'
 import { login } from '@/store/slice/authSlice'
 import { ACCESS_TOKEN } from '@/constants/cookie'
 import { toast } from 'sonner'
 import { useAppDispatch } from '@/store/store'
-
 const formSchema = z.object({
   username: z.string().min(1, 'Username is required'),
   password: z.string().min(1, 'Password is required'),
@@ -37,7 +36,7 @@ const SignIn: React.FC = () => {
     try {
       const result = await dispatch(login(values)).unwrap()
       setCookie(ACCESS_TOKEN, result.access_token, { path: '/', secure: true, httpOnly: false })
-      navigate(DASHBOARD_PATH, { replace: true })
+      navigate(BASE_PATH, { replace: true })
     } catch (error) {
       toast.error(error as string)
     }

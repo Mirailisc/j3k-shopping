@@ -9,7 +9,7 @@ import { Order } from '@/types/order'
 import { toast } from 'sonner'
 import { isAxiosError } from 'axios'
 import { axiosInstance } from '@/lib/axios'
-import { OrderStatus, stateOption } from '../../types/orderState';
+import { OrderStatus, stateOption } from '../../types/orderState'
 
 type Props = {
   open: boolean
@@ -17,48 +17,38 @@ type Props = {
   order: Order
   data: Order[]
   setData: (data: Order[]) => void
-  
 }
 
 export const formSchema = z.object({
-  status: z
-    .nativeEnum(OrderStatus, {
-      errorMap: () => ({ message: 'Invalid status selected' }),
+  status: z.nativeEnum(OrderStatus, {
+    errorMap: () => ({ message: 'Invalid status selected' }),
   }),
 })
 
-
-export const UpdateOrderStatusForm: React.FC<Props> = ({ open, setOpen, order, data, setData}: Props) => {
+export const UpdateOrderStatusForm: React.FC<Props> = ({ open, setOpen, order, data, setData }: Props) => {
   const [targetOrder, setTargetOrder] = useState<string>('')
 
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      status: order.status,
-        },
+      status: OrderStatus.Pending,
+    },
   })
 
   useEffect(() => {
     if (order) {
       setTargetOrder(order.id)
-      form.reset({
-        status: order.status,
-
-      })
     }
   }, [order, form])
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const newStatus = {
-      status: values.status
-    }
-    
     try {
-      const res = await axiosInstance.put(`/order/status/${targetOrder}`, newStatus)
-      
+      const res = await axiosInstance.patch(`/order/status/${targetOrder}`, values)
+
       const updatedData = data.map((item) => (item.id === order.id ? { ...item, ...res.data } : item))
 
       setData(updatedData)
+      toast.success('Status updated!')
     } catch (error) {
       if (isAxiosError(error)) {
         const errorMessage = error.response?.data?.message || 'Something went wrong'
@@ -80,29 +70,31 @@ export const UpdateOrderStatusForm: React.FC<Props> = ({ open, setOpen, order, d
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4 mt-6">
             <FormField
-              control = {form.control}
-              name = "status"
-              render = {({ field }) => (
+              control={form.control}
+              name="status"
+              render={({ field }) => (
                 <FormItem>
-                  <label htmlFor = "status">Status</label>
+                  <label htmlFor="status">Status</label>
                   <FormControl>
-                  <select
-                    className="border rounded-lg px-3 py-2 text-sm focus:bg-black text-gray-200 focus:outline-none block w-full"
-                    value={OrderStatus[field.value] ?? ''}
-                    onChange={(e) => {
-                      const selected = OrderStatus[e.target.value as keyof typeof OrderStatus]
-                      field.onChange(Number(selected))
-                    }}
-                  >
-                    {stateOption.map((option) => (
-                      <option key={option.label} value={option.label}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
+                    <select
+                      className="border rounded-lg px-3 py-2 text-sm focus:bg-black text-gray-200 focus:outline-none block w-full"
+                      value={field.value}
+                      onChange={(e) => {
+                        const selectedStatus = e.target.value as keyof typeof OrderStatus
+                        field.onChange(OrderStatus[selectedStatus])
+                      }}
+                    >
+                      {stateOption.map((option) => (
+                        <option key={option.label} value={option.label}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
                   </FormControl>
                 </FormItem>
-              )} />
+              )}
+            />
+
             <DialogFooter>
               <Button type="submit" size="sm">
                 Save

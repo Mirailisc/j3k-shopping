@@ -4,7 +4,7 @@ import UserCard from '@/components/Admin/Dashboard/UserCard'
 import Sidebar from '@/components/Admin/utils/Sidebar'
 import { useSidebar } from '@/context/hooks/useSidebar'
 
-const Dashboard: React.FC = () => {
+const AdminDashboard: React.FC = () => {
   const sidebar = useSidebar()
 
   return (
@@ -29,4 +29,4 @@ const Dashboard: React.FC = () => {
   )
 }
 
-export default Dashboard
+export default AdminDashboard
