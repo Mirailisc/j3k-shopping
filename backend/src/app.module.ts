@@ -9,6 +9,7 @@ import { SocialModule } from './social/social.module'
 import { ContactModule } from './contact/contact.module'
 import { ProductModule } from './product/product.module'
 import { OrderModule } from './order/order.module'
+import { ReviewModule } from './review/review.module'
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { OrderModule } from './order/order.module'
     ContactModule,
     ProductModule,
     OrderModule,
+    ReviewModule,
   ],
   controllers: [AppController],
   providers: [AppService],
