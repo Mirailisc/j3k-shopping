@@ -41,6 +41,12 @@ import AdminDashboard from './pages/Admin/Dashboard'
 import Products from './pages/Products'
 import { AnimatePresence } from 'framer-motion'
 import UserInfo from './pages/UserInfo'
+import Protected from './components/utils/Protected'
+import Navbar from './components/User/utils/Navbar'
+import SellerDashboard from './pages/Seller/Dashboard'
+import AdminDashboard from './pages/Admin/Dashboard'
+import Products from './pages/Products'
+import { AnimatePresence } from 'framer-motion'
 
 const Home = React.lazy(() => import('@/pages/Home'))
 
@@ -72,6 +78,7 @@ function App() {
 
   return (
     <AnimatePresence mode='wait'>
+    <AnimatePresence mode="wait">
       <TooltipProvider>
         <SidebarProvider>
           <Suspense fallback={<Loading />}>
@@ -80,6 +87,7 @@ function App() {
             <Routes>
               <Route path={BASE_PATH} element={<Home />} />
               <Route path={PRODUCT_PATH} element={<Products />} />
+              <Route path={USER_INFO_PATH} element={<UserInfo />} />
 
               <Route element={<Protected />}>
                 <Route path={PROFILE_PATH} element={<Profile />} />
