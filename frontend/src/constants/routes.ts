@@ -21,3 +21,5 @@ export const ORDER_MANAGE_PATH = ADMIN_BASE_PATH + 'orders'
 export const PRODUCT_MANAGE_PATH = ADMIN_BASE_PATH + 'products'
 export const REPORT_PATH = ADMIN_BASE_PATH + 'reports'
 export const REVIEW_MANAGE_PATH = ADMIN_BASE_PATH + 'reviews'
+
+export const NOT_FOUND_PATH = '*'

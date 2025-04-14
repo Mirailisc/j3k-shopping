@@ -41,6 +41,7 @@ import UserInfo from './pages/UserInfo'
 import Protected from './components/utils/Protected'
 import SellerDashboard from './pages/Seller/Dashboard'
 import AdminDashboard from './pages/Admin/Dashboard'
+import NotFound from './pages/NotFound'
 
 const Home = React.lazy(() => import('@/pages/Home'))
 
@@ -104,6 +105,8 @@ function App() {
                   <Route path={SIGN_IN_PATH} element={<SignIn />} />
                 </>
               )}
+
+              <Route path="*" element={<NotFound/>} />
             </Routes>
           </Suspense>
         </SidebarProvider>
