@@ -67,10 +67,10 @@ export function OrderDataTable({ data, setData, fetchOrders }: Props) {
     toast.success('Order data has been refreshed')
   }
 
-  const isSuperAdmin = user?.isSuperAdmin
+  const isAdmin = user?.isAdmin
 
   const columns: ColumnDef<Order>[] = TableColumns({
-    isSuperAdmin,
+    isAdmin,
     handleEditOrder,
     handleUploadEvidence
   })

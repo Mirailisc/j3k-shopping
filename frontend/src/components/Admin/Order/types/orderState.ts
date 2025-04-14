@@ -10,12 +10,12 @@ export const stateOption = [
 ] as const
 
 export enum OrderStatus {
-  Pending,
-  Paid,
-  Shipped,
-  Delivering,
-  Completed,
-  Cancelled,
-  Refunded,
-  Refunding,
+  Pending = 'Pending',
+  Paid = 'Paid',
+  Shipped = 'Shipped',
+  Delivering = 'Delivering',
+  Completed = 'Completed',
+  Cancelled = 'Cancelled',
+  Refunding = 'Refunding',
+  Refunded = 'Refunded',
 }

@@ -100,28 +100,6 @@ export const CreateOrderForm: React.FC<Props> = ({ open, setOpen, data, setData 
                   </FormItem>
                 )}
               />
-              {/* <FormField
-                control={form.control}
-                name="status"
-                render={({ field }) => (
-                  <FormItem>
-                    <label htmlFor="status">Status</label>
-                    <FormControl>
-                      <select
-                        className="border rounded-lg px-3 py-2 text-sm focus:bg-black text-gray-200 focus:outline-none block w-full"
-                        value={field.value}
-                        onChange={field.onChange}
-                      >
-                        {stateOption.map((option) => (
-                          <option key={option.label} value={option.label}>
-                            {option.label}
-                          </option>
-                        ))}
-                      </select>
-                    </FormControl>
-                  </FormItem>
-                )}
-              /> */}
               <FormField
                 control={form.control}
                 name="amount"

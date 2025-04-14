@@ -43,12 +43,15 @@ export const UploadOrderEvidenceForm: React.FC<Props> = ({ open, setOpen, order,
   }, [order])
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const newOrder = {
-      evidence: values.evidence
+    const formData = new FormData()
+    if (values.evidence instanceof File) {
+      formData.append('evidence', values.evidence)
     }
     
     try {
-      const res = await axiosInstance.put(`/order/evidence/${targetOrder}`, newOrder)
+      const res = await axiosInstance.patch(`/order/evidence/${targetOrder}`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
       
       const updatedData = data.map((item) => (item.id === order.id ? { ...item, ...res.data } : item))
 
