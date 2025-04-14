@@ -27,4 +27,26 @@ export class ProfileService {
     WHERE User.id = ${userId}`
     return result[0]
   }
+
+  async getProfileByUsername(username: string) {
+    const result = await this.prismaService.$queryRaw`
+    SELECT 
+        User.username, 
+        User.firstName, 
+        User.lastName, 
+        User.isAdmin,
+        User.isSuperAdmin,
+        User.email,
+        JSON_OBJECT(
+            'line', Social.line, 
+            'facebook', Social.facebook, 
+            'website', Social.website, 
+            'instagram', Social.instagram, 
+            'tiktok', Social.tiktok
+        ) AS social
+    FROM User 
+    LEFT JOIN Social ON Social.userId = User.id
+    WHERE User.username = ${username}`
+    return result[0]
+  }
 }

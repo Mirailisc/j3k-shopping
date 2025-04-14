@@ -13,6 +13,7 @@ import {
   SELLER_DASHBOARD_PATH,
   SIGN_IN_PATH,
   SIGN_UP_PATH,
+  USER_INFO_PATH,
   USER_MANAGE_PATH,
 } from '@/constants/routes'
 import SignIn from './pages/SignIn'
@@ -39,6 +40,7 @@ import SellerDashboard from './pages/Seller/Dashboard'
 import AdminDashboard from './pages/Admin/Dashboard'
 import Products from './pages/Products'
 import { AnimatePresence } from 'framer-motion'
+import UserInfo from './pages/UserInfo'
 
 const Home = React.lazy(() => import('@/pages/Home'))
 
@@ -83,6 +85,8 @@ function App() {
                 <Route path={PROFILE_PATH} element={<Profile />} />
                 <Route path={SELLER_DASHBOARD_PATH} element={<SellerDashboard />} />
               </Route>
+            <Route path={PROFILE_PATH} element={<Profile />} />
+            <Route path={USER_INFO_PATH} element={<UserInfo />} />
 
               <Route element={<AdminProtected />}>
                 <Route path={ADMIN_DASHBOARD_PATH} element={<AdminDashboard />} />
