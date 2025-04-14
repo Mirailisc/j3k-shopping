@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Link } from 'react-router-dom'
-import { PROFILE_PATH, USER_INFO_PATH } from '@/constants/routes'
+import { USER_INFO_PATH } from '@/constants/routes'
 
 type Props = {
   isSuperAdmin: boolean | undefined
