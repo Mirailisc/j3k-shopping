@@ -13,6 +13,7 @@ import {
   SELLER_DASHBOARD_PATH,
   SIGN_IN_PATH,
   SIGN_UP_PATH,
+  USER_INFO_PATH,
   USER_MANAGE_PATH,
 } from '@/constants/routes'
 import SignIn from './pages/SignIn'
@@ -33,12 +34,13 @@ import { useCookies } from 'react-cookie'
 import { me } from './store/slice/authSlice'
 import Loading from './pages/Loading'
 import Profile from './pages/Profile'
-import Protected from './components/utils/Protected'
 import Navbar from './components/User/utils/Navbar'
+import { AnimatePresence } from 'framer-motion'
+import Products from './pages/Products'
+import UserInfo from './pages/UserInfo'
+import Protected from './components/utils/Protected'
 import SellerDashboard from './pages/Seller/Dashboard'
 import AdminDashboard from './pages/Admin/Dashboard'
-import Products from './pages/Products'
-import { AnimatePresence } from 'framer-motion'
 
 const Home = React.lazy(() => import('@/pages/Home'))
 
@@ -69,7 +71,7 @@ function App() {
   }, [cookie, dispatch, removeCookie, navigate])
 
   return (
-    <AnimatePresence mode='wait'>
+    <AnimatePresence mode="wait">
       <TooltipProvider>
         <SidebarProvider>
           <Suspense fallback={<Loading />}>
@@ -78,11 +80,14 @@ function App() {
             <Routes>
               <Route path={BASE_PATH} element={<Home />} />
               <Route path={PRODUCT_PATH} element={<Products />} />
+              <Route path={USER_INFO_PATH} element={<UserInfo />} />
 
               <Route element={<Protected />}>
                 <Route path={PROFILE_PATH} element={<Profile />} />
                 <Route path={SELLER_DASHBOARD_PATH} element={<SellerDashboard />} />
               </Route>
+            <Route path={PROFILE_PATH} element={<Profile />} />
+            <Route path={USER_INFO_PATH} element={<UserInfo />} />
 
               <Route element={<AdminProtected />}>
                 <Route path={ADMIN_DASHBOARD_PATH} element={<AdminDashboard />} />
