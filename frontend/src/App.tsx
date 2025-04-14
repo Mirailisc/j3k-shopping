@@ -56,8 +56,8 @@ function App() {
 
   const navbarRender = () => {
     if (location.pathname.includes(ADMIN_BASE_PATH)) return <AdminNavbar />
-    else if (location.pathname === SIGN_IN_PATH) return <></>
-    else if (location.pathname === SIGN_UP_PATH) return <></>
+    else if (location.pathname === SIGN_IN_PATH && !isAuthenticated) return <></>
+    else if (location.pathname === SIGN_UP_PATH && !isAuthenticated) return <></>
     else return <Navbar />
   }
 
