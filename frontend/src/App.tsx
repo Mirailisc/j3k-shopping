@@ -34,23 +34,13 @@ import { useCookies } from 'react-cookie'
 import { me } from './store/slice/authSlice'
 import Loading from './pages/Loading'
 import Profile from './pages/Profile'
-<<<<<<< HEAD
-import Protected from './components/utils/Protected'
 import Navbar from './components/User/utils/Navbar'
+import { AnimatePresence } from 'framer-motion'
+import Products from './pages/Products'
+import UserInfo from './pages/UserInfo'
+import Protected from './components/utils/Protected'
 import SellerDashboard from './pages/Seller/Dashboard'
 import AdminDashboard from './pages/Admin/Dashboard'
-import Products from './pages/Products'
-import { AnimatePresence } from 'framer-motion'
-import UserInfo from './pages/UserInfo'
-=======
->>>>>>> 94c1181 (ghjghj)
-import Protected from './components/utils/Protected'
-import Navbar from './components/User/utils/Navbar'
-import SellerDashboard from './pages/Seller/Dashboard'
-import AdminDashboard from './pages/Admin/Dashboard'
-import Products from './pages/Products'
-import { AnimatePresence } from 'framer-motion'
-import UserInfo from './pages/UserInfo'
 
 const Home = React.lazy(() => import('@/pages/Home'))
 
@@ -81,7 +71,6 @@ function App() {
   }, [cookie, dispatch, removeCookie, navigate])
 
   return (
-    <AnimatePresence mode='wait'>
     <AnimatePresence mode="wait">
       <TooltipProvider>
         <SidebarProvider>
