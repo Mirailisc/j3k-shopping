@@ -14,17 +14,12 @@ export class ProductService {
     let buffer: Buffer
 
     if (typeof imageData === 'string') {
-      // If imageData is a string (e.g., Base64 string), convert it to Buffer
       buffer = Buffer.from(imageData, 'base64')
     } else if (Buffer.isBuffer(imageData)) {
-      // If it's already a Buffer, no need to convert
       buffer = imageData
     } else {
-      // Otherwise, assume it's a Uint8Array
       buffer = Buffer.from(imageData)
     }
-
-    // Convert to base64 string
     return `data:image/jpeg;base64,${buffer.toString('base64')}`
   }
 
@@ -33,19 +28,6 @@ export class ProductService {
       SELECT *
       FROM Product
     `
-
-    return products.map((product) => ({
-      ...product,
-      productImg: this.toBase64(product.productImg),
-    }))
-  }
-
-  async searchProductByName(name: string) {
-    const searchTerm = `%${name.toLowerCase()}%`
-
-    const products = await this.prisma.$queryRaw<
-      Product[]
-    >`SELECT * FROM Product WHERE LOWER("name") LIKE ${searchTerm}`
 
     return products.map((product) => ({
       ...product,

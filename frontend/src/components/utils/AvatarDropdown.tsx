@@ -8,10 +8,10 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Skeleton } from '@/components/ui/skeleton'
 import { ACCESS_TOKEN } from '@/constants/cookie'
-import { BASE_PATH, PROFILE_PATH } from '@/constants/routes'
+import { ADMIN_DASHBOARD_PATH, BASE_PATH, PRODUCT_PATH, PROFILE_PATH, SELLER_DASHBOARD_PATH } from '@/constants/routes'
 import { logout } from '@/store/slice/authSlice'
 import { RootState, useAppDispatch } from '@/store/store'
-import { ChevronDown, Github, LucideLogOut } from 'lucide-react'
+import { ChevronDown, Github, HomeIcon, LayoutDashboard, LucideLogOut, ShoppingBag } from 'lucide-react'
 import { useCookies } from 'react-cookie'
 import Gravatar from 'react-gravatar'
 import { useSelector } from 'react-redux'
@@ -57,6 +57,42 @@ const AvatarDropdown: React.FC = () => {
           ) : (
             <DropdownMenuItem>{user.username}</DropdownMenuItem>
           )}
+        </Link>
+        <DropdownMenuSeparator />
+        <div className="block md:hidden">
+          <Link to={BASE_PATH}>
+            <DropdownMenuItem>
+              <Button className="w-full">Sell Something</Button>
+            </DropdownMenuItem>
+          </Link>
+          <DropdownMenuSeparator />
+          <Link to={BASE_PATH}>
+            <DropdownMenuItem>
+              <HomeIcon />
+              Home
+            </DropdownMenuItem>
+          </Link>
+          <Link to={PRODUCT_PATH}>
+            <DropdownMenuItem>
+              <ShoppingBag />
+              Products
+            </DropdownMenuItem>
+          </Link>
+          <DropdownMenuSeparator />
+        </div>
+        {user.isAdmin || user.isSuperAdmin ? (
+          <Link to={ADMIN_DASHBOARD_PATH}>
+            <DropdownMenuItem>
+              <LayoutDashboard />
+              Admin Dashboard
+            </DropdownMenuItem>
+          </Link>
+        ) : null}
+        <Link to={SELLER_DASHBOARD_PATH}>
+          <DropdownMenuItem>
+            <LayoutDashboard />
+            Seller Dashboard
+          </DropdownMenuItem>
         </Link>
         <DropdownMenuSeparator />
         <a href="https://github.com/Mirailisc/j3k-shopping-fe" target="_blank" rel="noreferrer">

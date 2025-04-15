@@ -8,7 +8,7 @@ import {
   CommandSeparator,
 } from '@/components/ui/command'
 import {
-  DASHBOARD_PATH,
+  ADMIN_DASHBOARD_PATH,
   ORDER_MANAGE_PATH,
   PRODUCT_MANAGE_PATH,
   REPORT_PATH,
@@ -38,7 +38,7 @@ const Command: React.FC<Props> = ({ open, setOpen }: Props) => {
       <CommandList>
         <CommandEmpty>No results found.</CommandEmpty>
         <CommandGroup heading="General">
-          <CommandItem onSelect={() => handleCommandItemSelect(DASHBOARD_PATH)}>
+          <CommandItem onSelect={() => handleCommandItemSelect(ADMIN_DASHBOARD_PATH)}>
             <CircleGauge />
             <span>Dashboard</span>
           </CommandItem>

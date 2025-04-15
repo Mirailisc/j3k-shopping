@@ -23,13 +23,9 @@ export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
   @Get()
+  @UseGuards(AuthGuard('jwt'), AdminGuard)
   async getAllProduct() {
     return await this.productService.getAllProduct()
-  }
-
-  @Get('search/:name')
-  async searchProductByName(@Param('name') name: string) {
-    return await this.productService.searchProductByName(name)
   }
 
   @Get(':id')

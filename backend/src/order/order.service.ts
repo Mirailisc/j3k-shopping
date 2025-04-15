@@ -1,4 +1,9 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common'
+import {
+  BadRequestException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common'
 import { CreateOrderDto } from './dto/create-order.dto'
 import { PrismaService } from 'src/prisma/prisma.service'
 import { randomUUID } from 'crypto'
@@ -127,45 +132,39 @@ export class OrderService {
     const order = await this.getOrderById(id)
     const product = await this.productService.getProductById(order.productId)
 
+    const stockUpdate = async (change: number) => {
+      await this.prisma.$executeRawUnsafe(`
+        UPDATE Product
+        SET quantity = quantity + ${change}
+        WHERE id = '${product.id}'
+      `)
+    }
+
     switch (status) {
+      case OrderStatus.PENDING:
+        await stockUpdate(-order.amount)
+        break
+
       case OrderStatus.PAID:
-        await this.prisma.$executeRaw<Order>`
-          UPDATE \`Order\`
-          SET status = ${status}
-          WHERE id = ${id}
-        `
+        if (!order.evidence) {
+          throw new BadRequestException('Evidence is required')
+        }
+        break
 
-        await this.prisma.$executeRaw<Product>`
-          UPDATE Product
-          SET quantity = ${product.quantity - order.amount}
-          WHERE id = ${product.id}
-        `
-
-        return await this.getOrderById(id)
-
-      case OrderStatus.REFUNDED:
-        await this.prisma.$executeRaw<Order>`
-          UPDATE \`Order\`
-          SET status = ${status}
-          WHERE id = ${id}
-        `
-
-        await this.prisma.$executeRaw<Product>`
-          UPDATE Product
-          SET quantity = ${product.quantity + order.amount}
-          WHERE id = ${product.id}
-        `
-
-        return await this.getOrderById(id)
+      case OrderStatus.CANCELLED:
+        await stockUpdate(order.amount)
+        break
 
       default:
-        await this.prisma.$executeRaw<Order>`
-          UPDATE \`Order\`
-          SET status = ${status}
-          WHERE id = ${id}
-        `
-
-        return await this.getOrderById(id)
+        break
     }
+
+    await this.prisma.$executeRawUnsafe(`
+      UPDATE \`Order\`
+      SET status = '${status}'
+      WHERE id = '${id}'
+    `)
+
+    return await this.getOrderById(id)
   }
 }

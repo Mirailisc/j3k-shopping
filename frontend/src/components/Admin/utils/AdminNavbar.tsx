@@ -3,7 +3,9 @@ import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Button } from '../../ui/button'
 import Command from './Command'
 import { useSidebar } from '@/context/hooks/useSidebar'
-import AvatarDropdown from './AvatarDropdown'
+import AvatarDropdown from '../../utils/AvatarDropdown'
+import { Link } from 'react-router-dom'
+import { BASE_PATH } from '@/constants/routes'
 
 const AdminNavbar: React.FC = () => {
   const [open, setOpen] = useState<boolean>(false)
@@ -33,7 +35,9 @@ const AdminNavbar: React.FC = () => {
           >
             {sidebar?.isSidebarOpen ? <ChevronLeft /> : <ChevronRight />}
           </Button>
-          <h1 className="text-2xl font-bold">J3K</h1>
+          <Link to={BASE_PATH}>
+            <h1 className="text-2xl font-bold">J3K</h1>
+          </Link>
         </div>
         <div className="flex gap-4">
           <Button

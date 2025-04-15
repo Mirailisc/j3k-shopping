@@ -9,7 +9,7 @@ import { Order } from '@/types/order'
 import { toast } from 'sonner'
 import { isAxiosError } from 'axios'
 import { axiosInstance } from '@/lib/axios'
-import { OrderStatus, stateOption } from '../../types/orderState';
+import { OrderStatus, stateOption } from '../../types/orderState'
 
 type Props = {
   open: boolean
@@ -17,7 +17,6 @@ type Props = {
   order: Order
   data: Order[]
   setData: (data: Order[]) => void
-  
 }
 
 export const formSchema = z.object({
@@ -71,11 +70,11 @@ export const UpdateOrderStatusForm: React.FC<Props> = ({ open, setOpen, order, d
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4 mt-6">
             <FormField
-              control = {form.control}
-              name = "status"
-              render = {({ field }) => (
+              control={form.control}
+              name="status"
+              render={({ field }) => (
                 <FormItem>
-                  <label htmlFor = "status">Status</label>
+                  <label htmlFor="status">Status</label>
                   <FormControl>
                   <select
                     className="border rounded-lg px-3 py-2 text-sm focus:bg-black text-gray-200 focus:outline-none block w-full"
@@ -90,7 +89,9 @@ export const UpdateOrderStatusForm: React.FC<Props> = ({ open, setOpen, order, d
                   </select>
                   </FormControl>
                 </FormItem>
-              )} />
+              )}
+            />
+
             <DialogFooter>
               <Button type="submit" size="sm">
                 Save

@@ -22,12 +22,12 @@ import {
 import { useState } from 'react'
 
 type Props = {
-  isSuperAdmin: boolean | undefined
+  isAdmin: boolean | undefined
   handleEditOrder: (user: Order) => void
   handleUploadEvidence: (user: Order) => void
 }
 
-export const TableColumns = ({ isSuperAdmin, handleEditOrder, handleUploadEvidence }: Props) => {
+export const TableColumns = ({ isAdmin, handleEditOrder, handleUploadEvidence }: Props) => {
   const [openImage, setOpenImage] = useState<string | null>(null)
   const columns: ColumnDef<Order>[] = [
     {
@@ -160,7 +160,7 @@ export const TableColumns = ({ isSuperAdmin, handleEditOrder, handleUploadEviden
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem onClick={() => navigator.clipboard.writeText(order.id)}>Copy Order ID</DropdownMenuItem>
-              {isSuperAdmin ? (
+              {isAdmin ? (
                 <>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => handleEditOrder(order)}>

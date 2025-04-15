@@ -2,7 +2,7 @@ import { ChartArea, CircleGauge, Package, ShoppingBag, Star, UserRound } from 'l
 import { useSidebar } from '@/context/hooks/useSidebar'
 import { Link } from 'react-router-dom'
 import {
-  DASHBOARD_PATH,
+  ADMIN_DASHBOARD_PATH,
   ORDER_MANAGE_PATH,
   PRODUCT_MANAGE_PATH,
   REPORT_PATH,
@@ -25,7 +25,7 @@ const Sidebar: React.FC = () => {
           transition={{ duration: 0.3, ease: 'easeInOut' }}
         >
           <Link
-            to={DASHBOARD_PATH}
+            to={ADMIN_DASHBOARD_PATH}
             className={`p-2 rounded-sm flex items-center ${sidebar?.isSidebarOpen ? 'justify-start' : 'justify-center'} gap-2 hover:bg-zinc-800`}
           >
             <CircleGauge size={16} />
