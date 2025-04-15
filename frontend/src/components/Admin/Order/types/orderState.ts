@@ -1,5 +1,4 @@
 export enum OrderStatus {
-<<<<<<< HEAD
   Pending,
   Paid,
   Shipped,
@@ -20,14 +19,3 @@ export const stateOption = [
   { label: "Refunding", value: OrderStatus.Refunding },
   { label: "Refunded", value: OrderStatus.Refunded },
 ] as const;
-=======
-  Pending = 'Pending',
-  Paid = 'Paid',
-  Shipped = 'Shipped',
-  Delivering = 'Delivering',
-  Completed = 'Completed',
-  Cancelled = 'Cancelled',
-  Refunding = 'Refunding',
-  Refunded = 'Refunded',
-}
->>>>>>> 1ecb80c59903c7295596b80f2d5b90afc9b70950
