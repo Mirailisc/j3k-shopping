@@ -1,16 +1,17 @@
-import ProductList from '@/components/ProductList'
+import ProductList from '@/components/Product/ProductList'
+import Stats from '@/components/Home/Stats'
 import { axiosInstance } from '@/lib/axios'
 import { ProductFeed } from '@/types/feed'
 import { isAxiosError } from 'axios'
 import React, { useEffect } from 'react'
 import { toast } from 'sonner'
 
-const Products: React.FC = () => {
+const Home: React.FC = () => {
   const [products, setProducts] = React.useState<ProductFeed[]>([])
 
   const getProducts = async () => {
     try {
-      const response = await axiosInstance.get('/feed/products')
+      const response = await axiosInstance.get('/feed/products/recent')
       setProducts(response.data)
     } catch (error) {
       if (isAxiosError(error)) {
@@ -28,10 +29,11 @@ const Products: React.FC = () => {
 
   return (
     <div className="mt-[100px] px-4">
-      <h2 className="text-3xl font-bold my-10">All Products</h2>
+      <Stats />
+      <h2 className="text-3xl font-bold my-10">Recently Added</h2>
       <ProductList products={products} />
     </div>
   )
 }
 
-export default Products
+export default Home

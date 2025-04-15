@@ -1,5 +1,7 @@
 export const BASE_PATH = '/'
+
 export const PRODUCT_PATH = BASE_PATH + 'products'
+export const PRODUCT_INFO_PATH = PRODUCT_PATH + '/:productId'
 
 // Authentications
 export const SIGN_UP_PATH = BASE_PATH + 'sign-up'

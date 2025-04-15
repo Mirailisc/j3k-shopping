@@ -30,7 +30,7 @@ export class ProductController {
 
   @Get(':id')
   async getProductById(@Param('id') id: string) {
-    return await this.productService.getProductById(id)
+    return await this.productService.getProductInfo(id)
   }
 
   @Get('seller/:id')
