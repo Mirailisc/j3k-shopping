@@ -9,3 +9,7 @@ export type Product = {
   createdAt: Date
   updatedAt: Date
 }
+
+export interface ProductDisplay extends Omit<Product, 'updatedAt' | 'userId'> {
+  seller: string
+}

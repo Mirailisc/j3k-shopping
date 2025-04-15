@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common'
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common'
 import { PrismaService } from 'src/prisma/prisma.service'
 import { Product } from './entities/product.entity'
 import { CreateProductDto } from './dto/create-product.dto'
@@ -43,7 +47,27 @@ export class ProductService {
     `
 
     if (!product || product.length === 0) {
-      throw new Error('Product not found')
+      throw new NotFoundException('Product not found')
+    }
+
+    const productData = product[0]
+
+    return {
+      ...productData,
+      productImg: this.toBase64(productData.productImg),
+    }
+  }
+
+  async getProductInfo(id: string) {
+    const product = await this.prisma.$queryRaw<Product[]>`
+      SELECT P.id, P.name, P.productImg, P.description, P.price, P.quantity, U.username AS seller,P.createdAt
+      FROM Product P
+      LEFT JOIN User U ON P.userId = U.id
+      WHERE P.id = ${id}
+    `
+
+    if (!product || product.length === 0) {
+      throw new NotFoundException('Product not found')
     }
 
     const productData = product[0]

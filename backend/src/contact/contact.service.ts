@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, NotFoundException } from '@nestjs/common'
 import { PrismaService } from 'src/prisma/prisma.service'
 import { UpdateContactDto } from './dto/update-contact.dto'
 import { Contact } from './entities/contact.entity'
@@ -15,7 +15,7 @@ export class ContactService {
     `
 
     if (contact.length === 0) {
-      throw new Error('User contact not found')
+      throw new NotFoundException('User contact not found')
     }
 
     return {

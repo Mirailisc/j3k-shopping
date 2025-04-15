@@ -3,7 +3,7 @@ import { isAxiosError } from 'axios'
 import { CircleCheck, Package, ShoppingBag, UserRound } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
-import StatCard from './StatCard'
+import StatCard from './components/StatCard'
 
 interface IStats {
   totalProduct: number
