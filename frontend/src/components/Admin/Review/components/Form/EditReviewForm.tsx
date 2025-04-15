@@ -49,14 +49,12 @@ export const EditReviewForm: React.FC<Props> = ({ open, setOpen, review, data, s
   }, [review, form])
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const formData = new FormData()
-    formData.append('rating', values.rating)
-    formData.append('comment', values.comment)
-
+    const formData = {
+      rating: values.rating,
+      comment: values.comment
+    }
     try {
-      const res = await axiosInstance.put(`/review/admin/${targetReview}`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      })
+      const res = await axiosInstance.patch(`/review/admin/${targetReview}`, formData)
 
       const updatedData = data.map((item) => (item.id === review.id ? { ...item, ...res.data } : item))
       setData(updatedData)
@@ -85,9 +83,8 @@ export const EditReviewForm: React.FC<Props> = ({ open, setOpen, review, data, s
                 <FormItem>
                   <Label htmlFor="rating">Rating</Label>
                   <FormControl>
-                  <select {...field} className="text-sm text-white px-2">
-                    <option value="" className='text-black' >Select Rating</option>
-                      {[0, 1, 2, 3, 4, 5].map((num) => (
+                  <select {...field} className="border rounded-lg px-3 py-2 text-sm focus:bg-black text-gray-200 focus:outline-none block w-full">
+                      {[1, 2, 3, 4, 5].map((num) => (
                     <option key={num} value={num} className="text-black" >{num}</option>))}
                   </select> 
                   </FormControl>

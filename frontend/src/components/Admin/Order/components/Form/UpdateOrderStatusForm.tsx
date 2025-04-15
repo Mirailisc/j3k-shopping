@@ -21,20 +21,16 @@ type Props = {
 }
 
 export const formSchema = z.object({
-  status: z
-    .nativeEnum(OrderStatus, {
-      errorMap: () => ({ message: 'Invalid status selected' }),
-  }),
-})
-
+  status: z.any()
+  })
 
 export const UpdateOrderStatusForm: React.FC<Props> = ({ open, setOpen, order, data, setData}: Props) => {
   const [targetOrder, setTargetOrder] = useState<string>('')
 
-  const form = useForm({
+  const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      status: order.status,
+      status: '',
         },
   })
 
@@ -42,23 +38,19 @@ export const UpdateOrderStatusForm: React.FC<Props> = ({ open, setOpen, order, d
     if (order) {
       setTargetOrder(order.id)
       form.reset({
-        status: order.status,
-
+        status: OrderStatus[order.status],
       })
     }
   }, [order, form])
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const newStatus = {
-      status: values.status
-    }
-    
+    const formData = new  FormData()
+    formData.append('status', OrderStatus[values.status])
     try {
-      const res = await axiosInstance.put(`/order/status/${targetOrder}`, newStatus)
-      
+      const res = await axiosInstance.patch(`/order/status/${targetOrder}`, formData)
       const updatedData = data.map((item) => (item.id === order.id ? { ...item, ...res.data } : item))
-
       setData(updatedData)
+      toast.success("Status updated!")
     } catch (error) {
       if (isAxiosError(error)) {
         const errorMessage = error.response?.data?.message || 'Something went wrong'
@@ -70,7 +62,6 @@ export const UpdateOrderStatusForm: React.FC<Props> = ({ open, setOpen, order, d
 
     setOpen(false)
   }
-
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
@@ -88,14 +79,11 @@ export const UpdateOrderStatusForm: React.FC<Props> = ({ open, setOpen, order, d
                   <FormControl>
                   <select
                     className="border rounded-lg px-3 py-2 text-sm focus:bg-black text-gray-200 focus:outline-none block w-full"
-                    value={OrderStatus[field.value] ?? ''}
-                    onChange={(e) => {
-                      const selected = OrderStatus[e.target.value as keyof typeof OrderStatus]
-                      field.onChange(Number(selected))
-                    }}
+                    value={field.value} //don't show initial status...
+                    onChange={(e) => field.onChange(Number(e.target.value))}
                   >
                     {stateOption.map((option) => (
-                      <option key={option.label} value={option.label}>
+                      <option key={option.label} value={option.value}>
                         {option.label}
                       </option>
                     ))}

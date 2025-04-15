@@ -55,7 +55,7 @@ export const TableColumns = ({ isAdmin, handleEditReview, handleDeleteReview }: 
           </Button>
         )
       },
-      cell: ({ row }) => <div className="text-white text-muted-foreground px-6" >{row.getValue('rating')}</div>,
+      cell: ({ row }) => <div className="text-xs text-muted-foreground px-6" >{row.getValue('rating')}</div>,
     },
     {
       accessorKey: 'comment',
@@ -92,7 +92,7 @@ export const TableColumns = ({ isAdmin, handleEditReview, handleDeleteReview }: 
       header: ({ column }) => {
         return (
           <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-            Created At
+            Updated At
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         )

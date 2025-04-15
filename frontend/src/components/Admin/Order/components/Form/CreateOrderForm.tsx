@@ -53,6 +53,7 @@ export const CreateOrderForm: React.FC<Props> = ({ open, setOpen, data, setData 
     try {
       const res = await axiosInstance.post('/order/admin', newOrder)
       setData([...data, res.data])
+      toast.success("Order created successfully!")
     } catch (error) {
       if (isAxiosError(error)) {
         const errorMessage = error.response?.data?.message || 'Something went wrong'
