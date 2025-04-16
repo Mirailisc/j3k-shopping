@@ -11,7 +11,7 @@ const Review: React.FC = () => {
   const [data, setData] = useState<TypeReview[]>([])
 
   const fetchReviews = async () => {
-    const { data } = await axiosInstance.get('/review')
+    const { data } = await axiosInstance.get('/review/admin')
     setData(data)
   }
 

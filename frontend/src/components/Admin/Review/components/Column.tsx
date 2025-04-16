@@ -13,12 +13,12 @@ import {
 import { Review } from '@/types/review'
 
 type Props = {
-  isAdmin: boolean | undefined
+  isSuperAdmin: boolean | undefined
   handleEditReview: (user: Review) => void
   handleDeleteReview: (user?: Review) => void
 }
 
-export const TableColumns = ({ isAdmin, handleEditReview, handleDeleteReview }: Props) => {
+export const TableColumns = ({ isSuperAdmin, handleEditReview, handleDeleteReview }: Props) => {
   const columns: ColumnDef<Review>[] = [
     {
       id: 'select',
@@ -91,7 +91,7 @@ export const TableColumns = ({ isAdmin, handleEditReview, handleDeleteReview }: 
       header: ({ column }) => {
         return (
           <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-            Created At
+            Updated At
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         )
@@ -120,7 +120,7 @@ export const TableColumns = ({ isAdmin, handleEditReview, handleDeleteReview }: 
               <DropdownMenuItem onClick={() => navigator.clipboard.writeText(Review.id)}>
                 Copy Review ID
               </DropdownMenuItem>
-              {isAdmin ? (
+              {isSuperAdmin ? (
                 <>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => handleEditReview(Review)}>

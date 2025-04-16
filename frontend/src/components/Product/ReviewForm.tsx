@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { Star } from 'lucide-react'
-
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
@@ -61,7 +60,6 @@ const ReviewForm: React.FC<Props> = ({ productId, productName, setShowReviewForm
         rating,
         comment,
       }
-
       await axiosInstance.post('/review/product', newReview)
 
       toast.success('Review submitted successfully')

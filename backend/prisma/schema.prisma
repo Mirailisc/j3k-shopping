@@ -25,7 +25,7 @@ model User {
   createdAt    DateTime @default(now())
 
   Product Product[]
-  Review  Review[]
+  Review  Reviews[]
   Contact Contact?
   Social  Social?
 
@@ -71,10 +71,10 @@ model Product {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @default(now())
   user        User     @relation(fields: [userId], references: [id])
-  Review      Review[]
+  Review      Reviews[]
 }
 
-model Review {
+model Reviews {
   id        String   @id @default(uuid())
   rating    Int
   comment   String

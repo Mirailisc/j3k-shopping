@@ -37,7 +37,7 @@ const ReviewDataController: React.FC<Props> = ({
     <div className="flex items-center justify-between py-4">
       <div className="flex items-center gap-2">
         <Input
-          placeholder="Filter product ID ..."
+          placeholder="Filter product ID..."
           value={(table.getColumn('productId')?.getFilterValue() as string) ?? ''}
           onChange={(event) => table.getColumn('productId')?.setFilterValue(event.target.value)}
           className="max-w-sm hidden md:block"

@@ -23,7 +23,7 @@ type Props = {
 }
 
 const formSchema = z.object({
-  rating: z.string().refine((val) => Number.isInteger(Number(val)), 'Rating must be an integer'),
+  rating: z.number().min(1).max(5).default(1),
   comment: z.string().min(1, 'Comment is required'),
 })
 
@@ -33,7 +33,7 @@ export const EditReviewForm: React.FC<Props> = ({ open, setOpen, review, data, s
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      rating: '',
+      rating: 1,
       comment: '',
     },
   })
@@ -42,21 +42,15 @@ export const EditReviewForm: React.FC<Props> = ({ open, setOpen, review, data, s
     if (review) {
       setTargetReview(review.id)
       form.reset({
-        rating: String(review.rating),
+        rating: review.rating,
         comment: review.comment,
       })
     }
   }, [review, form])
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const formData = new FormData()
-    formData.append('rating', values.rating)
-    formData.append('comment', values.comment)
-
     try {
-      const res = await axiosInstance.put(`/review/admin/${targetReview}`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      })
+      const res = await axiosInstance.put(`/review/admin/${targetReview}`, values)
 
       const updatedData = data.map((item) => (item.id === review.id ? { ...item, ...res.data } : item))
       setData(updatedData)
@@ -78,18 +72,24 @@ export const EditReviewForm: React.FC<Props> = ({ open, setOpen, review, data, s
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4 mt-6">
-          <FormField
+            <FormField
               control={form.control}
               name="rating"
               render={({ field }) => (
                 <FormItem>
                   <Label htmlFor="rating">Rating</Label>
                   <FormControl>
-                  <select {...field} className="text-sm text-white px-2">
-                    <option value="" className='text-black' >Select Rating</option>
-                      {[0, 1, 2, 3, 4, 5].map((num) => (
-                    <option key={num} value={num} className="text-black" >{num}</option>))}
-                  </select> 
+                    <select
+                      {...field}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
+                      className="border rounded-lg px-3 py-2 text-sm focus:bg-black text-gray-200 focus:outline-none block w-full"
+                    >
+                      {[1, 2, 3, 4, 5].map((num) => (
+                        <option key={num} value={num} className="text-black">
+                          {num}
+                        </option>
+                      ))}
+                    </select>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

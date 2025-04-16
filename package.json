@@ -9,5 +9,9 @@
   "keywords": [],
   "author": "Mirailisc",
   "private": true,
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "date-fns": "^4.1.0",
+    "gravatar": "^1.8.2"
+  }
 }

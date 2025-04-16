@@ -1,21 +1,21 @@
-export const stateOption = [
-    {label: "Pending"},
-    {label: "Paid"},
-    {label: "Shipped"},
-    {label: "Delivering"},
-    {label: "Completed"},
-    {label: "Cancelled"},
-    {label: "Refunding"},
-    {label: "Refunded"},
-] as const
-
 export enum OrderStatus {
-  Pending = 'Pending',
-  Paid = 'Paid',
-  Shipped = 'Shipped',
-  Delivering = 'Delivering',
-  Completed = 'Completed',
-  Cancelled = 'Cancelled',
-  Refunding = 'Refunding',
-  Refunded = 'Refunded',
+  Pending,
+  Paid,
+  Shipped,
+  Delivering,
+  Completed,
+  Cancelled,
+  Refunded,
+  Refunding,
 }
+
+export const stateOption = [
+  { label: "Pending", value: OrderStatus.Pending },
+  { label: "Paid", value: OrderStatus.Paid },
+  { label: "Shipped", value: OrderStatus.Shipped },
+  { label: "Delivering", value: OrderStatus.Delivering },
+  { label: "Completed", value: OrderStatus.Completed },
+  { label: "Cancelled", value: OrderStatus.Cancelled },
+  { label: "Refunding", value: OrderStatus.Refunding },
+  { label: "Refunded", value: OrderStatus.Refunded },
+] as const;

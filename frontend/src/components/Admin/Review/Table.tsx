@@ -119,10 +119,10 @@ export function ReviewDataTable({ data, setData, fetchReviews }: Props) {
     toast.success('Review data has been refreshed')
   }
 
-  const isAdmin = user?.isAdmin
+  const isSuperAdmin = user?.isSuperAdmin
 
   const columns: ColumnDef<Review>[] = TableColumns({
-    isAdmin,
+    isSuperAdmin,
     handleEditReview,
     handleDeleteReview,
   })

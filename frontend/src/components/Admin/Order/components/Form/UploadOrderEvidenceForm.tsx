@@ -29,7 +29,7 @@ export const UploadOrderEvidenceForm: React.FC<Props> = ({ open, setOpen, order,
   const [targetOrder, setTargetOrder] = useState<string>('')
   const [previewImg, setPreviewImg] = useState<string>('')
   
-  const form = useForm({
+  const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       evidence: undefined,
@@ -39,23 +39,24 @@ export const UploadOrderEvidenceForm: React.FC<Props> = ({ open, setOpen, order,
   useEffect(() => {
     if (order) {
       setTargetOrder(order.id)
+      form.reset({
+        evidence: undefined
+      })
+      setPreviewImg(order.evidence)
     }
-  }, [order])
+  }, [form, order])
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const formData = new FormData()
-    if (values.evidence instanceof File) {
-      formData.append('evidence', values.evidence)
-    }
+    const formData = new FormData();
+    formData.append('evidence', values.evidence);
     
     try {
       const res = await axiosInstance.patch(`/order/evidence/${targetOrder}`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
-      
       const updatedData = data.map((item) => (item.id === order.id ? { ...item, ...res.data } : item))
-
       setData(updatedData)
+      toast.success("Evidence Uploaded!")
     } catch (error) {
       if (isAxiosError(error)) {
         const errorMessage = error.response?.data?.message || 'Something went wrong'
