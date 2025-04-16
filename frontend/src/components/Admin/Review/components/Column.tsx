@@ -19,7 +19,6 @@ type Props = {
 }
 
 export const TableColumns = ({ isAdmin, handleEditReview, handleDeleteReview }: Props) => {
-
   const columns: ColumnDef<Review>[] = [
     {
       id: 'select',
@@ -55,7 +54,7 @@ export const TableColumns = ({ isAdmin, handleEditReview, handleDeleteReview }: 
           </Button>
         )
       },
-      cell: ({ row }) => <div className="text-white text-muted-foreground px-6" >{row.getValue('rating')}</div>,
+      cell: ({ row }) => <div className="text-muted-foreground px-6">{row.getValue('rating')}</div>,
     },
     {
       accessorKey: 'comment',
@@ -65,12 +64,12 @@ export const TableColumns = ({ isAdmin, handleEditReview, handleDeleteReview }: 
     {
       accessorKey: 'productId',
       header: 'product ID',
-      cell: ({ row }) => <div className='px-6'>{row.getValue('productId')}</div>,
+      cell: ({ row }) => <div className="text-xs text-muted-foreground px-5">{row.getValue('productId')}</div>,
     },
     {
       accessorKey: 'userId',
       header: 'User ID',
-      cell: ({ row }) => <div>{row.getValue('userId')}</div>,
+      cell: ({ row }) => <div className="text-xs text-muted-foreground px-5">{row.getValue('userId')}</div>,
     },
     {
       accessorKey: 'createdAt',

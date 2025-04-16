@@ -1,5 +1,5 @@
 import { ColumnDef } from '@tanstack/react-table'
-import { ArrowUpDown, MoreHorizontal, Edit, Upload  } from 'lucide-react'
+import { ArrowUpDown, MoreHorizontal, Edit, Upload } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Order } from '@/types/order'
@@ -120,12 +120,26 @@ export const TableColumns = ({ isAdmin, handleEditOrder, handleUploadEvidence }:
     },
     {
       accessorKey: 'amount',
-      header: 'Amount',
+      header: ({ column }) => {
+        return (
+          <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+            Amount
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        )
+      },
       cell: ({ row }) => <div>{row.getValue('amount')}</div>,
     },
     {
       accessorKey: 'total',
-      header: 'Total',
+      header: ({ column }) => {
+        return (
+          <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+            Total
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        )
+      },
       cell: ({ row }) => <div>{parseInt(row.getValue('total')).toFixed(2)} ฿</div>,
     },
     {
@@ -168,7 +182,7 @@ export const TableColumns = ({ isAdmin, handleEditOrder, handleUploadEvidence }:
                     Update status
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => handleUploadEvidence(order)}>
-                    <Upload  className="mr-2 h-4 w-4" />
+                    <Upload className="mr-2 h-4 w-4" />
                     Upload Evidence
                   </DropdownMenuItem>
                 </>
