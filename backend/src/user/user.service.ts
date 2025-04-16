@@ -203,10 +203,20 @@ export class UserService {
       throw new BadRequestException('Email already exists')
     }
 
-    await this.prisma.$executeRaw<User>`
-      INSERT INTO User(id, username, email, firstName, lastName, isAdmin, isSuperAdmin, password) 
-      VALUES (${uuid}, ${username}, ${email}, ${firstName}, ${lastName}, ${isAdmin}, ${isSuperAdmin}, ${hashedPassword})
-    `
+    await this.prisma.$executeRawUnsafe(
+      `
+      INSERT INTO User(id, username, email, firstName, lastName, isAdmin, isSuperAdmin, password)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      uuid,
+      username,
+      email,
+      firstName,
+      lastName,
+      isAdmin,
+      isSuperAdmin,
+      hashedPassword,
+    )
+
     await this.prisma
       .$executeRaw<Social>`INSERT INTO Social(id, userId, line, facebook, instagram, tiktok, website) VALUES (${socialUUID}, ${uuid}, ${line}, ${facebook}, ${instagram}, ${tiktok}, ${website})`
     await this.prisma
@@ -217,8 +227,9 @@ export class UserService {
 
   async resetPassword(userId: string, current: string, newPassword: string) {
     const user = await this.getUserById(userId)
+    const isPasswordMatch = await bcrypt.compare(current, user.password)
 
-    if (bcrypt.compare(current, user.password)) {
+    if (isPasswordMatch) {
       const hashedPassword = await bcrypt.hash(newPassword, BCRYPT_SALT_ROUNDS)
       await this.prisma.$executeRaw`
         UPDATE User 
