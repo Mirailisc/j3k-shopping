@@ -7,3 +7,8 @@ export type Review = {
     createdAt: Date
     updatedAt: Date
   }
+
+export interface ReviewDisplay extends Omit<Review, 'updatedAt' | 'productId'> {
+    email: string
+    fullName: string
+}

@@ -5,6 +5,7 @@ import { UserService } from 'src/user/user.service'
 import { SocialService } from 'src/social/social.service'
 import { ContactService } from 'src/contact/contact.service'
 import { ReviewController } from './review.controller'
+import { ProductService } from 'src/product/product.service'
 
 @Module({
   controllers: [ReviewController],
@@ -14,6 +15,7 @@ import { ReviewController } from './review.controller'
     UserService,
     SocialService,
     ContactService,
+    ProductService,
   ],
 })
 export class ReviewModule {}

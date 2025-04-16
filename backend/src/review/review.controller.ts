@@ -6,7 +6,6 @@ import {
   Param,
   Patch,
   Post,
-  Put,
   Request,
   UseGuards,
 } from '@nestjs/common'
@@ -32,9 +31,9 @@ export class ReviewController {
     return await this.reviewService.getReviewById(id)
   }
 
-  @Get("search/:id")
-  async getReviewByProductId(@Param('id') id: string){
-    return await this.reviewService.getReviewByProductId(id)
+  @Get('product/:id')
+  async getReviewByProductId(@Param('id') productId: string) {
+    return await this.reviewService.getReviewInfo(productId)
   }
 
   @Get("buyer/:id")
@@ -42,16 +41,19 @@ export class ReviewController {
     return await this.reviewService.getReviewByUserId(id)
   }
 
-  @Post("/buyer")
+  @Post('product')
   @UseGuards(AuthGuard('jwt'))
-  async createReviewByBuyer(
+  async createReview(
+    @Body() createReviewDto: Omit<CreateReviewDto, 'userId'>,
     @Request() req,
-    @Body() review: CreateReviewDto
-  ){
-    return await this.reviewService.createReviewByBuyer(review, req.user.userId)
+  ) {
+    return await this.reviewService.createReview(
+      createReviewDto,
+      req.user.userId,
+    )
   }
 
-  @Post("/admin")
+  @Post("admin")
   @UseGuards(AuthGuard('jwt'), SuperAdminGuard)
   async createReviewByAdmin(
     @Body() review: CreateReviewDto
@@ -59,7 +61,7 @@ export class ReviewController {
     return await this.reviewService.createReviewByAdmin(review)
   }
 
-  @Delete('buyer/:id')
+  @Delete(':id')
   @UseGuards(AuthGuard('jwt'))
   async deleteReviewByBuyer(
     @Param('id') id:string,
@@ -76,7 +78,7 @@ export class ReviewController {
     return await this.reviewService.deleteReviewByAdmin(id)
   }
 
-  @Patch("buyer/:id")
+  @Patch(":id")
   @UseGuards(AuthGuard('jwt'))
   async updateReviewByBuyer(
     @Param('id') id:string,
@@ -96,5 +98,3 @@ export class ReviewController {
   }
 
 }
-
-

@@ -24,10 +24,7 @@ dist-ssr
 *.sw?
 
 .env
-<<<<<<< HEAD
 .eslintignore
-=======
 .eslintcache
->>>>>>> 2959938 (sdfsdfs)
 
 coverage/

@@ -5,17 +5,17 @@ export class CreateReviewDto {
     description: 'Rating of the product',
     example: 5,
   })
-  rating: Number
+  rating: number
 
   @ApiProperty({
     description: 'The comment of the product',
     example: 'The product is cute.',
   })
-  comment: String
+  comment: string
 
   @ApiProperty({
     description: 'The ID of the product whose rated',
-    example: 'pid'
+    example: 'pid',
   })
   productId: string
 

@@ -1,25 +1,21 @@
 import { axiosInstance } from '@/lib/axios'
-import { RootState } from '@/store/store'
 import { Profile as ProfileType } from '@/types/profile'
 import { isAxiosError } from 'axios'
-import { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useCallback, useEffect, useState } from 'react'
 import { toast } from 'sonner'
-import Loading from './Loading'
-import { Pencil } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 import ProfileSocial from '@/components/User/Profile/Social'
-import ProfileSocialEditForm from '@/components/User/Profile/SocialEditForm'
 import Gravatar from 'react-gravatar'
+import { useParams } from 'react-router-dom'
+import Loading from '../Loading'
 
-const Profile: React.FC = () => {
+const UserInfo: React.FC = () => {
   const [info, setInfo] = useState<ProfileType | null>(null)
-  const [isEditing, setIsEditing] = useState<boolean>(false)
-  const { user } = useSelector((state: RootState) => state.auth)
 
-  const getProfile = async () => {
+  const { username } = useParams()
+
+  const getUserInfo = useCallback(async () => {
     try {
-      const response = await axiosInstance.get('/profile')
+      const response = await axiosInstance.get(`/profile/${username}`)
       setInfo(response.data)
     } catch (error) {
       if (isAxiosError(error)) {
@@ -29,13 +25,11 @@ const Profile: React.FC = () => {
         toast.error('An unexpected error occurred')
       }
     }
-  }
+  }, [username])
 
   useEffect(() => {
-    if (user) {
-      getProfile()
-    }
-  }, [user])
+    getUserInfo()
+  }, [getUserInfo])
 
   if (!info) {
     return <Loading />
@@ -52,20 +46,11 @@ const Profile: React.FC = () => {
         <div className="bg-zinc-900 rounded-md p-4 border border-white/10">
           <div className="flex justify-between">
             <h3 className="font-bold text-xl mb-4">Social</h3>
-            {!isEditing && (
-              <Button variant="outline" size="icon" onClick={() => setIsEditing(true)}>
-                <Pencil />
-              </Button>
-            )}
           </div>
-          {isEditing ? (
-            <ProfileSocialEditForm social={info.social} setIsEditing={setIsEditing} />
-          ) : (
-            <ProfileSocial social={info.social} />
-          )}
+          <ProfileSocial social={info.social} />
         </div>
       </div>
     </div>
   )
 }
-export default Profile
+export default UserInfo

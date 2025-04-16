@@ -5,17 +5,23 @@ import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
 import { randomUUID } from 'crypto'
 import { Order } from '@prisma/client';
+import { ReviewInfo } from './entities/review-info.entity';
+import { ProductService } from 'src/product/product.service';
 
 @Injectable()
 export class ReviewService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(  private readonly prisma: PrismaService,
+                private readonly productService: ProductService,
+              ) {}
   
   async getAllReview() {
     const result = await this.prisma.$queryRaw<Review[]>`
       SELECT *
       FROM Review
     `
-    return result
+    return result.map((review) => ({
+      ...review,
+    }))
   }
 
   async getReviewById(id: string){
@@ -43,27 +49,41 @@ export class ReviewService {
     return review
   }
 
-  async createReviewByBuyer(review: CreateReviewDto, me:string){
-    const uuid =randomUUID()
-    const existingOrder = await this.prisma.$queryRaw<Order[]>
-  `  SELECT id 
-    FROM \`Order\` o
-    WHERE o.productId = ${review.productId} 
-    AND o.userId = ${review.userId}
+  async getReviewInfo(productId: string) {
+    const reviews = await this.prisma.$queryRaw<ReviewInfo[]>`
+      SELECT R.id, R.rating, R.comment, R.userId, U.email, CONCAT(U.firstName, ' ', U.lastName) AS fullName, R.createdAt
+      FROM Review R
+      LEFT JOIN User U ON R.userId = U.id
+      WHERE R.productId = ${productId}
     `
 
-    if(!existingOrder || existingOrder.length === 0){
-      throw new Error("You have not order this product yet!")
+    return reviews
+  }
+
+  async createReview(
+    createReviewDto: Omit<CreateReviewDto, 'userId'>,
+    userId: string,
+  ) {
+    const uuid = randomUUID()
+    const product = await this.productService.getProductById(
+      createReviewDto.productId,
+    )
+    const existingReview = await this.getReviewInfo(createReviewDto.productId)
+
+    if (product.userId === userId) {
+      throw new BadRequestException('You cannot review your own product')
     }
 
-    if(existingOrder[0].userId !== me ){
-      throw new Error("You can not review did product.")
+    if (existingReview.find((review) => review.userId === userId)) {
+      throw new BadRequestException('You have already reviewed this product')
     }
-    return await this.prisma.$executeRaw<Review[]> `
-      INSERT INTO Review (id, rating, comment, userId, productId) VALUES
-      (${uuid}, ${review.rating}, ${review.comment}, ${review.userId}, ${review.productId})
+
+    await this.prisma.$executeRaw`
+      INSERT INTO Review (id, rating, comment, productId, userId)
+      VALUES (${uuid}, ${createReviewDto.rating}, ${createReviewDto.comment}, ${createReviewDto.productId}, ${userId})
     `
 
+    return this.getReviewById(uuid)
   }
 
   async createReviewByAdmin(review: CreateReviewDto){
@@ -75,6 +95,15 @@ export class ReviewService {
     `
     if (!existingOrder || existingOrder.length === 0) {
       throw new BadRequestException("User haven't order this before")
+    }
+
+    const existingReview = await this.prisma.$queryRaw<Review[]>`
+      SELECT id FROM Review 
+      WHERE  
+      userId = ${review.userId} AND productId = ${review.productId}
+    `
+    if (existingReview || existingReview.length > 0){
+      throw new BadRequestException("You have already reviewed this product")
     }
 
     await this.prisma.$executeRaw<Review[]>
@@ -131,3 +160,4 @@ export class ReviewService {
   }
   
 }
+ 

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, NotFoundException } from '@nestjs/common'
 import { PrismaService } from 'src/prisma/prisma.service'
 import { UpdateSocialDto } from './dto/update-social.dto'
 import { Social } from './entities/social.entity'
@@ -15,7 +15,7 @@ export class SocialService {
         `
 
     if (social.length === 0) {
-      throw new Error('User social not found')
+      throw new NotFoundException('User social not found')
     }
 
     return {

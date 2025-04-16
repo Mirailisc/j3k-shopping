@@ -1,9 +1,9 @@
-export class Review {
+export class ReviewInfo {
   id: string
   rating: number
   comment: string
-  productId: string
   userId: string
+  email: string
+  fullName: string
   createdAt: Date
-  updatedAt: Date
 }
