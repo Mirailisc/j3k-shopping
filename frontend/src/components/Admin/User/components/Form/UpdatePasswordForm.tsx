@@ -83,7 +83,7 @@ export const UpdatePasswordForm: React.FC<Props> = ({ open, setOpen, user }: Pro
                 <FormItem>
                   <Label htmlFor="currentPassword">Current Password</Label>
                   <FormControl>
-                    <Input type="currentPassword" placeholder="Current Password" {...field} />
+                    <Input type="password" placeholder="Current Password" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -97,7 +97,7 @@ export const UpdatePasswordForm: React.FC<Props> = ({ open, setOpen, user }: Pro
                 <FormItem>
                   <Label htmlFor="newPassword">New Password</Label>
                   <FormControl>
-                    <Input type="newPassword" placeholder="New Password" {...field} />
+                    <Input type="password" placeholder="New Password" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
