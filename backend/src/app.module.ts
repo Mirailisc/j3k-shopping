@@ -24,7 +24,6 @@ import { FeedModule } from './feed/feed.module'
     OrderModule,
     ReviewModule,
     FeedModule,
-    ReviewModule,
   ],
   controllers: [AppController],
   providers: [AppService],
