@@ -26,19 +26,9 @@ export class ReviewController {
     return await this.reviewService.getAllReview()
   }
 
-  @Get(":id")
-  async getReviewById(@Param('id') id: string){
-    return await this.reviewService.getReviewById(id)
-  }
-
   @Get('product/:id')
   async getReviewByProductId(@Param('id') productId: string) {
     return await this.reviewService.getReviewInfo(productId)
-  }
-
-  @Get("buyer/:id")
-  async getReviewByUserId(@Param('id') id : string){
-    return await this.reviewService.getReviewByUserId(id)
   }
 
   @Post('product')

@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common'
+import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common'
 import { PrismaService } from 'src/prisma/prisma.service'
 import { Review } from './entities/review.entity'
 import { CreateReviewDto } from './dto/create-review.dto';
@@ -19,9 +19,7 @@ export class ReviewService {
       SELECT *
       FROM Review
     `
-    return result.map((review) => ({
-      ...review,
-    }))
+    return result
   }
 
   async getReviewById(id: string){
@@ -29,24 +27,10 @@ export class ReviewService {
       `SELECT * FROM REVIEW WHERE id = ${id}`
     
     if(!review || review.length === 0){
-      throw new Error('Review not found')
+      throw new NotFoundException ('Review not found')
     }
 
     return review[0]
-  }
-
-  async getReviewByProductId(id: string){
-    const review = await this.prisma.$queryRaw<Review[]>
-      `SELECT * FROM REVIEW WHERE prudctId = ${id}`
-
-    return review
-  }
-
-  async getReviewByUserId(id: string){
-    const review = await this.prisma.$queryRaw<Review[]>
-      `SELECT * FROM REVIEW WHERE userId = ${id}`
-
-    return review
   }
 
   async getReviewInfo(productId: string) {
