@@ -21,18 +21,17 @@ type Props = {
 }
 
 const formSchema = z.object({
-  rating: z.string().refine((val) => Number.isInteger(Number(val)), 'Rating must be an integer'),
+  rating: z.number().min(1).max(5).default(1),
   comment: z.string().min(1, 'Comment is required'),
   productId: z.string().min(1, 'Product ID is required'),
   userId: z.string().min(1, 'User ID is required'),
 })
 
 export const CreateReviewForm: React.FC<Props> = ({ open, setOpen, data, setData }: Props) => {
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      rating: '',
+      rating: 1,
       comment: '',
       productId: '',
       userId: '',
@@ -40,14 +39,8 @@ export const CreateReviewForm: React.FC<Props> = ({ open, setOpen, data, setData
   })
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const formData = new FormData()
-    formData.append('rating', values.rating)
-    formData.append('comment', values.comment)
-    formData.append('productId', values.productId)
-    formData.append('userId', values.userId)
-
     try {
-      const res = await axiosInstance.post('/review/admin', formData)
+      const res = await axiosInstance.post('/review/admin', values)
       setData([...data, res.data])
       toast.success('Review created!')
       setOpen(false)
@@ -74,10 +67,17 @@ export const CreateReviewForm: React.FC<Props> = ({ open, setOpen, data, setData
                 <FormItem>
                   <Label htmlFor="rating">Rating</Label>
                   <FormControl>
-                  <select {...field} className="border rounded-lg px-3 py-2 text-sm focus:bg-black text-gray-200 focus:outline-none block w-full">
+                    <select
+                      {...field}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
+                      className="border rounded-lg px-3 py-2 text-sm focus:bg-black text-gray-200 focus:outline-none block w-full"
+                    >
                       {[1, 2, 3, 4, 5].map((num) => (
-                    <option key={num} value={num} className="text-black" >{num}</option>))}
-                  </select> 
+                        <option key={num} value={num} className="text-black">
+                          {num}
+                        </option>
+                      ))}
+                    </select>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -105,7 +105,7 @@ export const CreateReviewForm: React.FC<Props> = ({ open, setOpen, data, setData
                 <FormItem>
                   <Label htmlFor="productId">Product ID</Label>
                   <FormControl>
-                    <Input {...field} placeholder="Product ID"/>
+                    <Input {...field} placeholder="Product ID" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

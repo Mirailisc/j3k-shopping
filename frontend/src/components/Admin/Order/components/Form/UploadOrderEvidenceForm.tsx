@@ -44,7 +44,7 @@ export const UploadOrderEvidenceForm: React.FC<Props> = ({ open, setOpen, order,
       })
       setPreviewImg(order.evidence)
     }
-  }, [order])
+  }, [form, order])
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     const formData = new FormData();
