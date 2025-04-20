@@ -7,9 +7,11 @@ import ProfileSocial from '@/components/User/Profile/Social'
 import Gravatar from 'react-gravatar'
 import { useParams } from 'react-router-dom'
 import Loading from '../Loading'
+import NotFound from '../NotFound'
 
 const UserInfo: React.FC = () => {
   const [info, setInfo] = useState<ProfileType | null>(null)
+  const [loading, setLoading] = useState<boolean>(true)
 
   const { username } = useParams()
 
@@ -24,6 +26,8 @@ const UserInfo: React.FC = () => {
       } else {
         toast.error('An unexpected error occurred')
       }
+    } finally {
+      setLoading(false)
     }
   }, [username])
 
@@ -31,9 +35,8 @@ const UserInfo: React.FC = () => {
     getUserInfo()
   }, [getUserInfo])
 
-  if (!info) {
-    return <Loading />
-  }
+  if (loading) return <Loading />
+  else if (!info) return <NotFound />
 
   return (
     <div className="p-10">

@@ -69,9 +69,10 @@ export class OrderService {
 
   async getOrderBySeller(id: string) {
     const orders = await this.prisma.$queryRaw<Order[]>`
-      SELECT * FROM \`Order\` 
-      LEFT JOIN Product ON \`Order\`.productId = Product.id 
-      WHERE Product.userId = ${id}
+      SELECT O.id, O.status, O.total, U.username, O.productId, O.amount, O.evidence, O.createdAt FROM \`Order\` O
+      LEFT JOIN Product P ON O.productId = P.id 
+      LEFT JOIN User U ON O.userId = U.id
+      WHERE P.userId = ${id}
     `
     return this.transformOrders(orders)
   }
@@ -96,6 +97,12 @@ export class OrderService {
       VALUES (${uuid}, ${OrderStatus.PENDING}, ${total}, ${createOrderDto.userId}, ${createOrderDto.productId}, ${createOrderDto.amount})
     `
 
+    await this.prisma.$executeRawUnsafe(`
+      UPDATE Product
+      SET quantity = quantity + ${-createOrderDto.amount}
+      WHERE id = '${createOrderDto.productId}'
+    `)
+
     return await this.getOrderById(uuid)
   }
 
@@ -118,12 +125,22 @@ export class OrderService {
       createOrderDto.productId,
     )
 
+    if (product.userId === me) {
+      throw new BadRequestException('You cannot order your own product')
+    }
+
     const total = this.calculateTotal(product, createOrderDto.amount)
 
     await this.prisma.$executeRaw<Order>`
       INSERT INTO \`Order\` (id, status, total, userId, productId, amount)
       VALUES (${uuid}, ${OrderStatus.PENDING}, ${total}, ${me}, ${createOrderDto.productId}, ${createOrderDto.amount})
     `
+
+    await this.prisma.$executeRawUnsafe(`
+      UPDATE Product
+      SET quantity = quantity + ${-createOrderDto.amount}
+      WHERE id = '${createOrderDto.productId}'
+    `)
 
     return await this.getOrderById(uuid)
   }
@@ -146,6 +163,36 @@ export class OrderService {
         break
 
       case OrderStatus.PAID:
+        if (!order.evidence) {
+          throw new BadRequestException('Evidence is required')
+        }
+        break
+
+      case OrderStatus.DELIVERING:
+        if (!order.evidence) {
+          throw new BadRequestException('Evidence is required')
+        }
+        break
+
+      case OrderStatus.SHIPPED:
+        if (!order.evidence) {
+          throw new BadRequestException('Evidence is required')
+        }
+        break
+
+      case OrderStatus.COMPLETED:
+        if (!order.evidence) {
+          throw new BadRequestException('Evidence is required')
+        }
+        break
+
+      case OrderStatus.REFUNDING:
+        if (!order.evidence) {
+          throw new BadRequestException('Evidence is required')
+        }
+        break
+
+      case OrderStatus.REFUNDED:
         if (!order.evidence) {
           throw new BadRequestException('Evidence is required')
         }

@@ -12,7 +12,6 @@ import ReviewForm from './ReviewForm'
 import { axiosInstance } from '@/lib/axios'
 import { toast } from 'sonner'
 import { isAxiosError } from 'axios'
-import Loading from '@/pages/Loading'
 
 type Props = {
   productId: string
@@ -20,7 +19,7 @@ type Props = {
 }
 
 const Reviews: React.FC<Props> = ({ productId, productName }: Props) => {
-  const [reviews, setReviews] = useState<ReviewDisplay[] | null>(null)
+  const [reviews, setReviews] = useState<ReviewDisplay[]>([])
   const [sortOption, setSortOption] = useState('newest')
   const [expandedReviews, setExpandedReviews] = useState<string[]>([])
   const [showReviewForm, setShowReviewForm] = useState(false)
@@ -42,10 +41,6 @@ const Reviews: React.FC<Props> = ({ productId, productName }: Props) => {
   useEffect(() => {
     getReviews()
   }, [getReviews])
-
-  if (!reviews) {
-    return <Loading />
-  }
 
   const averageRating = reviews.reduce((total, review) => total + review.rating, 0) / reviews.length || 0
   const roundedRating = Math.round(averageRating * 10) / 10

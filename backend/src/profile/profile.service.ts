@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, NotFoundException } from '@nestjs/common'
 import { PrismaService } from 'src/prisma/prisma.service'
 import { Profile } from './entities/profile.entity'
 
@@ -29,7 +29,7 @@ export class ProfileService {
   }
 
   async getProfileByUsername(username: string) {
-    const result = await this.prismaService.$queryRaw`
+    const result = await this.prismaService.$queryRaw<Profile[]>`
     SELECT 
         User.username, 
         User.firstName, 
@@ -47,6 +47,11 @@ export class ProfileService {
     FROM User 
     LEFT JOIN Social ON Social.userId = User.id
     WHERE User.username = ${username}`
+
+    if (result.length === 0) {
+      throw new NotFoundException('User not found')
+    }
+
     return result[0]
   }
 }
