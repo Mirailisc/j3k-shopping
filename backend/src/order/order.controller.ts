@@ -29,16 +29,16 @@ export class OrderController {
     return await this.orderService.getAllOrders()
   }
 
-  @Get('buyer/:id')
+  @Get('buyer')
   @UseGuards(AuthGuard('jwt'))
-  async getOrderByBuyer(@Param('id') id: string) {
-    return await this.orderService.getOrderByBuyer(id)
+  async getOrderByBuyer(@Request() req) {
+    return await this.orderService.getOrderByBuyer(req.user.userId)
   }
 
-  @Get('seller/:id')
+  @Get('seller')
   @UseGuards(AuthGuard('jwt'))
-  async getOrderBySeller(@Param('id') id: string) {
-    return await this.orderService.getOrderBySeller(id)
+  async getOrderBySeller(@Request() req) {
+    return await this.orderService.getOrderBySeller(req.user.userId)
   }
 
   @Post('admin')

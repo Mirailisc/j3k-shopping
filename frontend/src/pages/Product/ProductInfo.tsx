@@ -7,9 +7,11 @@ import { toast } from 'sonner'
 import { axiosInstance } from '@/lib/axios'
 import { ProductDisplay } from '@/types/product'
 import { isAxiosError } from 'axios'
+import NotFound from '../NotFound'
 
 const ProductInfo: React.FC = () => {
   const [info, setInfo] = useState<ProductDisplay | null>(null)
+  const [loading, setLoading] = useState<boolean>(true)
   const { productId } = useParams()
 
   const getProduct = useCallback(async () => {
@@ -23,6 +25,8 @@ const ProductInfo: React.FC = () => {
       } else {
         toast.error('An unexpected error occurred')
       }
+    } finally {
+      setLoading(false)
     }
   }, [productId])
 
@@ -30,9 +34,8 @@ const ProductInfo: React.FC = () => {
     getProduct()
   }, [getProduct])
 
-  if (!info) {
-    return <Loading />
-  }
+  if (loading) return <Loading />
+  else if (!info) return <NotFound />
 
   return (
     <div className="mt-[100px] container mx-auto px-4 py-8">

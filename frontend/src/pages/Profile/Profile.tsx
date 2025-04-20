@@ -11,9 +11,11 @@ import ProfileSocial from '@/components/User/Profile/Social'
 import ProfileSocialEditForm from '@/components/User/Profile/SocialEditForm'
 import Gravatar from 'react-gravatar'
 import Loading from '../Loading'
+import NotFound from '../NotFound'
 
 const Profile: React.FC = () => {
   const [info, setInfo] = useState<ProfileType | null>(null)
+  const [loading, setLoading] = useState<boolean>(true)
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const { user } = useSelector((state: RootState) => state.auth)
 
@@ -28,6 +30,8 @@ const Profile: React.FC = () => {
       } else {
         toast.error('An unexpected error occurred')
       }
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -37,9 +41,8 @@ const Profile: React.FC = () => {
     }
   }, [user])
 
-  if (!info) {
-    return <Loading />
-  }
+  if (loading) return <Loading />
+  else if (!info) return <NotFound />
 
   return (
     <div className="p-10">

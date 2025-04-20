@@ -1,12 +1,12 @@
-enum OrderStatus {
+export enum OrderStatus {
   Pending,
   Paid,
-  Shipped,
   Delivering,
+  Shipped,
   Completed,
-  Cancelled,
-  Refunded,
   Refunding,
+  Refunded,
+  Cancelled,
 }
 
 export type Order = {
@@ -18,4 +18,12 @@ export type Order = {
     evidence: string
     productId: string
     amount: number
+}
+
+export interface OrderWithUsername extends Omit<Order, 'userId'> {
+  username: string
+}
+
+export function toOrderStatus(status: string): OrderStatus {
+  return OrderStatus[status as keyof typeof OrderStatus]
 }
