@@ -16,6 +16,7 @@ import {
   SIGN_UP_PATH,
   USER_INFO_PATH,
   USER_MANAGE_PATH,
+  SELLER_PRODUCT_REVIEWS_PATH,
 } from '@/constants/routes'
 import SignIn from './pages/Auth/SignIn'
 import SignUp from './pages/Auth/SignUp'
@@ -45,6 +46,7 @@ import { useSelector } from 'react-redux'
 import UserInfo from './pages/Profile/UserInfo'
 import Profile from './pages/Profile/Profile'
 import ProductInfo from './pages/Product/ProductInfo'
+import ProductReviews from './pages/Seller/ProductReviews'
 
 const Home = React.lazy(() => import('@/pages/Home'))
 
@@ -91,6 +93,7 @@ function App() {
               <Route element={<Protected />}>
                 <Route path={PROFILE_PATH} element={<Profile />} />
                 <Route path={SELLER_DASHBOARD_PATH} element={<SellerDashboard />} />
+                <Route path="/seller/inventory/:productId/reviews" element={<ProductReviews />} />
               </Route>
 
               <Route element={<AdminProtected />}>

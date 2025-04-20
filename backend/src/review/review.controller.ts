@@ -25,11 +25,28 @@ export class ReviewController {
   async getAllReview() {
     return await this.reviewService.getAllReview()
   }
+  
+  //Added Here
+  // Incase of We want only Seller to be able to see all their Product Reviews PS:I think everyone should be able to see.
+  /*@Get('seller/:productId')
+  @UseGuards(AuthGuard('jwt'))
+  async getReviewsForSellerProduct(
+    @Param('productId') productId: string,
+    @Request() req,
+    )   {
+      return await this.reviewService.getReviewsForSellerProduct(productId, req.user.userId)
+    }*/
 
-  @Get('product/:id')
-  async getReviewByProductId(@Param('id') productId: string) {
-    return await this.reviewService.getReviewInfo(productId)
-  }
+  @Get('seller/:productId')
+  async getReviewsForSellerProduct(@Param('productId') productId: string) {
+  return this.reviewService.getReviewsForSellerProduct(productId)
+}
+  @Get('stats/:productId')
+  async getRatingStats(@Param('productId') productId: string) {
+  return this.reviewService.getRatingStats(productId)
+}
+    //Ended Add
+
 
   @Post('product')
   @UseGuards(AuthGuard('jwt'))
