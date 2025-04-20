@@ -23,8 +23,8 @@ import { useState } from 'react'
 
 type Props = {
   isAdmin: boolean | undefined
-  handleEditProduct: (user: Product) => void
-  handleDeleteProduct: (user?: Product) => void
+  handleEditProduct: (product: Product) => void
+  handleDeleteProduct: (product?: Product) => void
 }
 
 export const TableColumns = ({ isAdmin, handleEditProduct, handleDeleteProduct }: Props) => {

@@ -11,6 +11,7 @@ import { Order } from './entities/order.entity'
 import { OrderStatus } from './enum/order.enum'
 import { ProductService } from 'src/product/product.service'
 import { Product } from 'src/product/entities/product.entity'
+import { Contact } from 'src/contact/entities/contact.entity'
 
 const IMPORT_TAX_PERCENTAGE = 0.37
 
@@ -68,10 +69,21 @@ export class OrderService {
   }
 
   async getOrderBySeller(id: string) {
-    const orders = await this.prisma.$queryRaw<Order[]>`
-      SELECT O.id, O.status, O.total, U.username, O.productId, O.amount, O.evidence, O.createdAt FROM \`Order\` O
+    const orders = await this.prisma.$queryRaw<Order[] & Partial<Contact>>`
+      SELECT O.id, O.status, O.total, U.username, O.productId, U.email, O.amount, O.evidence, O.createdAt,
+      JSON_OBJECT(
+        'citizenId', C.citizenId,
+        'phone', C.phone,
+        'address', C.address,
+        'city', C.city,
+        'province', C.province,
+        'zipCode', C.zipCode,
+        'country', C.country
+      ) AS contact
+      FROM \`Order\` O
       LEFT JOIN Product P ON O.productId = P.id 
       LEFT JOIN User U ON O.userId = U.id
+      LEFT JOIN Contact C ON U.id = C.userId
       WHERE P.userId = ${id}
     `
     return this.transformOrders(orders)
@@ -213,5 +225,20 @@ export class OrderService {
     `)
 
     return await this.getOrderById(id)
+  }
+
+  async deleteOrder(id: string) {
+    const order = await this.getOrderById(id)
+
+    await this.prisma.$executeRaw`
+      UPDATE Product
+      SET quantity = quantity + ${order.amount}
+      WHERE id = ${order.productId}
+    `
+
+    await this.prisma.$executeRaw`
+      DELETE FROM \`Order\` WHERE id = ${id}
+    `
+    return order
   }
 }

@@ -59,7 +59,7 @@ export function ProductDataTable({ data, setData, fetchProducts }: Props) {
   }
 
   const handleDeleteProduct = (product?: Product) => {
-    if (user) {
+    if (product) {
       setDeleteTarget({ single: product })
     } else {
       setDeleteTarget({ multiple: true })
@@ -82,27 +82,27 @@ export function ProductDataTable({ data, setData, fetchProducts }: Props) {
       }
     } else if (deleteTarget?.multiple) {
       const selectedRows = table.getSelectedRowModel().rows
-      const selectedUsers = selectedRows.map((row) => row.original)
-      const selectedIds = selectedUsers.map((product) => product.id)
+      const selectedProducts = selectedRows.map((row) => row.original)
+      const selectedIds = selectedProducts.map((product) => product.id)
 
-      const failedUsers: string[] = []
+      const failedProducts: string[] = []
 
       await Promise.all(
-        selectedUsers.map(async (product) => {
+        selectedProducts.map(async (product) => {
           try {
             await axiosInstance.delete(`/user/${product.id}`)
           } catch {
-            failedUsers.push(product.id)
+            failedProducts.push(product.id)
           }
         }),
       )
 
-      const successfullyDeleted = selectedUsers.length - failedUsers.length
+      const successfullyDeleted = selectedProducts.length - failedProducts.length
       if (successfullyDeleted > 0) {
         toast.success(`${successfullyDeleted} product(s) have been deleted`)
       }
-      if (failedUsers.length > 0) {
-        toast.error(`Failed to delete: ${failedUsers.join(', ')}`)
+      if (failedProducts.length > 0) {
+        toast.error(`Failed to delete: ${failedProducts.join(', ')}`)
       }
 
       // Update frontend data

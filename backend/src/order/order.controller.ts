@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -92,5 +93,11 @@ export class OrderController {
       id,
       updateOrderStatusDto.status,
     )
+  }
+
+  @Delete(':id')
+  @UseGuards(AuthGuard('jwt'), SuperAdminGuard)
+  async deleteOrder(@Param('id') id: string) {
+    return await this.orderService.deleteOrder(id)
   }
 }

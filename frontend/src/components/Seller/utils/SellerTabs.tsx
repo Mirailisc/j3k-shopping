@@ -8,24 +8,24 @@ const SellerTabs: React.FC = () => {
   const location = useLocation()
 
   return (
-    <div className="flex my-10 bg-zinc-900 border border-white/10 rounded-md p-4 flex-row gap-2 items-center">
-      <Link to={SELLER_DASHBOARD_PATH}>
-        <Button variant={location.pathname === SELLER_DASHBOARD_PATH ? 'default' : 'outline'}>
+    <div className="flex my-10 bg-zinc-900 border border-white/10 rounded-md p-4 flex-col md:flex-row gap-2 items-center">
+      <Link to={SELLER_DASHBOARD_PATH} className='w-full md:w-auto'>
+        <Button variant={location.pathname === SELLER_DASHBOARD_PATH ? 'default' : 'outline'} className='w-full md:w-auto'>
           <CircleGauge size={16} />
           Dashboard
         </Button>
       </Link>
-      <Link to={SELLER_ORDER_PATH}>
-        <Button variant={location.pathname === SELLER_ORDER_PATH ? 'default' : 'outline'}>
+      <Link to={SELLER_ORDER_PATH} className='w-full md:w-auto'>
+        <Button variant={location.pathname === SELLER_ORDER_PATH ? 'default' : 'outline'} className='w-full md:w-auto'>
           <Package size={16} />
           Orders
         </Button>
       </Link>
-      <Button variant="outline">
+      <Button variant="outline" className='w-full md:w-auto'>
         <ShoppingBag size={16} />
         Products
       </Button>
-      <Button variant="outline">
+      <Button variant="outline" className='w-full md:w-auto'>
         <ChartArea size={16} />
         Reports
       </Button>
