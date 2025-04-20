@@ -123,7 +123,7 @@ export const TableColumns = ({
         return (
           <Dialog open={openImage === orderId} onOpenChange={(open) => !open && handleCloseDialog()}>
             <DialogTrigger asChild>
-              <Button variant="ghost" className="text-white/50" onClick={handleOpenDialog}>
+              <Button variant="ghost" className="text-black/50 dark:text-white/50" onClick={handleOpenDialog}>
                 Click to show image
               </Button>
             </DialogTrigger>

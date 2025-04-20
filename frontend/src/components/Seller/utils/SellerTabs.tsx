@@ -8,7 +8,7 @@ const SellerTabs: React.FC = () => {
   const location = useLocation()
 
   return (
-    <div className="flex my-10 bg-zinc-900 border border-white/10 rounded-md p-4 flex-col md:flex-row gap-2 items-center">
+    <div className="flex my-10 bg-zinc-100 dark:bg-zinc-900 border border-black/20 dark:border-white/10 rounded-md p-4 flex-col md:flex-row gap-2 items-center">
       <Link to={SELLER_DASHBOARD_PATH} className='w-full md:w-auto'>
         <Button variant={location.pathname === SELLER_DASHBOARD_PATH ? 'default' : 'outline'} className='w-full md:w-auto'>
           <CircleGauge size={16} />

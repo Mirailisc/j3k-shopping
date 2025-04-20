@@ -1,4 +1,5 @@
 import { IconInput } from '@/components/ui/icon-input'
+import { PRODUCT_INFO_PATH } from '@/constants/routes'
 import { axiosInstance } from '@/lib/axios'
 import { ProductFeed } from '@/types/feed'
 import { isAxiosError } from 'axios'
@@ -82,7 +83,7 @@ const ProductSearchInput: React.FC = () => {
             }
           }
         }}
-        className="bg-zinc-800 text-white placeholder:text-zinc-400"
+        className="text-black dark:text-white dark:placeholder:text-zinc-400"
       />
       {searchResult.length > 0 && (
         <div className="absolute mt-1 w-full bg-zinc-800 text-white rounded-md shadow-lg border border-zinc-700 max-h-60 overflow-y-auto z-50">
@@ -91,9 +92,9 @@ const ProductSearchInput: React.FC = () => {
             return (
               <Link
                 key={product.id}
-                to={`/product/${product.id}`}
+                to={PRODUCT_INFO_PATH.replace(':productId', product.id)}
                 className={`flex items-center gap-3 px-4 py-2 transition-colors ${
-                  isSelected ? 'bg-zinc-700' : 'hover:bg-zinc-700'
+                  isSelected ? 'dark:bg-zinc-700' : 'hover:bg-zinc-700'
                 }`}
                 onMouseEnter={() => setSelectedIndex(index)}
               >

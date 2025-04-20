@@ -52,7 +52,7 @@ const Profile: React.FC = () => {
           <h3 className="font-bold text-2xl mt-4">{info.firstName + ' ' + info.lastName}</h3>
           <div className="text-zinc-400">{info.username}</div>
         </div>
-        <div className="bg-zinc-900 rounded-md p-4 border border-white/10">
+        <div className="bg-zinc-100 border-black/20 dark:bg-zinc-900 rounded-md p-4 border dark:border-white/10">
           <div className="flex justify-between">
             <h3 className="font-bold text-xl mb-4">Social</h3>
             {!isEditing && (

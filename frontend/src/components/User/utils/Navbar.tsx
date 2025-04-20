@@ -11,20 +11,20 @@ const Navbar: React.FC = () => {
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated)
 
   return (
-    <div className="fixed top-[10px] left-[10px] right-[10px] border border-white/10 z-40 bg-zinc-900 backdrop-blur-lg rounded-sm shadow-md mx-0">
+    <div className="fixed top-[10px] left-[10px] right-[10px] border border-black/20 dark:border-white/10 z-40 bg-zinc-100 dark:bg-zinc-900 backdrop-blur-lg rounded-sm shadow-md mx-0">
       <div className="flex flex-row items-center justify-between px-6 py-3">
         <div className="flex gap-4 items-center">
           <Link to={BASE_PATH}>
-            <h1 className="text-2xl font-bold">J3K</h1>
+            <h1 className="text-2xl font-bold">TUNG9</h1>
           </Link>
           <div className="gap-4 items-center hidden md:flex">
-            <Link to={BASE_PATH} className="flex gap-1 items-center text-sm text-zinc-500 hover:text-zinc-200">
+            <Link to={BASE_PATH} className="flex gap-1 items-center text-sm text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-200">
               <HomeIcon size={16} /> Home
             </Link>
-            <Link to={PRODUCT_PATH} className="flex gap-1 items-center text-sm text-zinc-500 hover:text-zinc-200">
+            <Link to={PRODUCT_PATH} className="flex gap-1 items-center text-sm text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-200">
               <ShoppingBag size={16} /> Products
             </Link>
-            <a href="https://youtu.be/OFhMGhvW_5I" className="flex gap-1 items-center text-sm text-zinc-500 hover:text-zinc-200">
+            <a href="https://youtu.be/OFhMGhvW_5I" className="flex gap-1 items-center text-sm text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-200">
               Free Robux
             </a>
           </div>

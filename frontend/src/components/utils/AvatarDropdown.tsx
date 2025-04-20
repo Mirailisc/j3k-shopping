@@ -16,6 +16,7 @@ import { useCookies } from 'react-cookie'
 import Gravatar from 'react-gravatar'
 import { useSelector } from 'react-redux'
 import { Link, useNavigate } from 'react-router-dom'
+import ThemeToggleButton from './ThemeToggleButton'
 
 const AvatarDropdown: React.FC = () => {
   const dispatch = useAppDispatch()
@@ -103,6 +104,10 @@ const AvatarDropdown: React.FC = () => {
         <a href="https://youtu.be/dQw4w9WgXcQ">
           <DropdownMenuItem>Support</DropdownMenuItem>
         </a>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem>
+          <ThemeToggleButton />
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => handleSignOut()}>
           <LucideLogOut /> Log out
