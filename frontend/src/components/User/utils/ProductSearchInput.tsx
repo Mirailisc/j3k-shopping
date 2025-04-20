@@ -79,7 +79,7 @@ const ProductSearchInput: React.FC = () => {
             e.preventDefault()
             const selectedProduct = searchResult[selectedIndex]
             if (selectedProduct) {
-              window.location.href = `/product/${selectedProduct.id}`
+              window.location.href = PRODUCT_INFO_PATH.replace(':productId', selectedProduct.id)
             }
           }
         }}
