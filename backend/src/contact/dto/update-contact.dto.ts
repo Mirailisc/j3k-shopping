@@ -2,12 +2,6 @@ import { ApiProperty } from '@nestjs/swagger'
 
 export class UpdateContactDto {
   @ApiProperty({
-    example: '12345678910111213',
-    nullable: true,
-  })
-  citizenId?: string
-
-  @ApiProperty({
     example: '0987654321',
     nullable: true,
   })

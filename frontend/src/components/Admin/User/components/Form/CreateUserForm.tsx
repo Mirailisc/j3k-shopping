@@ -30,14 +30,19 @@ const formSchema = z
     lastName: z.string().optional(),
     admin: z.boolean(),
     superAdmin: z.boolean(),
-    password: z.string().min(1, 'Password is required'),
+    password: z
+      .string()
+      .min(8, 'Password must be at least 8 characters')
+      .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
+      .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
+      .regex(/[0-9]/, 'Password must contain at least one number')
+      .regex(/[\W_]/, 'Password must contain at least one special character (e.g., !@#$%^&*)'),
     confirmPassword: z.string().min(1, 'Confirm Password is required'),
     line: z.string().optional(),
     facebook: z.string().optional(),
     instagram: z.string().optional(),
     tiktok: z.string().optional(),
     website: z.string().optional(),
-    citizenId: z.string().optional(),
     phone: z.string().optional(),
     address: z.string().optional(),
     city: z.string().optional(),
@@ -67,7 +72,6 @@ export const CreateUserForm: React.FC<Props> = ({ open, setOpen, data, setData }
       instagram: '',
       tiktok: '',
       website: '',
-      citizenId: '',
       phone: '',
       address: '',
       city: '',
@@ -86,13 +90,12 @@ export const CreateUserForm: React.FC<Props> = ({ open, setOpen, data, setData }
       lastName: values.lastName || '',
       isAdmin: values.admin,
       isSuperAdmin: values.superAdmin,
-      password: '********',
+      password: values.password,
       line: values.line || '',
       facebook: values.facebook || '',
       instagram: values.instagram || '',
       tiktok: values.tiktok || '',
       website: values.website || '',
-      citizenId: values.citizenId || '',
       phone: values.phone || '',
       address: values.address || '',
       city: values.city || '',
@@ -308,19 +311,6 @@ export const CreateUserForm: React.FC<Props> = ({ open, setOpen, data, setData }
             <h2 className="text-xl font-bold my-4">Contact</h2>
 
             <div className="flex flex-col md:grid grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="citizenId"
-                render={({ field }) => (
-                  <FormItem>
-                    <Label htmlFor="citizenId">Citizen ID</Label>
-                    <FormControl>
-                      <Input placeholder="Citizen ID" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
               <FormField
                 control={form.control}
                 name="phone"

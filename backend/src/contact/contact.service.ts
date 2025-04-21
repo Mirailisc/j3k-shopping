@@ -19,7 +19,6 @@ export class ContactService {
     }
 
     return {
-      citizenId: contact[0].citizenId,
       phone: contact[0].phone,
       address: contact[0].address,
       city: contact[0].city,
@@ -33,7 +32,6 @@ export class ContactService {
     return await this.prisma.$executeRaw`
       UPDATE Contact
       SET
-      citizenId = ${contact.citizenId},
       phone = ${contact.phone},
       address = ${contact.address},
       city = ${contact.city},

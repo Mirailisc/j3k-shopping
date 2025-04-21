@@ -15,16 +15,30 @@ const Navbar: React.FC = () => {
       <div className="flex flex-row items-center justify-between px-6 py-3">
         <div className="flex gap-4 items-center">
           <Link to={BASE_PATH}>
-            <h1 className="text-2xl font-bold">TUNG9</h1>
+            <div className="flex items-center space-x-2">
+              <div className="w-8 h-8 bg-emerald-600 rounded-md flex items-center justify-center">
+                <span className="text-white font-bold">T</span>
+              </div>
+              <span className="text-xl font-bold">TUNG9</span>
+            </div>
           </Link>
           <div className="gap-4 items-center hidden md:flex">
-            <Link to={BASE_PATH} className="flex gap-1 items-center text-sm text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-200">
+            <Link
+              to={BASE_PATH}
+              className="flex gap-1 items-center text-sm text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-200"
+            >
               <HomeIcon size={16} /> Home
             </Link>
-            <Link to={PRODUCT_PATH} className="flex gap-1 items-center text-sm text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-200">
+            <Link
+              to={PRODUCT_PATH}
+              className="flex gap-1 items-center text-sm text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-200"
+            >
               <ShoppingBag size={16} /> Products
             </Link>
-            <a href="https://youtu.be/OFhMGhvW_5I" className="flex gap-1 items-center text-sm text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-200">
+            <a
+              href="https://youtu.be/OFhMGhvW_5I"
+              className="flex gap-1 items-center text-sm text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-200"
+            >
               Free Robux
             </a>
           </div>

@@ -96,7 +96,7 @@ const AvatarDropdown: React.FC = () => {
           </DropdownMenuItem>
         </Link>
         <DropdownMenuSeparator />
-        <a href="https://github.com/Mirailisc/j3k-shopping-fe" target="_blank" rel="noreferrer">
+        <a href="https://github.com/Mirailisc/j3k-shopping" target="_blank" rel="noreferrer">
           <DropdownMenuItem>
             <Github /> GitHub
           </DropdownMenuItem>

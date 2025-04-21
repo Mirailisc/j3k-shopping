@@ -3,11 +3,13 @@ import Stats from '@/components/Home/Stats'
 import { axiosInstance } from '@/lib/axios'
 import { ProductFeed } from '@/types/feed'
 import { isAxiosError } from 'axios'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { toast } from 'sonner'
+import { ProductListSkeleton } from '@/components/Product/ProductListSkeleton'
 
 const Home: React.FC = () => {
-  const [products, setProducts] = React.useState<ProductFeed[]>([])
+  const [products, setProducts] = useState<ProductFeed[]>([])
+  const [loading, setLoading] = useState<boolean>(true)
 
   const getProducts = async () => {
     try {
@@ -20,6 +22,8 @@ const Home: React.FC = () => {
       } else {
         toast.error('An unexpected error occurred')
       }
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -27,10 +31,19 @@ const Home: React.FC = () => {
     getProducts()
   }, [])
 
+  if (loading)
+    return (
+      <div className="mt-[100px] px-4">
+        <Stats />
+        <h2 className="text-3xl font-bold my-10">Recently</h2>
+        <ProductListSkeleton count={12} />
+      </div>
+    )
+
   return (
     <div className="mt-[100px] px-4">
       <Stats />
-      <h2 className="text-3xl font-bold my-10">Recently Added</h2>
+      <h2 className="text-3xl font-bold my-10">Recently</h2>
       <ProductList products={products} />
     </div>
   )

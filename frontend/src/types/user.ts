@@ -18,7 +18,6 @@ export type Social = {
 }
 
 export type Contact = {
-  citizenId: string
   phone: string
   address: string
   city: string

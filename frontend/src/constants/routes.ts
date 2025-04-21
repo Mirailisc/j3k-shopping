@@ -3,6 +3,10 @@ export const BASE_PATH = '/'
 export const PRODUCT_PATH = BASE_PATH + 'products'
 export const PRODUCT_INFO_PATH = PRODUCT_PATH + '/:productId'
 
+// Checkout
+export const CHECKOUT_PATH = BASE_PATH + 'checkout'
+export const ORDER_CONFIRMATION_PATH = CHECKOUT_PATH + '/order-confirmation'
+
 // Authentications
 export const SIGN_UP_PATH = BASE_PATH + 'sign-up'
 export const SIGN_IN_PATH = BASE_PATH + 'sign-in'

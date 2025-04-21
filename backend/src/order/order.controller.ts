@@ -51,7 +51,7 @@ export class OrderController {
   @Post('buyer')
   @UseGuards(AuthGuard('jwt'))
   async createOrderByBuyer(
-    @Body() createOrderDto: CreateOrderDto,
+    @Body() createOrderDto: Omit<CreateOrderDto, 'userId'>,
     @Request() req,
   ) {
     return await this.orderService.createOrderByBuyer(

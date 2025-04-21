@@ -1,5 +1,4 @@
 export class Contact {
-  citizenId: string
   email: string
   phone: string
   address: string

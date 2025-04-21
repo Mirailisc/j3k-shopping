@@ -32,7 +32,7 @@ export class UserService {
       SELECT 
       U.id, U.username, U.email, U.firstName, U.lastName, U.isAdmin, U.isSuperAdmin,
       S.line, S.facebook, S.website, S.instagram, S.tiktok,
-      C.citizenId, C.phone, C.address, C.city, C.province, C.zipCode, C.country,
+      C.phone, C.address, C.city, C.province, C.zipCode, C.country,
       U.createdAt
       FROM User U
       LEFT JOIN Social S ON U.id = S.userId
@@ -45,7 +45,7 @@ export class UserService {
       SELECT 
       U.id, U.username, U.email, U.firstName, U.lastName, U.isAdmin, U.isSuperAdmin,
       S.line, S.facebook, S.website, S.instagram, S.tiktok,
-      C.citizenId, C.phone, C.address, C.city, C.province, C.zipCode, C.country,
+      C.phone, C.address, C.city, C.province, C.zipCode, C.country,
       U.createdAt
       FROM User U
       LEFT JOIN Social S ON U.id = S.userId
@@ -112,7 +112,6 @@ export class UserService {
       instagram,
       tiktok,
       website,
-      citizenId,
       phone,
       address,
       city,
@@ -143,7 +142,6 @@ export class UserService {
     })
 
     await this.contactService.updateContact(id, {
-      citizenId,
       phone,
       address,
       city,
@@ -176,7 +174,6 @@ export class UserService {
       instagram,
       tiktok,
       website,
-      citizenId,
       phone,
       address,
       city,
@@ -220,7 +217,7 @@ export class UserService {
     await this.prisma
       .$executeRaw<Social>`INSERT INTO Social(id, userId, line, facebook, instagram, tiktok, website) VALUES (${socialUUID}, ${uuid}, ${line}, ${facebook}, ${instagram}, ${tiktok}, ${website})`
     await this.prisma
-      .$executeRaw`INSERT INTO Contact(id, citizenId, phone, address, city, province, zipCode, country, userId) VALUES (${contactUUID}, ${citizenId}, ${phone}, ${address}, ${city}, ${province}, ${zipCode}, ${country}, ${uuid})`
+      .$executeRaw`INSERT INTO Contact(id, phone, address, city, province, zipCode, country, userId) VALUES (${contactUUID}, ${phone}, ${address}, ${city}, ${province}, ${zipCode}, ${country}, ${uuid})`
 
     return await this.getFullUserById(uuid)
   }

@@ -74,11 +74,6 @@ export class CreateUserDto {
   @ApiProperty({
     nullable: true,
   })
-  citizenId: string
-
-  @ApiProperty({
-    nullable: true,
-  })
   phone: string
 
   @ApiProperty({

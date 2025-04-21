@@ -1,7 +1,6 @@
 import {
   BadRequestException,
   Injectable,
-  Logger,
   NotFoundException,
 } from '@nestjs/common'
 import { CreateOrderDto } from './dto/create-order.dto'
@@ -17,8 +16,6 @@ const IMPORT_TAX_PERCENTAGE = 0.37
 
 @Injectable()
 export class OrderService {
-  private logger: Logger = new Logger(OrderService.name)
-
   constructor(
     private readonly prisma: PrismaService,
     private readonly productService: ProductService,
@@ -46,7 +43,10 @@ export class OrderService {
   }
 
   private calculateTotal(product: Product, amount: number) {
-    return product.price * amount * (1 + IMPORT_TAX_PERCENTAGE)
+    const subtotal = product.price * amount
+    const tax = subtotal * IMPORT_TAX_PERCENTAGE
+    const total = subtotal + tax
+    return total
   }
 
   async getAllOrders() {
@@ -72,7 +72,6 @@ export class OrderService {
     const orders = await this.prisma.$queryRaw<Order[] & Partial<Contact>>`
       SELECT O.id, O.status, O.total, U.username, O.productId, U.email, O.amount, O.evidence, O.createdAt,
       JSON_OBJECT(
-        'citizenId', C.citizenId,
         'phone', C.phone,
         'address', C.address,
         'city', C.city,
@@ -129,7 +128,7 @@ export class OrderService {
   }
 
   async createOrderByBuyer(
-    createOrderDto: Omit<CreateOrderDto, 'userId' | 'status'>,
+    createOrderDto: Omit<CreateOrderDto, 'userId'>,
     me: string,
   ) {
     const uuid = randomUUID()
