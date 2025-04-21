@@ -13,7 +13,7 @@ import { Product } from 'src/product/entities/product.entity'
 import { Contact } from 'src/contact/entities/contact.entity'
 import { NotificationService } from 'src/notification/notification.service'
 
-const IMPORT_TAX_PERCENTAGE = 0.37
+export const IMPORT_TAX_PERCENTAGE = 0.37
 
 @Injectable()
 export class OrderService {
