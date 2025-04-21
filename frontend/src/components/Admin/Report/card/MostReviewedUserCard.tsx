@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { axiosInstance } from '@/lib/axios'
 import { Star } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { userReview } from './types/userReview'
+import { userReview } from '../types/userReview'
 
 
 const MostReviewedUserCard: React.FC = () => {
