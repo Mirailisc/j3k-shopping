@@ -23,7 +23,7 @@ export class ReviewService {
   async getAllReview() {
     const result = await this.prisma.$queryRaw<Review[]>`
       SELECT *
-      FROM Reviews
+      FROM Review
     `
     return result
   }
@@ -31,7 +31,7 @@ export class ReviewService {
   async getReviewById(id: string) {
     const review = await this.prisma.$queryRaw<
       Review[]
-    >`SELECT * FROM Reviews WHERE id = ${id}`
+    >`SELECT * FROM Review WHERE id = ${id}`
 
     if (!review || review.length === 0) {
       throw new NotFoundException('Review not found')
@@ -43,7 +43,7 @@ export class ReviewService {
   async getReviewInfo(productId: string) {
     const reviews = await this.prisma.$queryRaw<ReviewInfo[]>`
       SELECT R.id, R.rating, R.comment, R.userId, U.email, CONCAT(U.firstName, ' ', U.lastName) AS fullName, R.createdAt
-      FROM Reviews R
+      FROM Review R
       LEFT JOIN User U ON R.userId = U.id
       WHERE R.productId = ${productId}
     `
@@ -78,7 +78,7 @@ export class ReviewService {
     }
 
     await this.prisma.$executeRaw`
-      INSERT INTO Reviews (id, rating, comment, productId, userId)
+      INSERT INTO Review (id, rating, comment, productId, userId)
       VALUES (${uuid}, ${createReviewDto.rating}, ${createReviewDto.comment}, ${createReviewDto.productId}, ${userId})
     `
 
@@ -111,7 +111,7 @@ export class ReviewService {
     }
 
     await this.prisma.$executeRaw<Review[]>`
-      INSERT INTO Reviews (id, rating, comment, userId, productId) VALUES
+      INSERT INTO Review (id, rating, comment, userId, productId) VALUES
       (${uuid}, ${createReviewDto.rating}, ${createReviewDto.comment}, ${createReviewDto.userId}, ${createReviewDto.productId})
     `
   }
@@ -121,16 +121,16 @@ export class ReviewService {
     if (reviewInfo.userId !== me) {
       throw new BadRequestException('You are not the owner of this review')
     }
-    return await this.prisma.$executeRaw`DELETE FROM Reviews WHERE id = ${id}`
+    return await this.prisma.$executeRaw`DELETE FROM Review WHERE id = ${id}`
   }
 
   async deleteReviewByAdmin(id: string) {
-    return await this.prisma.$executeRaw`DELETE FROM Reviews WHERE id = ${id}`
+    return await this.prisma.$executeRaw`DELETE FROM Review WHERE id = ${id}`
   }
 
   async updateReviewByAdmin(id: string, review: UpdateReviewDto) {
     const existReview = await this.prisma.$queryRaw<Review[]>`
-        SELECT id FROM Reviews 
+        SELECT id FROM Review
         WHERE id = ${id}
       `
 
@@ -140,7 +140,7 @@ export class ReviewService {
 
     // old
     await this.prisma.$executeRaw<Review>`
-        UPDATE \`Reviews\`
+        UPDATE \`Review\`
         SET rating = ${review.rating}, comment = ${review.comment}
         WHERE id = ${id}
       `
