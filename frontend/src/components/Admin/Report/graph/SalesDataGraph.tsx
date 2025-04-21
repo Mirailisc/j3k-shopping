@@ -35,12 +35,11 @@ export const SalesDataGraph: React.FC = () => {
       }, [])
   
     const percentageChanges: number = useMemo(() => {
-        const lastMonthSales = Number(chartData[1]?.sales || 1)
-        const thisMonthSales = Number(chartData[0]?.sales || 0)
+        const lastMonthSales = Number(chartData[chartData.length-2]?.revenue || 1)
+        const thisMonthSales = Number(chartData[chartData.length-1]?.revenue || 0)
         return ((thisMonthSales - lastMonthSales) * 100) / lastMonthSales
       }, [chartData])
 
-    console.log(chartData)
     return (
     <div>
       <Card>
@@ -86,7 +85,7 @@ export const SalesDataGraph: React.FC = () => {
             fill="var(--color-revenue)"
             fillOpacity={0.4}
             stroke="var(--color-revenue)"
-            stackId="b" // important: different stackId so they don't stack together
+            stackId="b" 
           />
 
           <ChartLegend content={<ChartLegendContent />} />
@@ -96,7 +95,7 @@ export const SalesDataGraph: React.FC = () => {
       <CardFooter className="flex-col gap-2 text-sm">
             <div className="flex items-center gap-2 font-medium leading-none">
                 {percentageChanges >= 0 ? `Gain ` : 'loss '}
-                sales by {percentageChanges}% this month
+                revenue by {percentageChanges.toFixed(2)}% this month
                 {percentageChanges >= 0 ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />
                 }
             </div>

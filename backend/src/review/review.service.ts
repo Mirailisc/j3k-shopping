@@ -30,7 +30,7 @@ export class ReviewService {
   async getReviewById(id: string) {
     const review = await this.prisma.$queryRaw<
       Review[]
-    >`SELECT * FROM Review WHERE id = ${id}`
+    >`SELECT * FROM Reviews WHERE id = ${id}`
 
     if (!review || review.length === 0) {
       throw new NotFoundException('Review not found')
@@ -42,7 +42,7 @@ export class ReviewService {
   async getReviewInfo(productId: string) {
     const reviews = await this.prisma.$queryRaw<ReviewInfo[]>`
       SELECT R.id, R.rating, R.comment, R.userId, U.email, CONCAT(U.firstName, ' ', U.lastName) AS fullName, R.createdAt
-      FROM Review R
+      FROM Reviews R
       LEFT JOIN User U ON R.userId = U.id
       WHERE R.productId = ${productId}
     `
@@ -77,7 +77,7 @@ export class ReviewService {
     }
 
     await this.prisma.$executeRaw`
-      INSERT INTO Review (id, rating, comment, productId, userId)
+      INSERT INTO Reviews (id, rating, comment, productId, userId)
       VALUES (${uuid}, ${createReviewDto.rating}, ${createReviewDto.comment}, ${createReviewDto.productId}, ${userId})
     `
 
@@ -110,7 +110,7 @@ export class ReviewService {
     }
 
     await this.prisma.$executeRaw<Review[]>`
-      INSERT INTO Review (id, rating, comment, userId, productId) VALUES
+      INSERT INTO Reviews (id, rating, comment, userId, productId) VALUES
       (${uuid}, ${createReviewDto.rating}, ${createReviewDto.comment}, ${createReviewDto.userId}, ${createReviewDto.productId})
     `
   }
@@ -129,7 +129,7 @@ export class ReviewService {
 
   async updateReviewByAdmin(id: string, review: UpdateReviewDto) {
     const existReview = await this.prisma.$queryRaw<Review[]>`
-        SELECT id FROM Review
+        SELECT id FROM Reviews
         WHERE id = ${id}
       `
 
@@ -139,7 +139,7 @@ export class ReviewService {
 
     // old
     await this.prisma.$executeRaw<Review>`
-        UPDATE \`Review\`
+        UPDATE \`Reviews\`
         SET rating = ${review.rating}, comment = ${review.comment}
         WHERE id = ${id}
       `

@@ -155,14 +155,11 @@ export class OrderService {
       WHERE id = '${createOrderDto.productId}'
     `)
 
-<<<<<<< HEAD
-=======
     await this.notificationService.sendNotification(
       product.userId,
       `A new order has been placed for your product "${product.name}`,
     )
 
->>>>>>> 6b098fb21c065b04ad532565583393a056af8a06
     return await this.getOrderById(uuid)
   }
 

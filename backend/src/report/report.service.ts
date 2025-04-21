@@ -14,14 +14,14 @@ export class ReportService {
   async getReviewedUsers() {
     const result = await this.prisma.$queryRaw<any[]>`
       SELECT usr.id AS id, usr.username AS username, 
-             COUNT(review.rating) AS reviews_amount, 
-             AVG(review.rating) AS average_rating
+             COUNT(r.rating) AS reviews_amount, 
+             AVG(r.rating) AS average_rating
       FROM user usr
-      JOIN review
-      ON (usr.id, review.id) IN (
+      JOIN reviews r
+      ON (usr.id, r.id) IN (
         SELECT prd.userId, rev.id
         FROM product prd
-        JOIN review rev ON prd.id = rev.productId
+        JOIN reviews rev ON prd.id = rev.productId
       )
       GROUP BY usr.id
       ORDER BY reviews_amount DESC, average_rating DESC

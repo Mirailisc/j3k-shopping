@@ -132,7 +132,7 @@ export const MostSales: React.FC = () => {
             </DropdownMenuContent>
           </DropdownMenu>
       </div>
-    <CardContent className="h-[400px] overflow-auto">
+    <CardContent className="max-h-[400px] overflow-auto">
       {loading ? (
     <div className="text-center py-20">Loading chart...</div>
       ) : (
@@ -142,7 +142,6 @@ export const MostSales: React.FC = () => {
         layout="vertical"
         height={400}
         margin={{ left: 12, right: 12 }}
-
       >
         <YAxis
           dataKey="name"
