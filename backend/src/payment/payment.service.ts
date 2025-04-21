@@ -2,12 +2,9 @@
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { isDev } from 'src/config/env'
 import { IMPORT_TAX_PERCENTAGE, OrderService } from 'src/order/order.service'
-import { Product } from 'src/product/entities/product.entity'
 import { ProductService } from 'src/product/product.service'
 import { ProfileService } from 'src/profile/profile.service'
 import Stripe from 'stripe'
-
-const URL = isDev ? 'http://localhost:3000' : 'https://j3k.arius.cloud'
 
 @Injectable()
 export class PaymentService {
@@ -23,13 +20,6 @@ export class PaymentService {
     })
   }
 
-  private calculateTotal(product: Product, amount: number) {
-    const subtotal = product.price * amount
-    const tax = subtotal * IMPORT_TAX_PERCENTAGE
-    const total = subtotal + tax
-    return Math.round(total * 100)
-  }
-
   async checkout(productId: string, amount: number, me: string) {
     const product = await this.productService.getProductById(productId)
 
@@ -41,7 +31,8 @@ export class PaymentService {
       throw new BadRequestException('Not enough stock')
     }
 
-    const total = this.calculateTotal(product, amount)
+    const priceWithTax = product.price * (1 + IMPORT_TAX_PERCENTAGE)
+    const unit_amount = Math.round(priceWithTax * 100)
 
     const session = await this.stripe.checkout.sessions.create({
       payment_method_types: ['card', 'promptpay'],
@@ -54,14 +45,16 @@ export class PaymentService {
               name: product.name,
               images: ['https://github.com/Mirailisc.png'],
             },
-            unit_amount: total,
+            unit_amount,
           },
           quantity: amount,
         },
       ],
-      success_url:
-        URL + '/checkout/order-confirmation?session_id={CHECKOUT_SESSION_ID}',
-      cancel_url: URL,
+      success_url: isDev
+        ? 'http://localhost:3000'
+        : 'https://j3k.arius.cloud' +
+          '/checkout/order-confirmation?session_id={CHECKOUT_SESSION_ID}',
+      cancel_url: isDev ? 'http://localhost:3000' : 'https://j3k.arius.cloud',
       metadata: {
         productId: product.id,
         buyerId: me,

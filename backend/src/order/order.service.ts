@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-magic-numbers */
 import {
   BadRequestException,
   Injectable,
@@ -45,10 +46,9 @@ export class OrderService {
   }
 
   private calculateTotal(product: Product, amount: number) {
-    const subtotal = product.price * amount
-    const tax = subtotal * IMPORT_TAX_PERCENTAGE
-    const total = subtotal + tax
-    return total
+    const priceWithTax = product.price * (1 + IMPORT_TAX_PERCENTAGE)
+    const unit_amount = Math.round(priceWithTax * 100)
+    return unit_amount * amount
   }
 
   async getAllOrders() {
