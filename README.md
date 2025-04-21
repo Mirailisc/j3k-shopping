@@ -16,6 +16,7 @@ Create `.env` file inside backend folder
 
 ```env
 DATABASE_URL=mysql://<your_database_user>:<your_database_password>@localhost:3306/j3k
+STRIPE_API_KEY= บอก กู เจ้าของ repo
 ```
 
 ### Development
