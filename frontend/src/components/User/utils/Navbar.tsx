@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import ProductSearchInput from './ProductSearchInput'
 import { HomeIcon, LogIn, ShoppingBag } from 'lucide-react'
+import Notification from '@/components/Admin/utils/Notification'
 
 const Navbar: React.FC = () => {
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated)
@@ -46,6 +47,7 @@ const Navbar: React.FC = () => {
         <ProductSearchInput />
         <div className="flex gap-4">
           {isAuthenticated && <Button className="hidden md:block">Sell Something</Button>}
+          {isAuthenticated && <Notification />}
           {isAuthenticated ? (
             <AvatarDropdown />
           ) : (

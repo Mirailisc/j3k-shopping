@@ -11,6 +11,7 @@ import { OrderStatus } from './enum/order.enum'
 import { ProductService } from 'src/product/product.service'
 import { Product } from 'src/product/entities/product.entity'
 import { Contact } from 'src/contact/entities/contact.entity'
+import { NotificationService } from 'src/notification/notification.service'
 
 const IMPORT_TAX_PERCENTAGE = 0.37
 
@@ -19,6 +20,7 @@ export class OrderService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly productService: ProductService,
+    private readonly notificationService: NotificationService,
   ) {}
 
   private toBase64(imageData: string | Uint8Array | Buffer): string {
@@ -152,6 +154,11 @@ export class OrderService {
       SET quantity = quantity + ${-createOrderDto.amount}
       WHERE id = '${createOrderDto.productId}'
     `)
+
+    await this.notificationService.sendNotification(
+      product.userId,
+      `A new order has been placed for your product "${product.name}`,
+    )
 
     return await this.getOrderById(uuid)
   }
