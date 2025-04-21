@@ -6,6 +6,7 @@ import { ProductService } from 'src/product/product.service'
 import { UserService } from 'src/user/user.service'
 import { SocialService } from 'src/social/social.service'
 import { ContactService } from 'src/contact/contact.service'
+import { NotificationService } from 'src/notification/notification.service'
 
 @Module({
   controllers: [OrderController],
@@ -16,6 +17,7 @@ import { ContactService } from 'src/contact/contact.service'
     UserService,
     SocialService,
     ContactService,
+    NotificationService,
   ],
 })
 export class OrderModule {}
