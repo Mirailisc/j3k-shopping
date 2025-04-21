@@ -12,6 +12,7 @@ import { OrderModule } from './order/order.module'
 import { ReviewModule } from './review/review.module'
 import { FeedModule } from './feed/feed.module'
 import { SearchModule } from './search/search.module';
+import { NotificationModule } from './notification/notification.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { SearchModule } from './search/search.module';
     FeedModule,
     ReviewModule,
     SearchModule,
+    NotificationModule,
   ],
   controllers: [AppController],
   providers: [AppService],
