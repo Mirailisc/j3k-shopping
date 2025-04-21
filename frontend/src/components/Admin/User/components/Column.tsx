@@ -129,11 +129,6 @@ export const tableColumns = ({ isSuperAdmin, handleEditUser, handleChangePasswor
       cell: ({ row }) => <div>{row.getValue('tiktok')}</div>,
     },
     {
-      accessorKey: 'citizenId',
-      header: 'Citizen ID',
-      cell: ({ row }) => <div>{row.getValue('citizenId')}</div>,
-    },
-    {
       accessorKey: 'phone',
       header: 'Phone',
       cell: ({ row }) => <div>{row.getValue('phone')}</div>,

@@ -34,7 +34,6 @@ model User {
 
 model Contact {
   id        String   @id @default(uuid())
-  citizenId String?
   phone     String?
   address   String?
   city      String?

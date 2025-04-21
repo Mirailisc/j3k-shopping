@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { Button } from '@/components/ui/button'
-import { Clock, FileText, Mail, MapPin, Package, Phone, User } from 'lucide-react'
+import { Clock, Mail, MapPin, Package, Phone, User } from 'lucide-react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -12,6 +12,8 @@ import { useState } from 'react'
 import { isAxiosError } from 'axios'
 import { toast } from 'sonner'
 import { axiosInstance } from '@/lib/axios'
+import { Link } from 'react-router-dom'
+import { USER_INFO_PATH } from '@/constants/routes'
 
 interface OrderDetailsDialogProps {
   order: OrderWithUsername | null
@@ -94,7 +96,7 @@ export default function OrderDetailsDialog({ order, open, onOpenChange }: OrderD
               <User className="h-4 w-4 text-muted-foreground" />
               <div className="text-sm">
                 <span className="font-medium">Customer: </span>
-                {order.username || 'Unknown'}
+                <Link to={USER_INFO_PATH.replace(":username", order.username)} className='hover:text-emerald-500 transition-colors'>{order.username || 'Unknown'}</Link>
               </div>
             </div>
 
@@ -150,14 +152,6 @@ export default function OrderDetailsDialog({ order, open, onOpenChange }: OrderD
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="flex items-center gap-2">
-                      <FileText className="h-4 w-4 text-muted-foreground" />
-                      <div>
-                        <div className="text-xs text-muted-foreground">Citizen ID</div>
-                        <div className="font-medium">{order.contact.citizenId}</div>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-2">
                       <Mail className="h-4 w-4 text-muted-foreground" />
                       <div>
                         <div className="text-xs text-muted-foreground">Email</div>
@@ -203,8 +197,8 @@ export default function OrderDetailsDialog({ order, open, onOpenChange }: OrderD
           <label htmlFor="status" className="text-sm font-medium">
             Update Status
           </label>
-          <Select  onValueChange={setSelectedStatus} defaultValue={statusEnum.toString()}>
-            <SelectTrigger className='w-full my-2'>
+          <Select onValueChange={setSelectedStatus} defaultValue={statusEnum.toString()}>
+            <SelectTrigger className="w-full my-2">
               <SelectValue placeholder="Select new status" />
             </SelectTrigger>
             <SelectContent>
@@ -212,7 +206,9 @@ export default function OrderDetailsDialog({ order, open, onOpenChange }: OrderD
                 .filter(([, value]) => typeof value === 'number')
                 .map(([key, value]) => (
                   <SelectItem key={value} value={value.toString()}>
-                    <Badge variant="outline" className={statusColors[value as OrderStatus]}>{key}</Badge>
+                    <Badge variant="outline" className={statusColors[value as OrderStatus]}>
+                      {key}
+                    </Badge>
                   </SelectItem>
                 ))}
             </SelectContent>

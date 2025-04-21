@@ -47,7 +47,7 @@ const SignIn: React.FC = () => {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="p-6 border backdrop-blur-sm border-white/10 rounded-lg flex flex-col gap-4 w-full md:w-[400px]"
+          className="p-6 border bg-zinc-100 dark:bg-zinc-900 backdrop-blur-sm border-black/20 dark:border-white/10 rounded-lg flex flex-col gap-4 w-full md:w-[400px]"
         >
           <h1 className="text-4xl font-bold mb-8">Sign In</h1>
           <FormField
