@@ -33,7 +33,7 @@ const AverageOrderValueCard: React.FC = () => {
         data ? (
         <>
         <div className = "flex items-baseline">
-            <h2 className = "text-3xl font-bold flex-wrap">{data.price.toFixed(2)} ฿</h2>
+            <h2 className = "text-3xl font-bold flex-wrap">{data.price?.toFixed(2)} ฿</h2>
         </div>
         </>
         ) :
