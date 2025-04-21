@@ -1,9 +1,4 @@
-import {
-  Controller,
-  Get,
-  Query,
-  UseGuards,
-} from '@nestjs/common'
+import { Controller, Get, Query, UseGuards } from '@nestjs/common'
 import { ReportService } from './report.service'
 import { AdminGuard } from 'src/auth/admin.guard'
 import { AuthGuard } from '@nestjs/passport'
@@ -24,7 +19,7 @@ export class ReportController {
     return await this.reportService.getRefundedUsers()
   }
 
-  @Get("average_sales")
+  @Get('average_sales')
   @UseGuards(AuthGuard('jwt'), AdminGuard)
   async getAverageSalesPrice() {
     return await this.reportService.getAverageSalesPrice()
@@ -36,7 +31,7 @@ export class ReportController {
     @Query('dataType') dataType: string,
     @Query('timePeriod') timePeriod: string,
   ) {
-    return await this.reportService.getHotProductSales(dataType, timePeriod);
+    return await this.reportService.getHotProductSales(dataType, timePeriod)
   }
 
   @Get('monthly')

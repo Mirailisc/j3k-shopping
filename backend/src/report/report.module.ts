@@ -6,11 +6,11 @@ import { UserService } from 'src/user/user.service'
 import { SocialService } from 'src/social/social.service'
 import { ContactService } from 'src/contact/contact.service'
 
-
 @Module({
   controllers: [ReportController],
-  providers: [ReportService, 
-    PrismaService, 
+  providers: [
+    ReportService,
+    PrismaService,
     UserService,
     SocialService,
     ContactService,
