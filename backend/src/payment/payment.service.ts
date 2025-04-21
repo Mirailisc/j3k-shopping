@@ -6,6 +6,11 @@ import { ProductService } from 'src/product/product.service'
 import { ProfileService } from 'src/profile/profile.service'
 import Stripe from 'stripe'
 
+const baseUrl = isDev ? 'http://localhost:3000' : 'https://j3k.arius.cloud'
+
+const success_url = `${baseUrl}/checkout/order-confirmation?session_id={CHECKOUT_SESSION_ID}`
+const cancel_url = baseUrl
+
 @Injectable()
 export class PaymentService {
   private stripe: Stripe
@@ -50,11 +55,8 @@ export class PaymentService {
           quantity: amount,
         },
       ],
-      success_url: isDev
-        ? 'http://localhost:3000'
-        : 'https://j3k.arius.cloud' +
-          '/checkout/order-confirmation?session_id={CHECKOUT_SESSION_ID}',
-      cancel_url: isDev ? 'http://localhost:3000' : 'https://j3k.arius.cloud',
+      success_url,
+      cancel_url,
       metadata: {
         productId: product.id,
         buyerId: me,
