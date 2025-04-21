@@ -22,7 +22,7 @@ export class ReviewService {
   async getAllReview() {
     const result = await this.prisma.$queryRaw<Review[]>`
       SELECT *
-      FROM Review
+      FROM Reviews
     `
     return result
   }
