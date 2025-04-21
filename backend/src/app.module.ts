@@ -12,8 +12,9 @@ import { OrderModule } from './order/order.module'
 import { ReviewModule } from './review/review.module'
 import { FeedModule } from './feed/feed.module'
 import { ReportModule } from './report/report.module'
-import { SearchModule } from './search/search.module';
-import { NotificationModule } from './notification/notification.module';
+import { SearchModule } from './search/search.module'
+import { NotificationModule } from './notification/notification.module'
+import { PaymentModule } from './payment/payment.module'
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { NotificationModule } from './notification/notification.module';
     ReviewModule,
     SearchModule,
     NotificationModule,
+    PaymentModule,
   ],
   controllers: [AppController],
   providers: [AppService],

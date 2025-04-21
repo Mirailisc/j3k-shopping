@@ -15,7 +15,6 @@ import { Separator } from '@/components/ui/separator'
 import { Textarea } from '@/components/ui/textarea'
 import type { ProductFeed } from '@/types/feed'
 import { Shipping } from '@/types/profile'
-import { ORDER_CONFIRMATION_PATH } from '@/constants/routes'
 import NotFound from '../NotFound'
 
 export default function CheckoutPage() {
@@ -150,21 +149,12 @@ export default function CheckoutPage() {
     setIsSubmitting(true)
 
     try {
-      const res = await axiosInstance.post('/order/buyer', {
+      const res = await axiosInstance.post('/payment/checkout', {
         productId: product.id,
         amount: quantity,
       })
       setIsSubmitting(false)
-      navigate(ORDER_CONFIRMATION_PATH, {
-        state: {
-          orderId: res.data.id,
-          product,
-          quantity,
-          subtotal,
-          tax,
-          total,
-        },
-      })
+      window.location.href = res.data.url
     } catch (error) {
       if (isAxiosError(error)) {
         const errorMessage = error.response?.data?.message || 'Something went wrong'

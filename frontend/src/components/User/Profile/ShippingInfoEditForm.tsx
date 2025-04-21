@@ -92,6 +92,7 @@ const ShippingInfoEditForm: React.FC<ShippingInfoEditFormProps> = ({ setShipping
         <div className="space-y-2">
           <Label htmlFor="phone">Phone</Label>
           <Input id="phone" name="phone" value={formData.phone} onChange={handleChange} placeholder="Phone Number" />
+          <div className='text-xs text-muted-foreground'>Phone number should belong to your PromptPay account</div>
         </div>
 
         <div className="space-y-2 md:col-span-2">
