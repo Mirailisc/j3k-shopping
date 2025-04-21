@@ -1,10 +1,13 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 import { BadRequestException, Injectable } from '@nestjs/common'
+import { isDev } from 'src/config/env'
 import { IMPORT_TAX_PERCENTAGE, OrderService } from 'src/order/order.service'
 import { Product } from 'src/product/entities/product.entity'
 import { ProductService } from 'src/product/product.service'
 import { ProfileService } from 'src/profile/profile.service'
 import Stripe from 'stripe'
+
+const URL = isDev ? 'http://localhost:3000' : 'https://j3k.arius.cloud'
 
 @Injectable()
 export class PaymentService {
@@ -57,8 +60,8 @@ export class PaymentService {
         },
       ],
       success_url:
-        'http://localhost:3000/checkout/order-confirmation?session_id={CHECKOUT_SESSION_ID}',
-      cancel_url: 'http://localhost:3000',
+        URL + '/checkout/order-confirmation?session_id={CHECKOUT_SESSION_ID}',
+      cancel_url: URL,
       metadata: {
         productId: product.id,
         buyerId: me,
