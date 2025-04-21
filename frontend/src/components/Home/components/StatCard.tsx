@@ -17,14 +17,14 @@ const StatCard: React.FC<Props> = ({ title, value, icon }: Props) => {
 
   return (
     <motion.div
-      className="border relative border-white/20 rounded-md p-4 overflow-hidden"
+      className="border relative border-black/20 dark:border-white/20 rounded-md p-4 overflow-hidden"
       initial="initial"
       whileHover="hover"
     >
       <div className="text-sm font-bold">{title}</div>
       <div className="text-4xl text-emerald-600 mt-2 font-bold">{value.toLocaleString()}</div>
 
-      <motion.div className="absolute -bottom-[20px] right-0 size-[100px] text-zinc-200" variants={iconVariants}>
+      <motion.div className="absolute -bottom-[20px] right-0 size-[100px] text-zinc-900 dark:text-zinc-200" variants={iconVariants}>
         <Icon className="w-full h-full" />
       </motion.div>
     </motion.div>

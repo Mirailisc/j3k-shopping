@@ -1,5 +1,5 @@
 import { ColumnDef } from '@tanstack/react-table'
-import { ArrowUpDown, MoreHorizontal, Edit, Upload } from 'lucide-react'
+import { ArrowUpDown, MoreHorizontal, Edit, Upload, Trash } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Order } from '@/types/order'
@@ -20,15 +20,36 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import { useState } from 'react'
+import { Badge } from '@/components/ui/badge'
 
 type Props = {
   isAdmin: boolean | undefined
-  handleEditOrder: (user: Order) => void
-  handleUploadEvidence: (user: Order) => void
+  isSuperAdmin: boolean | undefined
+  handleEditOrder: (order: Order) => void
+  handleUploadEvidence: (order: Order) => void
+  handleDeleteOrder: (order: Order) => void
 }
 
-export const TableColumns = ({ isAdmin, handleEditOrder, handleUploadEvidence }: Props) => {
+export const TableColumns = ({
+  isAdmin,
+  isSuperAdmin,
+  handleEditOrder,
+  handleUploadEvidence,
+  handleDeleteOrder,
+}: Props) => {
   const [openImage, setOpenImage] = useState<string | null>(null)
+
+  const statusColors: Record<string, string> = {
+    Pending: 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20',
+    Paid: 'bg-green-500/10 text-green-500 border-green-500/20',
+    Shipped: 'bg-blue-500/10 text-blue-500 border-blue-500/20',
+    Delivering: 'bg-purple-500/10 text-purple-500 border-purple-500/20',
+    Completed: 'bg-green-700/10 text-green-700 border-green-700/20',
+    Cancelled: 'bg-red-500/10 text-red-500 border-red-500/20',
+    Refunded: 'bg-gray-500/10 text-gray-500 border-gray-500/20',
+    Refunding: 'bg-orange-500/10 text-orange-500 border-orange-500/20',
+  }
+
   const columns: ColumnDef<Order>[] = [
     {
       id: 'select',
@@ -74,7 +95,11 @@ export const TableColumns = ({ isAdmin, handleEditOrder, handleUploadEvidence }:
           </Button>
         )
       },
-      cell: ({ row }) => <div>{row.getValue('status')}</div>,
+      cell: ({ row }) => (
+        <Badge variant="outline" className={statusColors[row.getValue('status') as string]}>
+          {row.getValue('status')}
+        </Badge>
+      ),
     },
     {
       accessorKey: 'evidence',
@@ -98,7 +123,7 @@ export const TableColumns = ({ isAdmin, handleEditOrder, handleUploadEvidence }:
         return (
           <Dialog open={openImage === orderId} onOpenChange={(open) => !open && handleCloseDialog()}>
             <DialogTrigger asChild>
-              <Button variant="ghost" className="text-white/50" onClick={handleOpenDialog}>
+              <Button variant="ghost" className="text-black/50 dark:text-white/50" onClick={handleOpenDialog}>
                 Click to show image
               </Button>
             </DialogTrigger>
@@ -184,6 +209,18 @@ export const TableColumns = ({ isAdmin, handleEditOrder, handleUploadEvidence }:
                   <DropdownMenuItem onClick={() => handleUploadEvidence(order)}>
                     <Upload className="mr-2 h-4 w-4" />
                     Upload Evidence
+                  </DropdownMenuItem>
+                </>
+              ) : null}
+              {isSuperAdmin ? (
+                <>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onClick={() => handleDeleteOrder(order)}
+                    className="text-red-600 focus:text-red-600"
+                  >
+                    <Trash className="mr-2 h-4 w-4" />
+                    Delete Review
                   </DropdownMenuItem>
                 </>
               ) : null}

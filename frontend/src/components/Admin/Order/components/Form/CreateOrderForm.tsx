@@ -11,6 +11,7 @@ import { axiosInstance } from '@/lib/axios'
 import { isAxiosError } from 'axios'
 import { toast } from 'sonner'
 import { OrderStatus } from '../../types/orderState'
+import { UserCombobox } from '@/components/Admin/utils/UserCombobox'
 
 type Props = {
   open: boolean
@@ -40,7 +41,6 @@ export const CreateOrderForm: React.FC<Props> = ({ open, setOpen, data, setData 
   })
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    
     const newOrder = {
       id: crypto.randomUUID(),
       status: values.status,
@@ -53,7 +53,7 @@ export const CreateOrderForm: React.FC<Props> = ({ open, setOpen, data, setData 
     try {
       const res = await axiosInstance.post('/order/admin', newOrder)
       setData([...data, res.data])
-      toast.success("Order created successfully!")
+      toast.success('Order created successfully!')
     } catch (error) {
       if (isAxiosError(error)) {
         const errorMessage = error.response?.data?.message || 'Something went wrong'
@@ -75,19 +75,7 @@ export const CreateOrderForm: React.FC<Props> = ({ open, setOpen, data, setData 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4 mt-6">
             <div className="flex flex-col md:grid grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="userId"
-                render={({ field }) => (
-                  <FormItem>
-                    <Label htmlFor="userId">User ID</Label>
-                    <FormControl>
-                      <Input {...field} placeholder="User ID" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <UserCombobox name="userId" />
               <FormField
                 control={form.control}
                 name="productId"

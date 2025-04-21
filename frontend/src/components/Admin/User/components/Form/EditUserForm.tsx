@@ -36,7 +36,6 @@ const formSchema = z.object({
   instagram: z.string().optional(),
   tiktok: z.string().optional(),
   website: z.string().optional(),
-  citizenId: z.string().optional(),
   phone: z.string().optional(),
   address: z.string().optional(),
   city: z.string().optional(),
@@ -62,7 +61,6 @@ export const EditUserForm: React.FC<Props> = ({ open, setOpen, user, data, setDa
       instagram: '',
       tiktok: '',
       website: '',
-      citizenId: '',
       phone: '',
       address: '',
       city: '',
@@ -87,7 +85,6 @@ export const EditUserForm: React.FC<Props> = ({ open, setOpen, user, data, setDa
       form.setValue('instagram', user.instagram || '')
       form.setValue('tiktok', user.tiktok || '')
       form.setValue('website', user.website || '')
-      form.setValue('citizenId', user.citizenId || '')
       form.setValue('phone', user.phone || '')
       form.setValue('address', user.address || '')
       form.setValue('city', user.city || '')
@@ -110,7 +107,6 @@ export const EditUserForm: React.FC<Props> = ({ open, setOpen, user, data, setDa
       instagram: values.instagram,
       tiktok: values.tiktok,
       website: values.website,
-      citizenId: values.citizenId,
       phone: values.phone,
       address: values.address,
       city: values.city,
@@ -303,19 +299,6 @@ export const EditUserForm: React.FC<Props> = ({ open, setOpen, user, data, setDa
             <h2 className="text-xl font-bold my-4">Contact</h2>
 
             <div className="flex flex-col md:grid grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="citizenId"
-                render={({ field }) => (
-                  <FormItem>
-                    <Label htmlFor="citizenId">Citizen ID</Label>
-                    <FormControl>
-                      <Input placeholder="Citizen ID" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
               <FormField
                 control={form.control}
                 name="phone"

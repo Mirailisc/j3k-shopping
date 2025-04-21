@@ -13,6 +13,7 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from '@/component
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
+import { UserCombobox } from '@/components/Admin/utils/UserCombobox'
 
 type Props = {
   open: boolean
@@ -164,19 +165,7 @@ export const CreateProductForm: React.FC<Props> = ({ open, setOpen, data, setDat
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="userId"
-              render={({ field }) => (
-                <FormItem>
-                  <Label htmlFor="userId">User ID</Label>
-                  <FormControl>
-                    <Input {...field} placeholder="User ID" />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <UserCombobox name="userId" />
 
             <DialogFooter>
               <Button type="submit" size="sm">

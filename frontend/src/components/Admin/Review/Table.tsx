@@ -59,7 +59,7 @@ export function ReviewDataTable({ data, setData, fetchReviews }: Props) {
   }
 
   const handleDeleteReview = (review?: Review) => {
-    if (user) {
+    if (review) {
       setDeleteTarget({ single: review })
     } else {
       setDeleteTarget({ multiple: true })
@@ -82,27 +82,27 @@ export function ReviewDataTable({ data, setData, fetchReviews }: Props) {
       }
     } else if (deleteTarget?.multiple) {
       const selectedRows = table.getSelectedRowModel().rows
-      const selectedUsers = selectedRows.map((row) => row.original)
-      const selectedIds = selectedUsers.map((review) => review.id)
+      const selectedReviews = selectedRows.map((row) => row.original)
+      const selectedIds = selectedReviews.map((review) => review.id)
 
-      const failedUsers: string[] = []
+      const failedReviews: string[] = []
 
       await Promise.all(
-        selectedUsers.map(async (review) => {
+        selectedReviews.map(async (review) => {
           try {
             await axiosInstance.delete(`/user/${review.id}`)
           } catch {
-            failedUsers.push(review.id)
+            failedReviews.push(review.id)
           }
         }),
       )
 
-      const successfullyDeleted = selectedUsers.length - failedUsers.length
+      const successfullyDeleted = selectedReviews.length - failedReviews.length
       if (successfullyDeleted > 0) {
         toast.success(`${successfullyDeleted} review(s) have been deleted`)
       }
-      if (failedUsers.length > 0) {
-        toast.error(`Failed to delete: ${failedUsers.join(', ')}`)
+      if (failedReviews.length > 0) {
+        toast.error(`Failed to delete: ${failedReviews.join(', ')}`)
       }
 
       // Update frontend data

@@ -1,7 +1,6 @@
 import {
   BadRequestException,
   Injectable,
-  Logger,
   NotFoundException,
 } from '@nestjs/common'
 import { CreateOrderDto } from './dto/create-order.dto'
@@ -11,13 +10,12 @@ import { Order } from './entities/order.entity'
 import { OrderStatus } from './enum/order.enum'
 import { ProductService } from 'src/product/product.service'
 import { Product } from 'src/product/entities/product.entity'
+import { Contact } from 'src/contact/entities/contact.entity'
 
 const IMPORT_TAX_PERCENTAGE = 0.37
 
 @Injectable()
 export class OrderService {
-  private logger: Logger = new Logger(OrderService.name)
-
   constructor(
     private readonly prisma: PrismaService,
     private readonly productService: ProductService,
@@ -45,7 +43,10 @@ export class OrderService {
   }
 
   private calculateTotal(product: Product, amount: number) {
-    return product.price * amount * (1 + IMPORT_TAX_PERCENTAGE)
+    const subtotal = product.price * amount
+    const tax = subtotal * IMPORT_TAX_PERCENTAGE
+    const total = subtotal + tax
+    return total
   }
 
   async getAllOrders() {
@@ -68,10 +69,21 @@ export class OrderService {
   }
 
   async getOrderBySeller(id: string) {
-    const orders = await this.prisma.$queryRaw<Order[]>`
-      SELECT * FROM \`Order\` 
-      LEFT JOIN Product ON \`Order\`.productId = Product.id 
-      WHERE Product.userId = ${id}
+    const orders = await this.prisma.$queryRaw<Order[] & Partial<Contact>>`
+      SELECT O.id, O.status, O.total, U.username, O.productId, U.email, O.amount, O.evidence, O.createdAt,
+      JSON_OBJECT(
+        'phone', C.phone,
+        'address', C.address,
+        'city', C.city,
+        'province', C.province,
+        'zipCode', C.zipCode,
+        'country', C.country
+      ) AS contact
+      FROM \`Order\` O
+      LEFT JOIN Product P ON O.productId = P.id 
+      LEFT JOIN User U ON O.userId = U.id
+      LEFT JOIN Contact C ON U.id = C.userId
+      WHERE P.userId = ${id}
     `
     return this.transformOrders(orders)
   }
@@ -96,6 +108,12 @@ export class OrderService {
       VALUES (${uuid}, ${OrderStatus.PENDING}, ${total}, ${createOrderDto.userId}, ${createOrderDto.productId}, ${createOrderDto.amount})
     `
 
+    await this.prisma.$executeRawUnsafe(`
+      UPDATE Product
+      SET quantity = quantity + ${-createOrderDto.amount}
+      WHERE id = '${createOrderDto.productId}'
+    `)
+
     return await this.getOrderById(uuid)
   }
 
@@ -110,7 +128,7 @@ export class OrderService {
   }
 
   async createOrderByBuyer(
-    createOrderDto: Omit<CreateOrderDto, 'userId' | 'status'>,
+    createOrderDto: Omit<CreateOrderDto, 'userId'>,
     me: string,
   ) {
     const uuid = randomUUID()
@@ -118,12 +136,22 @@ export class OrderService {
       createOrderDto.productId,
     )
 
+    if (product.userId === me) {
+      throw new BadRequestException('You cannot order your own product')
+    }
+
     const total = this.calculateTotal(product, createOrderDto.amount)
 
     await this.prisma.$executeRaw<Order>`
       INSERT INTO \`Order\` (id, status, total, userId, productId, amount)
       VALUES (${uuid}, ${OrderStatus.PENDING}, ${total}, ${me}, ${createOrderDto.productId}, ${createOrderDto.amount})
     `
+
+    await this.prisma.$executeRawUnsafe(`
+      UPDATE Product
+      SET quantity = quantity + ${-createOrderDto.amount}
+      WHERE id = '${createOrderDto.productId}'
+    `)
 
     return await this.getOrderById(uuid)
   }
@@ -151,6 +179,36 @@ export class OrderService {
         }
         break
 
+      case OrderStatus.DELIVERING:
+        if (!order.evidence) {
+          throw new BadRequestException('Evidence is required')
+        }
+        break
+
+      case OrderStatus.SHIPPED:
+        if (!order.evidence) {
+          throw new BadRequestException('Evidence is required')
+        }
+        break
+
+      case OrderStatus.COMPLETED:
+        if (!order.evidence) {
+          throw new BadRequestException('Evidence is required')
+        }
+        break
+
+      case OrderStatus.REFUNDING:
+        if (!order.evidence) {
+          throw new BadRequestException('Evidence is required')
+        }
+        break
+
+      case OrderStatus.REFUNDED:
+        if (!order.evidence) {
+          throw new BadRequestException('Evidence is required')
+        }
+        break
+
       case OrderStatus.CANCELLED:
         await stockUpdate(order.amount)
         break
@@ -166,5 +224,20 @@ export class OrderService {
     `)
 
     return await this.getOrderById(id)
+  }
+
+  async deleteOrder(id: string) {
+    const order = await this.getOrderById(id)
+
+    await this.prisma.$executeRaw`
+      UPDATE Product
+      SET quantity = quantity + ${order.amount}
+      WHERE id = ${order.productId}
+    `
+
+    await this.prisma.$executeRaw`
+      DELETE FROM \`Order\` WHERE id = ${id}
+    `
+    return order
   }
 }
