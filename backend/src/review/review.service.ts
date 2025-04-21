@@ -120,16 +120,16 @@ export class ReviewService {
     if (reviewInfo.userId !== me) {
       throw new BadRequestException('You are not the owner of this review')
     }
-    return await this.prisma.$executeRaw`DELETE FROM Reviews WHERE id = ${id}`
+    return await this.prisma.$executeRaw`DELETE FROM Review WHERE id = ${id}`
   }
 
   async deleteReviewByAdmin(id: string) {
-    return await this.prisma.$executeRaw`DELETE FROM Reviews WHERE id = ${id}`
+    return await this.prisma.$executeRaw`DELETE FROM Review WHERE id = ${id}`
   }
 
   async updateReviewByAdmin(id: string, review: UpdateReviewDto) {
     const existReview = await this.prisma.$queryRaw<Review[]>`
-        SELECT id FROM Reviews 
+        SELECT id FROM Reviews
         WHERE id = ${id}
       `
 

@@ -12,6 +12,8 @@
   "license": "ISC",
   "dependencies": {
     "date-fns": "^4.1.0",
-    "gravatar": "^1.8.2"
+    "gravatar": "^1.8.2",
+    "rechart": "^0.0.1",
+    "use-debounce": "^10.0.4"
   }
 }

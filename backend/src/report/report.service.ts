@@ -14,14 +14,14 @@ export class ReportService {
   async getReviewedUsers() {
     const result = await this.prisma.$queryRaw<any[]>`
       SELECT usr.id AS id, usr.username AS username, 
-             COUNT(review.rating) AS reviews_amount, 
-             AVG(review.rating) AS average_rating
+             COUNT(r.rating) AS reviews_amount, 
+             AVG(r.rating) AS average_rating
       FROM user usr
-      JOIN review
-      ON (usr.id, review.id) IN (
+      JOIN reviews r
+      ON (usr.id, r.id) IN (
         SELECT prd.userId, rev.id
         FROM product prd
-        JOIN review rev ON prd.id = rev.productId
+        JOIN reviews rev ON prd.id = rev.productId
       )
       GROUP BY usr.id
       ORDER BY reviews_amount DESC, average_rating DESC
@@ -58,25 +58,75 @@ export class ReportService {
     }));
   }
 
-  async getHotProducts() { 
-    const result = await this.prisma.$queryRaw<any[]>`
-    SELECT p.name, SUM(o.amount) as sales FROM 
-    \`order\` o join product p
-    ON o.productId = p.id
-    WHERE o.createdAt <= NOW() AND o.createdAt >= DATE_SUB(NOW(), INTERVAL 1 MONTH)
-      AND o.status = 'Completed'
-    GROUP BY p.id
-    HAVING sales > 0
-    ORDER BY sales DESC
-    LIMIT 5
+  async getAverageSalesPrice() {
+    const result = await this.prisma.$queryRaw<{average_price: Number}[]>`
+      SELECT AVG(total) as average_price FROM
+      \`Order\` o  LIMIT 1
     `
-    if (result.length === 0) return null;
+    return {
+      price: result[0]?.average_price,
+    } 
 
+  }
+
+
+  async getHotProductSales(dataType: string, timePeriod: string) {
+  
+    const query = timePeriod === 'ALL TIME'
+      ? this.prisma.$queryRawUnsafe<any[]>(`
+          SELECT p.name, SUM(o.${dataType}) as total
+          FROM \`order\` o
+          JOIN product p ON o.productId = p.id
+          WHERE o.status = 'Completed'
+          GROUP BY p.id
+          HAVING total > 0
+          ORDER BY total DESC
+        `)
+      : this.prisma.$queryRawUnsafe<any[]>(`
+          SELECT p.name, SUM(o.${dataType}) as total
+          FROM \`order\` o
+          JOIN product p ON o.productId = p.id
+          WHERE o.status = 'Completed'
+          AND o.createdAt >= DATE_SUB(NOW(), ${timePeriod})
+          GROUP BY p.id
+          HAVING total > 0
+          ORDER BY total DESC
+        `);
+  
+    const result = await query;
+  
+    if (!result || result.length === 0) return null;
+  
     return result.map((row) => ({
       name: row.name,
-      value: Number(row.sales).toFixed(0),
-      //total_revenue: Number(row.total_revenue).toFixed(2)
-
+      value: Number(row.total),
     }));
+  }
+  
+
+  async getMonthlySales() {
+    const result = await this.prisma.$queryRaw<any[]> `
+      SELECT DATE_FORMAT(createdAt, "%M %Y") as month, SUM(amount) as total_sales, sum(total) as total_revenue FROM \`order\`
+      WHERE status = 'completed' AND createdAt >= DATE_SUB(NOW(), interval 6 MONTH)
+      GROUP BY month
+      ORDER BY MOD(MOD((DATE_FORMAT(NOW(), "%m") - DATE_FORMAT(createdAt, "%m")),  12) +12, 12) DESC
+    `
+    return result.map((row) => ({
+      month: row.month,
+      sales: Number(row.total_sales),
+      revenue: Number(row.total_revenue)
+    }));
+  }
+
+  async getNewUserThisMonth() {
+    const result = await this.prisma.$queryRaw<any[]>`
+      SELECT COUNT(id) as newuser FROM user
+      UNION
+      SELECT COUNT(id) as newuser FROM user
+      WHERE createdAt < DATE_SUB(NOW(), INTERVAL 1 MONTH)
+    `
+    return result.map((row) => ({
+      newUser: Number(row.newuser)
+    }))
   }
 }
