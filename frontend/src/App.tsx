@@ -4,6 +4,7 @@ import {
   ADMIN_BASE_PATH,
   ADMIN_DASHBOARD_PATH,
   BASE_PATH,
+  BILLING_PATH,
   CHECKOUT_PATH,
   ORDER_CONFIRMATION_PATH,
   ORDER_INFO_PATH,
@@ -59,6 +60,7 @@ import OrderInfo from './pages/Order/OrderInfo'
 import Orders from './pages/Order'
 import { axiosInstance } from './lib/axios'
 import ServerDown from './pages/ServerDown'
+import Billing from './pages/Billing'
 
 const Home = React.lazy(() => import('@/pages/Home'))
 
@@ -131,6 +133,8 @@ function App() {
 
                     <Route path={ORDER_PATH} element={<Orders />} />
                     <Route path={ORDER_INFO_PATH} element={<OrderInfo />} />
+
+                    <Route path={BILLING_PATH} element={<Billing />} />
 
                     <Route path={CHECKOUT_PATH} element={<Checkout />} />
                     <Route path={ORDER_CONFIRMATION_PATH} element={<OrderConfirmation />} />

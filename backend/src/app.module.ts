@@ -15,6 +15,7 @@ import { ReportModule } from './report/report.module'
 import { SearchModule } from './search/search.module'
 import { NotificationModule } from './notification/notification.module'
 import { PaymentModule } from './payment/payment.module'
+import { BillModule } from './bill/bill.module'
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { PaymentModule } from './payment/payment.module'
     SearchModule,
     NotificationModule,
     PaymentModule,
+    BillModule,
   ],
   controllers: [AppController],
   providers: [AppService],

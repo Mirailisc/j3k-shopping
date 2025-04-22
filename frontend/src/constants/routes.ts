@@ -4,6 +4,9 @@ export const BASE_PATH = '/'
 export const PRODUCT_PATH = BASE_PATH + 'products'
 export const PRODUCT_INFO_PATH = PRODUCT_PATH + '/:productId'
 
+// Billing
+export const BILLING_PATH = BASE_PATH + 'billing'
+
 // Order
 export const ORDER_PATH = BASE_PATH + 'orders'
 export const ORDER_INFO_PATH = ORDER_PATH + '/:orderId'

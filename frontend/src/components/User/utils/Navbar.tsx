@@ -13,7 +13,7 @@ const Navbar: React.FC = () => {
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated)
 
   return (
-    <div className="fixed top-[10px] left-[10px] right-[10px] border border-black/20 dark:border-white/10 z-40 bg-zinc-100 dark:bg-zinc-900 backdrop-blur-lg rounded-sm shadow-md mx-0">
+    <div className="fixed top-[10px] left-[10px] right-[10px] border border-black/20 dark:border-white/10 z-40 bg-zinc-100/50 dark:bg-zinc-900/50 backdrop-blur-lg rounded-sm shadow-md mx-0">
       <div className="flex flex-row items-center justify-between px-6 py-3">
         <div className="flex gap-4 items-center">
           <Link to={BASE_PATH}>

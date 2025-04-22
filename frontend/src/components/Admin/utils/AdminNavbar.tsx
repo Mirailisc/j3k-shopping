@@ -25,7 +25,7 @@ const AdminNavbar: React.FC = () => {
   }, [])
 
   return (
-    <div className="sticky top-[10px] border border-black/20 dark:border-white/10 mx-[10px] z-40 bg-zinc-100 dark:bg-zinc-900 backdrop-blur-lg rounded-sm shadow-md">
+    <div className="sticky top-[10px] border border-black/20 dark:border-white/10 mx-[10px] z-40 bg-zinc-100/50 dark:bg-zinc-900/50 backdrop-blur-lg rounded-sm shadow-md">
       <div className="flex flex-row  items-center justify-between px-6 py-3">
         <div className="flex items-center flex-row gap-4">
           <Button variant="outline" className="cursor-pointer" size="icon" onClick={() => sidebar?.toggleSidebar()}>
