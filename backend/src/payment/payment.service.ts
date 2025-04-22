@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { isDev } from 'src/config/env'
+import { ContactService } from 'src/contact/contact.service'
 import { IMPORT_TAX_PERCENTAGE, OrderService } from 'src/order/order.service'
 import { ProductService } from 'src/product/product.service'
 import { ProfileService } from 'src/profile/profile.service'
@@ -17,6 +18,7 @@ export class PaymentService {
 
   constructor(
     private readonly productService: ProductService,
+    private readonly contactService: ContactService,
     private readonly orderService: OrderService,
     private readonly profileService: ProfileService,
   ) {
@@ -27,6 +29,17 @@ export class PaymentService {
 
   async checkout(productId: string, amount: number, me: string) {
     const product = await this.productService.getProductById(productId)
+    const contact = await this.contactService.getContactById(me)
+
+    if (
+      !contact.address ||
+      !contact.city ||
+      !contact.province ||
+      !contact.zipCode ||
+      !contact.country
+    ) {
+      throw new BadRequestException('Your contact information is incomplete')
+    }
 
     if (product.userId === me) {
       throw new BadRequestException('You cannot order your own product')

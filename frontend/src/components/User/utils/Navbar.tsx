@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom'
 import ProductSearchInput from './ProductSearchInput'
 import { HomeIcon, LogIn, ShoppingBag } from 'lucide-react'
 import Notification from '@/components/Admin/utils/Notification'
+import { Badge } from '@/components/ui/badge'
 
 const Navbar: React.FC = () => {
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated)
@@ -20,7 +21,8 @@ const Navbar: React.FC = () => {
               <div className="w-8 h-8 bg-emerald-600 rounded-md flex items-center justify-center">
                 <span className="text-white font-bold">T</span>
               </div>
-              <span className="text-xl font-bold">TUNG9</span>
+              <span className="text-xl font-bold">TUN9</span>
+              {import.meta.env.DEV && <Badge variant="destructive">dev</Badge>}
             </div>
           </Link>
           <div className="gap-4 items-center hidden md:flex">

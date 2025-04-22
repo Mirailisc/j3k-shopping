@@ -36,6 +36,12 @@ export class OrderController {
     return await this.orderService.getOrderByBuyer(req.user.userId)
   }
 
+  @Get('buyer/:id')
+  @UseGuards(AuthGuard('jwt'))
+  async getOrderDetails(@Param('id') id: string) {
+    return await this.orderService.getOrderDetails(id)
+  }
+
   @Get('seller')
   @UseGuards(AuthGuard('jwt'))
   async getOrderBySeller(@Request() req) {
@@ -93,6 +99,12 @@ export class OrderController {
       id,
       updateOrderStatusDto.status,
     )
+  }
+
+  @Patch('complete/:id')
+  @UseGuards(AuthGuard('jwt'))
+  async completeOrder(@Param('id') id: string) {
+    return await this.orderService.completeOrder(id)
   }
 
   @Delete(':id')

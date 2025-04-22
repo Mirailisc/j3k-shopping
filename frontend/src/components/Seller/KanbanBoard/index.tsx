@@ -111,14 +111,16 @@ export default function KanbanBoard() {
     <>
       <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {columns.map((column) => (
-            <KanbanColumn
-              key={column.status}
-              status={column.status}
-              orders={column.orders}
-              onOrderClick={handleOrderClick}
-            />
-          ))}
+          {columns
+            .filter((column) => column.status !== OrderStatus.Completed)
+            .map((column) => (
+              <KanbanColumn
+                key={column.status}
+                status={column.status}
+                orders={column.orders}
+                onOrderClick={handleOrderClick}
+              />
+            ))}
         </div>
 
         <DragOverlay>{activeOrder ? <OrderCard order={activeOrder} /> : null}</DragOverlay>

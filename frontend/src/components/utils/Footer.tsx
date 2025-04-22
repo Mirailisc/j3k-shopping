@@ -13,7 +13,7 @@ export function Footer() {
               <div className="w-8 h-8 bg-emerald-600 rounded-md flex items-center justify-center">
                 <span className="text-white font-bold">T</span>
               </div>
-              <span className="text-xl font-bold">TUNG9</span>
+              <span className="text-xl font-bold">TUN9</span>
             </div>
             <p className="text-sm text-muted-foreground">
               Your one-stop destination for quality products at competitive prices.
@@ -25,7 +25,7 @@ export function Footer() {
               </div>
               <div className="flex items-center text-sm">
                 <Mail className="h-4 w-4 mr-2 text-emerald-600" />
-                <span>contact@tung9.com</span>
+                <span>contact@shop.arius.cloud</span>
               </div>
             </div>
           </div>
@@ -35,7 +35,7 @@ export function Footer() {
 
         {/* Bottom Footer */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-          <div className="text-sm text-muted-foreground">© {new Date().getFullYear()} TUNG9. All rights reserved.</div>
+          <div className="text-sm text-muted-foreground">© {new Date().getFullYear()} TUN9. All rights reserved.</div>
         </div>
       </div>
     </footer>

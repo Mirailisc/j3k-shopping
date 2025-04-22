@@ -28,6 +28,17 @@ export class ContactService {
     }
   }
 
+  async getContactById(id: string) {
+    const contact = await this.prisma.$queryRaw<Contact[]>`
+      SELECT * FROM Contact WHERE userId = ${id}
+    `
+    if (contact.length === 0) {
+      throw new NotFoundException('User contact not found')
+    }
+
+    return contact[0]
+  }
+
   async updateContact(id: string, contact: UpdateContactDto) {
     return await this.prisma.$executeRaw`
       UPDATE Contact

@@ -8,10 +8,17 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Skeleton } from '@/components/ui/skeleton'
 import { ACCESS_TOKEN } from '@/constants/cookie'
-import { ADMIN_DASHBOARD_PATH, BASE_PATH, PRODUCT_PATH, PROFILE_PATH, SELLER_DASHBOARD_PATH } from '@/constants/routes'
+import {
+  ADMIN_DASHBOARD_PATH,
+  BASE_PATH,
+  ORDER_PATH,
+  PRODUCT_PATH,
+  PROFILE_PATH,
+  SELLER_DASHBOARD_PATH,
+} from '@/constants/routes'
 import { logout } from '@/store/slice/authSlice'
 import { RootState, useAppDispatch } from '@/store/store'
-import { ChevronDown, Github, HomeIcon, LayoutDashboard, LucideLogOut, ShoppingBag } from 'lucide-react'
+import { ChevronDown, Github, HomeIcon, LayoutDashboard, LucideLogOut, Package, Receipt, ShoppingBag } from 'lucide-react'
 import { useCookies } from 'react-cookie'
 import Gravatar from 'react-gravatar'
 import { useSelector } from 'react-redux'
@@ -81,6 +88,17 @@ const AvatarDropdown: React.FC = () => {
           </Link>
           <DropdownMenuSeparator />
         </div>
+        <Link to={ORDER_PATH}>
+          <DropdownMenuItem>
+            <Package />
+            Orders
+          </DropdownMenuItem>
+        </Link>
+        <DropdownMenuItem>
+          <Receipt />
+          Billing
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
         {user.isAdmin || user.isSuperAdmin ? (
           <Link to={ADMIN_DASHBOARD_PATH}>
             <DropdownMenuItem>

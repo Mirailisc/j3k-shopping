@@ -10,7 +10,6 @@ import { randomUUID } from 'crypto'
 import { Order } from './entities/order.entity'
 import { OrderStatus } from './enum/order.enum'
 import { ProductService } from 'src/product/product.service'
-import { Product } from 'src/product/entities/product.entity'
 import { Contact } from 'src/contact/entities/contact.entity'
 import { NotificationService } from 'src/notification/notification.service'
 
@@ -43,12 +42,6 @@ export class OrderService {
       ...order,
       evidence: order.evidence ? this.toBase64(order.evidence) : null,
     }))
-  }
-
-  private calculateTotal(product: Product, amount: number) {
-    const priceWithTax = product.price * (1 + IMPORT_TAX_PERCENTAGE)
-    const unit_amount = Math.round(priceWithTax * 100)
-    return unit_amount * amount
   }
 
   async getAllOrders() {
@@ -92,9 +85,51 @@ export class OrderService {
 
   async getOrderByBuyer(id: string) {
     const orders = await this.prisma.$queryRaw<Order[]>`
-      SELECT * FROM \`Order\` WHERE userId = ${id}
+      SELECT O.id, O.status, O.total, U.username, O.productId, U.email, O.amount, O.evidence, O.createdAt,
+      JSON_OBJECT(
+        'phone', C.phone,
+        'address', C.address,
+        'city', C.city,
+        'province', C.province,
+        'zipCode', C.zipCode,
+        'country', C.country
+      ) AS contact
+      FROM \`Order\` O
+      LEFT JOIN User U ON O.userId = U.id
+      LEFT JOIN Contact C ON U.id = C.userId
+      WHERE O.userId = ${id}
     `
     return this.transformOrders(orders)
+  }
+
+  async getOrderDetails(id: string) {
+    const orders = await this.prisma.$queryRaw<Order[]>`
+      SELECT O.id, O.status, O.total, U.username, O.productId, U.email, O.amount, O.evidence, O.createdAt,
+      JSON_OBJECT(
+        'phone', C.phone,
+        'address', C.address,
+        'city', C.city,
+        'province', C.province,
+        'zipCode', C.zipCode,
+        'country', C.country
+      ) AS contact
+      FROM \`Order\` O
+      LEFT JOIN User U ON O.userId = U.id
+      LEFT JOIN Contact C ON U.id = C.userId
+      WHERE O.id = ${id}
+    `
+
+    return this.transformOrders(orders)[0]
+  }
+
+  async completeOrder(id: string) {
+    await this.prisma.$executeRaw`
+      UPDATE \`Order\`
+      SET status = ${OrderStatus.COMPLETED}
+      WHERE id = ${id}
+    `
+
+    return await this.getOrderDetails(id)
   }
 
   async createOrderByAdmin(createOrderDto: CreateOrderDto) {
@@ -103,7 +138,8 @@ export class OrderService {
       createOrderDto.productId,
     )
 
-    const total = this.calculateTotal(product, createOrderDto.amount)
+    const priceWithTax = product.price * (1 + IMPORT_TAX_PERCENTAGE)
+    const total = priceWithTax * createOrderDto.amount
 
     await this.prisma.$executeRaw<Order>`
       INSERT INTO \`Order\` (id, status, total, userId, productId, amount)
@@ -142,7 +178,8 @@ export class OrderService {
       throw new BadRequestException('You cannot order your own product')
     }
 
-    const total = this.calculateTotal(product, createOrderDto.amount)
+    const priceWithTax = product.price * (1 + IMPORT_TAX_PERCENTAGE)
+    const total = priceWithTax * createOrderDto.amount
 
     await this.prisma.$executeRaw<Order>`
       INSERT INTO \`Order\` (id, status, total, userId, productId, amount)

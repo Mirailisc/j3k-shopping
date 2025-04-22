@@ -1,7 +1,12 @@
 export const BASE_PATH = '/'
 
+// Product
 export const PRODUCT_PATH = BASE_PATH + 'products'
 export const PRODUCT_INFO_PATH = PRODUCT_PATH + '/:productId'
+
+// Order
+export const ORDER_PATH = BASE_PATH + 'orders'
+export const ORDER_INFO_PATH = ORDER_PATH + '/:orderId'
 
 // Checkout
 export const CHECKOUT_PATH = BASE_PATH + 'checkout'
