@@ -23,6 +23,7 @@ RUN bun install --frozen-lockfile --prod --cwd /app/backend
 
 # Only generate Prisma client during build (doesn't need database connection)
 ENV DATABASE_URL=${DATABASE_URL}
+ENV STRIPE_API_KEY=${STRIPE_API_KEY}
 RUN cd /app/backend && bun run prisma:generate
 
 ENV NODE_ENV=production

@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { axiosInstance } from '@/lib/axios'
 import { Frown } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { userRefunded } from './types/userRefunded'
+import { userRefunded } from '../types/userRefunded'
 
 
 const MostRefundedUserCard: React.FC = () => {

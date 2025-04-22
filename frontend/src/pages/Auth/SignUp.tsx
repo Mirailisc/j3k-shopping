@@ -21,7 +21,13 @@ const formSchema = z
       .regex(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i, 'Invalid email address'),
     firstName: z.string().min(1, 'First Name is required'),
     lastName: z.string().min(1, 'Last Name is required'),
-    password: z.string().min(1, 'Password is required'),
+    password: z
+      .string()
+      .min(8, 'Password must be at least 8 characters')
+      .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
+      .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
+      .regex(/[0-9]/, 'Password must contain at least one number')
+      .regex(/[\W_]/, 'Password must contain at least one special character (e.g., !@#$%^&*)'),
     confirmPassword: z.string().min(1, 'Confirm Password is required'),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -72,7 +78,7 @@ const SignUp: React.FC = () => {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="p-6 border backdrop-blur-sm border-white/10 rounded-lg flex flex-col gap-4 w-full md:w-[600px]"
+          className="p-6 border bg-zinc-100 dark:bg-zinc-900 backdrop-blur-sm border-black/20 dark:border-white/10 rounded-lg flex flex-col gap-4 w-full md:w-[600px]"
         >
           <h1 className="text-4xl font-bold mb-8">Sign Up</h1>
           <FormField

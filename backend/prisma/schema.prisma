@@ -29,12 +29,12 @@ model User {
   Contact Contact?
   Social  Social?
 
-  orders Order[] @relation("UserOrders")
+  orders       Order[]        @relation("UserOrders")
+  Notification Notification[]
 }
 
 model Contact {
   id        String   @id @default(uuid())
-  citizenId String?
   phone     String?
   address   String?
   city      String?
@@ -61,16 +61,16 @@ model Social {
 }
 
 model Product {
-  id          String   @id @default(uuid())
+  id          String    @id @default(uuid())
   name        String
   productImg  Bytes
   description String
   price       Float
   quantity    Int
   userId      String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now())
-  user        User     @relation(fields: [userId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @default(now())
+  user        User      @relation(fields: [userId], references: [id])
   Review      Reviews[]
 }
 
@@ -108,4 +108,14 @@ model Order {
   amount    Float
 
   user User @relation("UserOrders", fields: [userId], references: [id])
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
 }

@@ -14,8 +14,8 @@ import { Review } from '@/types/review'
 
 type Props = {
   isSuperAdmin: boolean | undefined
-  handleEditReview: (user: Review) => void
-  handleDeleteReview: (user?: Review) => void
+  handleEditReview: (review: Review) => void
+  handleDeleteReview: (review?: Review) => void
 }
 
 export const TableColumns = ({ isSuperAdmin, handleEditReview, handleDeleteReview }: Props) => {

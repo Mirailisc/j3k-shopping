@@ -24,26 +24,26 @@ const AdminNavbar: React.FC = () => {
   }, [])
 
   return (
-    <div className="sticky top-[10px] border border-white/10 mx-[10px] z-40 bg-zinc-900 backdrop-blur-lg rounded-sm shadow-md">
+    <div className="sticky top-[10px] border border-black/20 dark:border-white/10 mx-[10px] z-40 bg-zinc-100 dark:bg-zinc-900 backdrop-blur-lg rounded-sm shadow-md">
       <div className="flex flex-row  items-center justify-between px-6 py-3">
-        <div className="flex gap-4">
-          <Button
-            variant="outline"
-            className="cursor-pointer bg-zinc-900"
-            size="icon"
-            onClick={() => sidebar?.toggleSidebar()}
-          >
+        <div className="flex items-center flex-row gap-4">
+          <Button variant="outline" className="cursor-pointer" size="icon" onClick={() => sidebar?.toggleSidebar()}>
             {sidebar?.isSidebarOpen ? <ChevronLeft /> : <ChevronRight />}
           </Button>
           <Link to={BASE_PATH}>
-            <h1 className="text-2xl font-bold">J3K</h1>
+            <div className="flex items-center space-x-2">
+              <div className="w-8 h-8 bg-emerald-600 rounded-md flex items-center justify-center">
+                <span className="text-white font-bold">T</span>
+              </div>
+              <span className="hidden md:block text-xl font-bold">TUNG9</span>
+            </div>
           </Link>
         </div>
         <div className="flex gap-4">
           <Button
             size="sm"
             variant="outline"
-            className="bg-zinc-900 text-zinc-500 hidden lg:block"
+            className="text-zinc-500 hidden lg:block"
             onClick={() => setOpen((prev) => !prev)}
           >
             Search....{' '}

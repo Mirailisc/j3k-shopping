@@ -24,7 +24,8 @@ services:
     ports:
       - "8000:4000"
     environment:
-      - DATABASE_URL=mysql://root:maozedong@db:3306/chinese-scam-prod
+      - DATABASE_URL
+      - STRIPE_API_KEY
     networks:
       - default
 

@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -29,16 +30,16 @@ export class OrderController {
     return await this.orderService.getAllOrders()
   }
 
-  @Get('buyer/:id')
+  @Get('buyer')
   @UseGuards(AuthGuard('jwt'))
-  async getOrderByBuyer(@Param('id') id: string) {
-    return await this.orderService.getOrderByBuyer(id)
+  async getOrderByBuyer(@Request() req) {
+    return await this.orderService.getOrderByBuyer(req.user.userId)
   }
 
-  @Get('seller/:id')
+  @Get('seller')
   @UseGuards(AuthGuard('jwt'))
-  async getOrderBySeller(@Param('id') id: string) {
-    return await this.orderService.getOrderBySeller(id)
+  async getOrderBySeller(@Request() req) {
+    return await this.orderService.getOrderBySeller(req.user.userId)
   }
 
   @Post('admin')
@@ -50,7 +51,7 @@ export class OrderController {
   @Post('buyer')
   @UseGuards(AuthGuard('jwt'))
   async createOrderByBuyer(
-    @Body() createOrderDto: CreateOrderDto,
+    @Body() createOrderDto: Omit<CreateOrderDto, 'userId'>,
     @Request() req,
   ) {
     return await this.orderService.createOrderByBuyer(
@@ -92,5 +93,11 @@ export class OrderController {
       id,
       updateOrderStatusDto.status,
     )
+  }
+
+  @Delete(':id')
+  @UseGuards(AuthGuard('jwt'), SuperAdminGuard)
+  async deleteOrder(@Param('id') id: string) {
+    return await this.orderService.deleteOrder(id)
   }
 }

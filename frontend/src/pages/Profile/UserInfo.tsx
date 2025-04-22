@@ -7,9 +7,11 @@ import ProfileSocial from '@/components/User/Profile/Social'
 import Gravatar from 'react-gravatar'
 import { useParams } from 'react-router-dom'
 import Loading from '../Loading'
+import NotFound from '../NotFound'
 
 const UserInfo: React.FC = () => {
   const [info, setInfo] = useState<ProfileType | null>(null)
+  const [loading, setLoading] = useState<boolean>(true)
 
   const { username } = useParams()
 
@@ -24,6 +26,8 @@ const UserInfo: React.FC = () => {
       } else {
         toast.error('An unexpected error occurred')
       }
+    } finally {
+      setLoading(false)
     }
   }, [username])
 
@@ -31,9 +35,8 @@ const UserInfo: React.FC = () => {
     getUserInfo()
   }, [getUserInfo])
 
-  if (!info) {
-    return <Loading />
-  }
+  if (loading) return <Loading />
+  else if (!info) return <NotFound />
 
   return (
     <div className="p-10">
@@ -43,7 +46,7 @@ const UserInfo: React.FC = () => {
           <h3 className="font-bold text-2xl mt-4">{info.firstName + ' ' + info.lastName}</h3>
           <div className="text-zinc-400">{info.username}</div>
         </div>
-        <div className="bg-zinc-900 rounded-md p-4 border border-white/10">
+        <div className="bg-zinc-100 border-black/20 dark:bg-zinc-900 rounded-md p-4 border dark:border-white/10">
           <div className="flex justify-between">
             <h3 className="font-bold text-xl mb-4">Social</h3>
           </div>

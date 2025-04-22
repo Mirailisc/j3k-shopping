@@ -1,5 +1,13 @@
-export type ChartData = {
+export type SalesData = {
     name: string,
     value: number,
-    //total_revenue: Number,
+}
+
+export type IncomeData = {
+    name: string,
+     revenue: number
+}
+
+export type averageSales = {
+    price: number,
 }

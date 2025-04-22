@@ -4,6 +4,8 @@ import {
   ADMIN_BASE_PATH,
   ADMIN_DASHBOARD_PATH,
   BASE_PATH,
+  CHECKOUT_PATH,
+  ORDER_CONFIRMATION_PATH,
   ORDER_MANAGE_PATH,
   PRODUCT_INFO_PATH,
   PRODUCT_MANAGE_PATH,
@@ -12,6 +14,8 @@ import {
   REPORT_PATH,
   REVIEW_MANAGE_PATH,
   SELLER_DASHBOARD_PATH,
+  SELLER_ORDER_PATH,
+  SELLER_PATH,
   SIGN_IN_PATH,
   SIGN_UP_PATH,
   USER_INFO_PATH,
@@ -44,9 +48,13 @@ import AdminDashboard from './pages/Admin/Dashboard'
 import NotFound from './pages/NotFound'
 import { useSelector } from 'react-redux'
 import UserInfo from './pages/Profile/UserInfo'
-import Profile from './pages/Profile/Profile'
+import Profile from './pages/Profile'
 import ProductInfo from './pages/Product/ProductInfo'
 import ProductReviews from './pages/Seller/ProductReviews'
+import SellerOrder from './pages/Seller/Order'
+import { Footer } from './components/utils/Footer'
+import OrderConfirmation from './pages/Checkout/OrderConfirmation'
+import Checkout from './pages/Checkout'
 
 const Home = React.lazy(() => import('@/pages/Home'))
 
@@ -63,6 +71,14 @@ function App() {
     else if (location.pathname === SIGN_IN_PATH && !isAuthenticated) return <></>
     else if (location.pathname === SIGN_UP_PATH && !isAuthenticated) return <></>
     else return <Navbar />
+  }
+
+  const footerRender = () => {
+    if (location.pathname.includes(ADMIN_BASE_PATH)) return <></>
+    else if (location.pathname === SIGN_IN_PATH && !isAuthenticated) return <></>
+    else if (location.pathname === SIGN_UP_PATH && !isAuthenticated) return <></>
+    else if (location.pathname.includes(SELLER_PATH)) return <></>
+    else return <Footer />
   }
 
   useEffect(() => {
@@ -83,37 +99,51 @@ function App() {
         <SidebarProvider>
           <Suspense fallback={<Loading />}>
             <Toaster />
-            {navbarRender()}
-            <Routes>
-              <Route path={BASE_PATH} element={<Home />} />
-              <Route path={PRODUCT_PATH} element={<Products />} />
-              <Route path={PRODUCT_INFO_PATH} element={<ProductInfo />} />
-              <Route path={USER_INFO_PATH} element={<UserInfo />} />
+            <div className="flex flex-col min-h-screen">
+              {navbarRender()}
+              <main className="flex-1">
+                <Routes>
+                  <Route path={BASE_PATH} element={<Home />} />
+                  <Route path={PRODUCT_PATH} element={<Products />} />
+                  <Route path={PRODUCT_INFO_PATH} element={<ProductInfo />} />
+                  <Route path={USER_INFO_PATH} element={<UserInfo />} />
 
               <Route element={<Protected />}>
                 <Route path={PROFILE_PATH} element={<Profile />} />
                 <Route path={SELLER_DASHBOARD_PATH} element={<SellerDashboard />} />
                 <Route path="/seller/inventory/:productId/reviews" element={<ProductReviews />} />
               </Route>
+                  <Route element={<Protected />}>
+                    <Route path={PROFILE_PATH} element={<Profile />} />
 
-              <Route element={<AdminProtected />}>
-                <Route path={ADMIN_DASHBOARD_PATH} element={<AdminDashboard />} />
-                <Route path={REPORT_PATH} element={<Report />} />
-                <Route path={USER_MANAGE_PATH} element={<User />} />
-                <Route path={ORDER_MANAGE_PATH} element={<Order />} />
-                <Route path={PRODUCT_MANAGE_PATH} element={<Product />} />
-                <Route path={REVIEW_MANAGE_PATH} element={<Review />} />
-              </Route>
+                    <Route path={SELLER_DASHBOARD_PATH} element={<SellerDashboard />} />
+                    <Route path={SELLER_ORDER_PATH} element={<SellerOrder />} />
 
-              {!isAuthenticated && (
-                <>
-                  <Route path={SIGN_UP_PATH} element={<SignUp />} />
-                  <Route path={SIGN_IN_PATH} element={<SignIn />} />
-                </>
-              )}
+                    <Route path={CHECKOUT_PATH} element={<Checkout />} />
+                    <Route path={ORDER_CONFIRMATION_PATH} element={<OrderConfirmation />} />
+                  </Route>
 
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+                  <Route element={<AdminProtected />}>
+                    <Route path={ADMIN_DASHBOARD_PATH} element={<AdminDashboard />} />
+                    <Route path={REPORT_PATH} element={<Report />} />
+                    <Route path={USER_MANAGE_PATH} element={<User />} />
+                    <Route path={ORDER_MANAGE_PATH} element={<Order />} />
+                    <Route path={PRODUCT_MANAGE_PATH} element={<Product />} />
+                    <Route path={REVIEW_MANAGE_PATH} element={<Review />} />
+                  </Route>
+
+                  {!isAuthenticated && (
+                    <>
+                      <Route path={SIGN_UP_PATH} element={<SignUp />} />
+                      <Route path={SIGN_IN_PATH} element={<SignIn />} />
+                    </>
+                  )}
+
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </main>
+              {footerRender()}
+            </div>
           </Suspense>
         </SidebarProvider>
       </TooltipProvider>
