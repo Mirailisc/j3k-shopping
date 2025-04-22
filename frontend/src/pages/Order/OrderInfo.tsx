@@ -1,36 +1,40 @@
-import { OrderStatus } from '@/types/order'
+import { OrderStatus, toOrderStatus } from '@/types/order'
 import NotFound from '../NotFound'
 import OrderStatusIndicator from '@/components/Order/OrderStatusIndicator'
-import OrderDetails from '@/components/Order/OrderDetails'
+import OrderDetails, { OrderDetails as OrderType } from '@/components/Order/OrderDetails'
 import PaymentEvidence from '@/components/Order/PaymentEvidence'
 import { useParams } from 'react-router-dom'
-
-function getOrder(id: string) {
-  const order = {
-    id,
-    status: OrderStatus.Pending, // Example status
-    createdAt: new Date().toISOString(),
-    total: 129.99,
-    username: 'John Doe',
-    contact: {
-      phone: '+1 234 567 8900',
-      address: '123 Main St, City, Country',
-    },
-    email: 'john.doe@example.com',
-    evidence: '',
-    productId: 'prod_123',
-    amount: 1,
-  }
-
-  return order
-}
+import { useCallback, useEffect, useState } from 'react'
+import { axiosInstance } from '@/lib/axios'
+import { isAxiosError } from 'axios'
+import { toast } from 'sonner'
 
 export default function OrderInfo() {
+  const [order, setOrder] = useState<OrderType | null>(null)
   const params = useParams()
 
-  if (!params.orderId) return <NotFound />
+  const getOrder = useCallback(async () => {
+    try {
+      const response = await axiosInstance.get(`/order/buyer/${params.orderId}`)
+      setOrder({
+        ...response.data,
+        status: toOrderStatus(response.data.status),
+      })
+    } catch (error) {
+      if (isAxiosError(error)) {
+        const errorMessage = error.response?.data?.message || 'Something went wrong'
+        toast.error(errorMessage)
+      } else {
+        toast.error('An unexpected error occurred')
+      }
+    }
+  }, [params.orderId])
 
-  const order = getOrder(params.orderId)
+  useEffect(() => {
+    getOrder()
+  }, [getOrder])
+
+  if (!params.orderId) return <NotFound />
 
   if (!order) return <NotFound />
 
@@ -40,7 +44,7 @@ export default function OrderInfo() {
 
       <div className="grid gap-8 md:grid-cols-3">
         <div className="md:col-span-2 space-y-6">
-          <OrderStatusIndicator status={order.status} />
+          <OrderStatusIndicator status={order.status} order={order} />
           <OrderDetails order={order} />
         </div>
 

@@ -1,5 +1,5 @@
 import { formatCurrency, formatDate } from "@/lib/utils"
-import { type OrderWithUsername, OrderStatus } from "@/types/order"
+import { type OrderWithUsername, OrderStatus, OrderStatusSeller } from "@/types/order"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
 
@@ -9,12 +9,11 @@ interface OrderCardProps {
 }
 
 export default function OrderCard({ order, onClick }: OrderCardProps) {
-  const statusColors: Record<OrderStatus, string> = {
+  const statusColors: Record<OrderStatusSeller, string> = {
     [OrderStatus.Pending]: "bg-yellow-500/10 text-yellow-500 border-yellow-500/20",
     [OrderStatus.Paid]: "bg-green-500/10 text-green-500 border-green-500/20",
     [OrderStatus.Shipped]: "bg-blue-500/10 text-blue-500 border-blue-500/20",
     [OrderStatus.Delivering]: "bg-purple-500/10 text-purple-500 border-purple-500/20",
-    [OrderStatus.Completed]: "bg-green-700/10 text-green-700 border-green-700/20",
     [OrderStatus.Cancelled]: "bg-red-500/10 text-red-500 border-red-500/20",
     [OrderStatus.Refunded]: "bg-gray-500/10 text-gray-500 border-gray-500/20",
     [OrderStatus.Refunding]: "bg-orange-500/10 text-orange-500 border-orange-500/20",

@@ -1,16 +1,16 @@
-'use client'
-
 import React from 'react'
 
 import { OrderStatus } from '@/types/order'
 import { CheckCircle2, Clock, Package, Truck, XCircle, RefreshCcw } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import AcceptDeliveryButton from './AcceptDeliveryButton'
 
 interface OrderStatusIndicatorProps {
   status: OrderStatus
+  order: { id: string }
 }
 
-export default function OrderStatusIndicator({ status }: OrderStatusIndicatorProps) {
+export default function OrderStatusIndicator({ status, order }: OrderStatusIndicatorProps) {
   const steps = [
     {
       status: OrderStatus.Pending,
@@ -62,11 +62,10 @@ export default function OrderStatusIndicator({ status }: OrderStatusIndicatorPro
     },
   }
 
-  // Check if the current status is a special status
   const isSpecialStatus = status in specialStatuses
 
   return (
-    <div className="rounded-lg shadow-sm border border-black/20 dark:border-white/10 p-6">
+    <div className="dark:bg-zinc-900 rounded-lg shadow-sm border border-black/20 dark:border-white/10 p-6">
       <h2 className="text-lg font-semibold mb-4">Order Status</h2>
 
       {isSpecialStatus ? (
@@ -121,7 +120,6 @@ export default function OrderStatusIndicator({ status }: OrderStatusIndicatorPro
             />
           </div>
 
-          {/* Current status description */}
           <div className="mt-6 p-4 bg-muted rounded-lg">
             <p className="text-sm">
               {isSpecialStatus
@@ -129,6 +127,12 @@ export default function OrderStatusIndicator({ status }: OrderStatusIndicatorPro
                 : steps.find((step) => step.status === status)?.description || 'Status unknown'}
             </p>
           </div>
+
+          {status === OrderStatus.Shipped && (
+            <div className="mt-4">
+              <AcceptDeliveryButton orderId={order.id} />
+            </div>
+          )}
         </div>
       )}
     </div>

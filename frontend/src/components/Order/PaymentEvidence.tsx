@@ -1,5 +1,3 @@
-'use client'
-
 import type React from 'react'
 
 import { useState } from 'react'
@@ -9,6 +7,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Upload, Check, AlertCircle } from 'lucide-react'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { isAxiosError } from 'axios'
+import { axiosInstance } from '@/lib/axios'
 
 interface PaymentEvidenceProps {
   orderId: string
@@ -40,19 +40,20 @@ export default function PaymentEvidence({ orderId, existingEvidence }: PaymentEv
       const formData = new FormData()
       formData.append('evidence', file)
 
-      // Replace with your actual API call
-      // await axiosInstance.patch(`/order/evidence/${orderId}`, formData, {
-      //   headers: { 'Content-Type': 'multipart/form-data' },
-      // });
-
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500))
+      await axiosInstance.patch(`/order/evidence/${orderId}`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
 
       setUploadStatus('success')
     } catch (error) {
-      console.error('Upload failed:', error)
       setUploadStatus('error')
-      setErrorMessage('Failed to upload payment evidence. Please try again.')
+
+      if (isAxiosError(error)) {
+        const errorMessage = error.response?.data?.message || 'Something went wrong'
+        setErrorMessage(errorMessage)
+      } else {
+        setErrorMessage('Failed to upload payment evidence. Please try again.')
+      }
     } finally {
       setIsUploading(false)
     }

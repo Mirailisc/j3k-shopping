@@ -8,6 +8,7 @@ import {
   ORDER_CONFIRMATION_PATH,
   ORDER_INFO_PATH,
   ORDER_MANAGE_PATH,
+  ORDER_PATH,
   PRODUCT_INFO_PATH,
   PRODUCT_MANAGE_PATH,
   PRODUCT_PATH,
@@ -55,6 +56,7 @@ import { Footer } from './components/utils/Footer'
 import OrderConfirmation from './pages/Checkout/OrderConfirmation'
 import Checkout from './pages/Checkout'
 import OrderInfo from './pages/Order/OrderInfo'
+import Orders from './pages/Order'
 
 const Home = React.lazy(() => import('@/pages/Home'))
 
@@ -114,6 +116,7 @@ function App() {
                     <Route path={SELLER_DASHBOARD_PATH} element={<SellerDashboard />} />
                     <Route path={SELLER_ORDER_PATH} element={<SellerOrder />} />
 
+                    <Route path={ORDER_PATH} element={<Orders />} />
                     <Route path={ORDER_INFO_PATH} element={<OrderInfo />} />
 
                     <Route path={CHECKOUT_PATH} element={<Checkout />} />

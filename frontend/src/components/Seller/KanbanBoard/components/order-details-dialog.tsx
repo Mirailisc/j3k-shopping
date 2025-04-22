@@ -1,5 +1,5 @@
 import { formatCurrency, formatDate } from '@/lib/utils'
-import { getOrderStatusEnum, OrderStatus, OrderWithUsername } from '@/types/order'
+import { getOrderStatusEnum, OrderStatus, OrderStatusSeller, OrderWithUsername } from '@/types/order'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
@@ -29,12 +29,11 @@ export default function OrderDetailsDialog({ order, open, onOpenChange }: OrderD
 
   const statusEnum = getOrderStatusEnum(order.status)
 
-  const statusColors: Record<OrderStatus, string> = {
+  const statusColors: Record<OrderStatusSeller, string> = {
     [OrderStatus.Pending]: 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20',
     [OrderStatus.Paid]: 'bg-green-500/10 text-green-500 border-green-500/20',
     [OrderStatus.Shipped]: 'bg-blue-500/10 text-blue-500 border-blue-500/20',
     [OrderStatus.Delivering]: 'bg-purple-500/10 text-purple-500 border-purple-500/20',
-    [OrderStatus.Completed]: 'bg-green-700/10 text-green-700 border-green-700/20',
     [OrderStatus.Cancelled]: 'bg-red-500/10 text-red-500 border-red-500/20',
     [OrderStatus.Refunded]: 'bg-gray-500/10 text-gray-500 border-gray-500/20',
     [OrderStatus.Refunding]: 'bg-orange-500/10 text-orange-500 border-orange-500/20',
@@ -96,7 +95,12 @@ export default function OrderDetailsDialog({ order, open, onOpenChange }: OrderD
               <User className="h-4 w-4 text-muted-foreground" />
               <div className="text-sm">
                 <span className="font-medium">Customer: </span>
-                <Link to={USER_INFO_PATH.replace(":username", order.username)} className='hover:text-emerald-500 transition-colors'>{order.username || 'Unknown'}</Link>
+                <Link
+                  to={USER_INFO_PATH.replace(':username', order.username)}
+                  className="hover:text-emerald-500 transition-colors"
+                >
+                  {order.username || 'Unknown'}
+                </Link>
               </div>
             </div>
 
@@ -203,10 +207,10 @@ export default function OrderDetailsDialog({ order, open, onOpenChange }: OrderD
             </SelectTrigger>
             <SelectContent>
               {Object.entries(OrderStatus)
-                .filter(([, value]) => typeof value === 'number')
+                .filter(([key, value]) => isNaN(Number(key)) && value !== OrderStatus.Completed)
                 .map(([key, value]) => (
                   <SelectItem key={value} value={value.toString()}>
-                    <Badge variant="outline" className={statusColors[value as OrderStatus]}>
+                    <Badge variant="outline" className={statusColors[value as OrderStatusSeller]}>
                       {key}
                     </Badge>
                   </SelectItem>

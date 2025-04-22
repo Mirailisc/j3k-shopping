@@ -42,7 +42,7 @@ const Info: React.FC<Props> = ({ product }: Props) => {
         <div className="flex flex-col md:flex-row gap-8">
           <div className="md:w-1/2 relative">
             <div className="aspect-square relative rounded-lg overflow-hidden border">
-              <img src={product.productImg || '/placeholder.svg'} alt={product.name} className="object-cover" />
+              <img src={product.productImg || '/placeholder.svg'} alt={product.name} className="object-cover size-full" />
             </div>
           </div>
           <div className="md:w-1/2 space-y-4">
