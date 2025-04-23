@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect } from 'react'
+import React, { Suspense, useEffect, useState } from 'react'
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import {
   ADMIN_BASE_PATH,
@@ -57,10 +57,14 @@ import OrderConfirmation from './pages/Checkout/OrderConfirmation'
 import Checkout from './pages/Checkout'
 import OrderInfo from './pages/Order/OrderInfo'
 import Orders from './pages/Order'
+import { axiosInstance } from './lib/axios'
+import ServerDown from './pages/ServerDown'
 
 const Home = React.lazy(() => import('@/pages/Home'))
 
 function App() {
+  const [isServerDown, setServerDown] = useState<boolean>(false)
+
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const location = useLocation()
@@ -94,6 +98,15 @@ function App() {
       }
     }
   }, [cookie, dispatch, removeCookie, navigate])
+
+  useEffect(() => {
+    axiosInstance
+      .get('/health')
+      .then(() => setServerDown(false))
+      .catch(() => setServerDown(true))
+  }, [])
+
+  if (isServerDown) return <ServerDown />
 
   return (
     <AnimatePresence mode="wait">
