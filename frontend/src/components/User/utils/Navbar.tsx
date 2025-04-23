@@ -39,7 +39,7 @@ const Navbar: React.FC = () => {
               <ShoppingBag size={16} /> Products
             </Link>
             <a
-              href="https://youtu.be/OFhMGhvW_5I"
+              href="https://www.youtube.com/shorts/iY2GDx2seO8?feature=share"
               className="flex gap-1 items-center text-sm text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-200"
             >
               Free Robux

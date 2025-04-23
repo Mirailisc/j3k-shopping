@@ -15,7 +15,7 @@ import { ReportModule } from './report/report.module'
 import { SearchModule } from './search/search.module'
 import { NotificationModule } from './notification/notification.module'
 import { PaymentModule } from './payment/payment.module'
-import { BillModule } from './bill/bill.module'
+import { TransactionModule } from './transaction/transaction.module'
 
 @Module({
   imports: [
@@ -34,7 +34,7 @@ import { BillModule } from './bill/bill.module'
     SearchModule,
     NotificationModule,
     PaymentModule,
-    BillModule,
+    TransactionModule,
   ],
   controllers: [AppController],
   providers: [AppService],

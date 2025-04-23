@@ -1,6 +1,6 @@
 export type TransactionType = 'income' | 'outcome'
 
-export interface Transaction {
+export class Transaction {
   id: string
   date: Date
   description: string
