@@ -14,6 +14,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { axiosInstance } from '@/lib/axios'
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuItemIndicator } from '@radix-ui/react-dropdown-menu'
+import { getLegendProps } from 'recharts/types/util/getLegendProps'
 
 const chartConfig = {
   sales: {
@@ -76,7 +77,7 @@ export const TotalRevenue: React.FC = () => {
       <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="h-10 w-30">
-              Custom
+              {getLabelFromTimeRange(range)}
               <ChevronDown className="ml-2 h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
