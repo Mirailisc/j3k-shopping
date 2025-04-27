@@ -33,7 +33,7 @@ import { DashboardModule } from './dashboard/dashboard.module'
     ReviewModule,
     SearchModule,
     NotificationModule,
-    //PaymentModule,
+    PaymentModule,
     DashboardModule,
   ],
   controllers: [AppController],
