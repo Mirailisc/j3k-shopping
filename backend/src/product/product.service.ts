@@ -160,11 +160,7 @@ export class ProductService {
     if (product.userId !== me) {
       throw new BadRequestException('You are not the owner of this product')
     }
-
-    await this.prisma.$executeRaw`
-      DELETE FROM OrderItem WHERE productId = ${id}
-    `
-
+    
     await this.prisma.$executeRaw`
       DELETE FROM Review WHERE productId = ${id}
     `
@@ -175,9 +171,6 @@ export class ProductService {
   }
 
   async deleteProductByAdmin(id: string) {
-    await this.prisma.$executeRaw`
-      DELETE FROM OrderItem WHERE productId = ${id}
-    `
 
     await this.prisma.$executeRaw`
       DELETE FROM Review WHERE productId = ${id}

@@ -109,7 +109,7 @@ export class ReportService {
       sales: Number(row.total_sales),
       revenue: Number(row.total_revenue),
     }))
-  }
+  } 
 
   async getNewUserThisMonth() {
     const result = await this.prisma.$queryRaw<any[]>`

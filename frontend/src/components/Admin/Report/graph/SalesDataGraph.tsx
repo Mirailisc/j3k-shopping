@@ -82,7 +82,7 @@ export const SalesDataGraph: React.FC = () => {
               <Area
                 yAxisId="left"
                 dataKey="sales"
-                type="natural"
+                type="monotone"
                 fill="var(--color-sales)"
                 fillOpacity={0.4}
                 stroke="var(--color-sales)"
@@ -91,7 +91,7 @@ export const SalesDataGraph: React.FC = () => {
               <Area
                 yAxisId="right"
                 dataKey="revenue"
-                type="natural"
+                type="monotone"
                 fill="var(--color-revenue)"
                 fillOpacity={0.4}
                 stroke="var(--color-revenue)"

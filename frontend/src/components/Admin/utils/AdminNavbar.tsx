@@ -6,6 +6,7 @@ import { useSidebar } from '@/context/hooks/useSidebar'
 import AvatarDropdown from '../../utils/AvatarDropdown'
 import { Link } from 'react-router-dom'
 import { BASE_PATH } from '@/constants/routes'
+import { Badge } from '@/components/ui/badge'
 
 const AdminNavbar: React.FC = () => {
   const [open, setOpen] = useState<boolean>(false)
@@ -35,7 +36,8 @@ const AdminNavbar: React.FC = () => {
               <div className="w-8 h-8 bg-emerald-600 rounded-md flex items-center justify-center">
                 <span className="text-white font-bold">T</span>
               </div>
-              <span className="hidden md:block text-xl font-bold">TUNG9</span>
+              <span className="hidden md:block text-xl font-bold">TUN9</span>
+              {import.meta.env.DEV && <Badge variant="destructive">dev</Badge>}
             </div>
           </Link>
         </div>

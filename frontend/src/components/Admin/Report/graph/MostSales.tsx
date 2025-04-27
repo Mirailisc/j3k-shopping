@@ -4,7 +4,6 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } f
 import { SalesData } from '../types/productChartData'
 import { useEffect, useMemo, useState } from 'react'
 import { axiosInstance } from '@/lib/axios'
-import { z } from 'zod'
 import { YAxis, XAxis, Bar, BarChart } from 'recharts'
 import {
   DropdownMenu,
@@ -34,9 +33,7 @@ const DataType = [
   { label: 'amount', value: 'amount' },
   { label: 'revenue', value: 'total' },
 ]
-export const formSchema = z.object({
-  set: z.string(),
-})
+
 export const MostSales: React.FC = () => {
   const [loading, setLoading] = useState(true)
   const [timePeriod, setTimePeriod] = useState('INTERVAL 1 MONTH')

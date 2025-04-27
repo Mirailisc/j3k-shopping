@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect } from 'react'
+import React, { Suspense, useEffect, useState } from 'react'
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import {
   ADMIN_BASE_PATH,
@@ -6,7 +6,9 @@ import {
   BASE_PATH,
   CHECKOUT_PATH,
   ORDER_CONFIRMATION_PATH,
+  ORDER_INFO_PATH,
   ORDER_MANAGE_PATH,
+  ORDER_PATH,
   PRODUCT_INFO_PATH,
   PRODUCT_MANAGE_PATH,
   PRODUCT_PATH,
@@ -55,10 +57,16 @@ import SellerOrder from './pages/Seller/Order'
 import { Footer } from './components/utils/Footer'
 import OrderConfirmation from './pages/Checkout/OrderConfirmation'
 import Checkout from './pages/Checkout'
+import OrderInfo from './pages/Order/OrderInfo'
+import Orders from './pages/Order'
+import { axiosInstance } from './lib/axios'
+import ServerDown from './pages/ServerDown'
 
 const Home = React.lazy(() => import('@/pages/Home'))
 
 function App() {
+  const [isServerDown, setServerDown] = useState<boolean>(false)
+
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const location = useLocation()
@@ -93,6 +101,15 @@ function App() {
     }
   }, [cookie, dispatch, removeCookie, navigate])
 
+  useEffect(() => {
+    axiosInstance
+      .get('/health')
+      .then(() => setServerDown(false))
+      .catch(() => setServerDown(true))
+  }, [])
+
+  if (isServerDown) return <ServerDown />
+
   return (
     <AnimatePresence mode="wait">
       <TooltipProvider>
@@ -118,6 +135,9 @@ function App() {
 
                     <Route path={SELLER_DASHBOARD_PATH} element={<SellerDashboard />} />
                     <Route path={SELLER_ORDER_PATH} element={<SellerOrder />} />
+
+                    <Route path={ORDER_PATH} element={<Orders />} />
+                    <Route path={ORDER_INFO_PATH} element={<OrderInfo />} />
 
                     <Route path={CHECKOUT_PATH} element={<Checkout />} />
                     <Route path={ORDER_CONFIRMATION_PATH} element={<OrderConfirmation />} />

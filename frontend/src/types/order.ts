@@ -1,4 +1,4 @@
-import { Contact } from "./user"
+import { Contact } from './user'
 
 export enum OrderStatus {
   Pending,
@@ -11,18 +11,21 @@ export enum OrderStatus {
   Cancelled,
 }
 
+export type OrderStatusSeller = Exclude<OrderStatus, OrderStatus.Completed>
+
 export type Order = {
-    id: string
-    status:OrderStatus 
-    createdAt: string
-    total: number
-    userId: string
-    evidence: string
-    productId: string
-    amount: number
+  id: string
+  status: OrderStatus
+  createdAt: string
+  total: number
+  userId: string
+  evidence: string
+  productId: string
+  amount: number
 }
 
-export interface OrderWithUsername extends Omit<Order, 'userId'> {
+export interface OrderWithUsername extends Omit<Order, 'userId' | 'status'> {
+  status: OrderStatusSeller
   username: string
   contact: Partial<Contact>
   email: string
@@ -33,7 +36,7 @@ export function toOrderStatus(status: string): OrderStatus {
 }
 
 export function getOrderStatusEnum(status: string | OrderStatus): OrderStatus {
-  if (typeof status === "number") {
+  if (typeof status === 'number') {
     return status
   }
 
