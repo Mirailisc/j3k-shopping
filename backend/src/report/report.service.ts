@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { PrismaService } from 'src/prisma/prisma.service'
 import { IMPORT_TAX_PERCENTAGE } from '../order/order.service';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class ReportService {
@@ -52,31 +53,32 @@ export class ReportService {
   }
 
   async getIncomeFromTaxes(timePeriod : string) {
-    const rangeQuery = timePeriod !== 'ALL TIME' ? `AND createdAt >= DATE_SUB(NOW(), ${timePeriod})` : ``
-    const result = await this.prisma.$queryRawUnsafe<any>(`
-      SELECT (sum(total) - ROUND(sum(total) / (1+${IMPORT_TAX_PERCENTAGE}),2)) as total_income 
-      FROM \`Order\` o  
+    const interval = Prisma.sql`${Prisma.raw(timePeriod)}`
+    const result = await this.prisma.$queryRaw<any>`
+      SELECT (sum(total) - ROUND(sum(total) / (1 + ${IMPORT_TAX_PERCENTAGE}), 2)) as total_income
+      FROM \`Order\` o
       WHERE status = 'Completed'
-      ${rangeQuery}
-    `)
+      ${timePeriod !== 'ALL TIME' ? Prisma.sql`AND createdAt >= DATE_SUB(NOW(), ${interval})` : Prisma.empty}
+    `
     return {
       price: result[0]?.total_income,
     }
   }
 
   async getHotProductSales(dataType: string, timePeriod: string) {
-    const rangeQuery = timePeriod !== 'ALL TIME' ? `AND o.createdAt >= DATE_SUB(NOW(), ${timePeriod})` : ``
+    const interval = Prisma.sql`${Prisma.raw(timePeriod)}`
+    const column = Prisma.sql`${Prisma.raw(dataType)}`
     const query =
-        this.prisma.$queryRawUnsafe<any[]>(`
-          SELECT p.name, SUM(o.${dataType}) as total
+        this.prisma.$queryRaw<any[]>`
+          SELECT p.name, SUM(o.${column}) as total
           FROM \`Order\` o
           JOIN Product p ON o.productId = p.id
           WHERE o.status = 'Completed'
-          ${rangeQuery}
+          ${timePeriod !== 'ALL TIME' ? Prisma.sql`AND o.createdAt >= DATE_SUB(NOW(), ${interval})` : Prisma.empty}
           GROUP BY p.id
           HAVING total > 0
           ORDER BY total DESC
-        `)
+        `
 
     const result = await query
 
@@ -87,16 +89,16 @@ export class ReportService {
   }
 
   async getStatusCount(timePeriod: string) {
-    const rangeQuery = timePeriod !== 'ALL TIME' ? `WHERE o.createdAt >= DATE_SUB(NOW(), ${timePeriod})` : ``
+    const interval = Prisma.sql`${Prisma.raw(timePeriod)}`
     const query =
-      this.prisma.$queryRawUnsafe<any[]>(`
+      this.prisma.$queryRaw<any[]>`
         SELECT status, count(status) as total
         FROM \`Order\` o
-        ${rangeQuery}
+        ${timePeriod !== 'ALL TIME' ? Prisma.sql`WHERE createdAt >= DATE_SUB(NOW(), ${interval})` : Prisma.empty}
         GROUP BY status
         HAVING total > 0
         ORDER BY total DESC
-      `)
+      `
 
     const result = await query
     return result.map((row)=> ({
@@ -106,14 +108,13 @@ export class ReportService {
   }
 
   async getNewUser(timePeriod : string) {
-    const rangeQuery = timePeriod !== 'ALL TIME' ? `WHERE createdAt < DATE_SUB(NOW(), ${timePeriod})` 
-    : `WHERE createdAt > NOW()`
-    const result = await this.prisma.$queryRawUnsafe<any[]>(`
+    const interval = Prisma.sql`${Prisma.raw(timePeriod)}`
+    const result = await this.prisma.$queryRaw<any[]>`
       SELECT COUNT(id) as newuser FROM User
       UNION ALL
       SELECT COUNT(id) as newuser FROM User
-      ${rangeQuery}
-    `)
+           ${timePeriod !== 'ALL TIME' ? Prisma.sql`WHERE createdAt < DATE_SUB(NOW(), ${interval})` : Prisma.empty}
+    `
     return result.map((row) => ({
       newUser: Number(row.newuser),
     }))
