@@ -58,7 +58,7 @@ export class ReportService {
       SELECT (sum(total) - ROUND(sum(total) / (1 + ${IMPORT_TAX_PERCENTAGE}), 2)) as total_income
       FROM \`Order\` o
       WHERE status = 'Completed'
-      ${timePeriod !== 'ALL TIME' ? Prisma.sql`AND createdAt >= DATE_SUB(NOW(), ${interval})` : Prisma.empty}
+      ${timePeriod === 'ALL TIME' ?  Prisma.empty: Prisma.sql`AND createdAt >= DATE_SUB(NOW(), ${interval})`}
     `
     return {
       price: result[0]?.total_income,
@@ -74,7 +74,7 @@ export class ReportService {
           FROM \`Order\` o
           JOIN Product p ON o.productId = p.id
           WHERE o.status = 'Completed'
-          ${timePeriod !== 'ALL TIME' ? Prisma.sql`AND o.createdAt >= DATE_SUB(NOW(), ${interval})` : Prisma.empty}
+          ${timePeriod === 'ALL TIME' ? Prisma.empty : Prisma.sql`AND o.createdAt >= DATE_SUB(NOW(), ${interval})` }
           GROUP BY p.id
           HAVING total > 0
           ORDER BY total DESC
@@ -94,7 +94,7 @@ export class ReportService {
       this.prisma.$queryRaw<any[]>`
         SELECT status, count(status) as total
         FROM \`Order\` o
-        ${timePeriod !== 'ALL TIME' ? Prisma.sql`WHERE createdAt >= DATE_SUB(NOW(), ${interval})` : Prisma.empty}
+        ${timePeriod === 'ALL TIME' ? Prisma.empty : Prisma.sql`WHERE createdAt >= DATE_SUB(NOW(), ${interval})`}
         GROUP BY status
         HAVING total > 0
         ORDER BY total DESC
@@ -113,7 +113,7 @@ export class ReportService {
       SELECT COUNT(id) as newuser FROM User
       UNION ALL
       SELECT COUNT(id) as newuser FROM User
-           ${timePeriod !== 'ALL TIME' ? Prisma.sql`WHERE createdAt < DATE_SUB(NOW(), ${interval})` : Prisma.empty}
+           ${timePeriod === 'ALL TIME' ? Prisma.empty : Prisma.sql`WHERE createdAt < DATE_SUB(NOW(), ${interval})`}
     `
     return result.map((row) => ({
       newUser: Number(row.newuser),
