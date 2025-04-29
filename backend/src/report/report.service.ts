@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { PrismaService } from 'src/prisma/prisma.service'
+import { IMPORT_TAX_PERCENTAGE } from '../order/order.service';
 
 @Injectable()
 export class ReportService {
@@ -50,34 +51,28 @@ export class ReportService {
     }))
   }
 
-  async getAverageSalesPrice() {
-    const result = await this.prisma.$queryRaw<{ average_price: number }[]>`
-      SELECT AVG(total) as average_price FROM
-      \`Order\` o  LIMIT 1
-    `
+  async getIncomeFromTaxes(timePeriod : string) {
+    const rangeQuery = timePeriod !== 'ALL TIME' ? `AND createdAt >= DATE_SUB(NOW(), ${timePeriod})` : ``
+    const result = await this.prisma.$queryRawUnsafe<any>(`
+      SELECT (sum(total) - ROUND(sum(total) / (1+${IMPORT_TAX_PERCENTAGE}),2)) as total_income 
+      FROM \`Order\` o  
+      WHERE status = 'Completed'
+      ${rangeQuery}
+    `)
     return {
-      price: result[0]?.average_price,
+      price: result[0]?.total_income,
     }
   }
 
   async getHotProductSales(dataType: string, timePeriod: string) {
+    const rangeQuery = timePeriod !== 'ALL TIME' ? `AND o.createdAt >= DATE_SUB(NOW(), ${timePeriod})` : ``
     const query =
-      timePeriod === 'ALL TIME'
-        ? this.prisma.$queryRawUnsafe<any[]>(`
+        this.prisma.$queryRawUnsafe<any[]>(`
           SELECT p.name, SUM(o.${dataType}) as total
           FROM \`Order\` o
           JOIN Product p ON o.productId = p.id
           WHERE o.status = 'Completed'
-          GROUP BY p.id
-          HAVING total > 0
-          ORDER BY total DESC
-        `)
-        : this.prisma.$queryRawUnsafe<any[]>(`
-          SELECT p.name, SUM(o.${dataType}) as total
-          FROM \`Order\` o
-          JOIN Product p ON o.productId = p.id
-          WHERE o.status = 'Completed'
-          AND o.createdAt >= DATE_SUB(NOW(), ${timePeriod})
+          ${rangeQuery}
           GROUP BY p.id
           HAVING total > 0
           ORDER BY total DESC
@@ -91,35 +86,96 @@ export class ReportService {
     }))
   }
 
-  async getMonthlySales() {
-    const result = await this.prisma.$queryRaw<any[]>`
-      SELECT 
-        DATE_FORMAT(createdAt, "%M %Y") as month,
-        DATE_FORMAT(createdAt, "%Y-%m") as sort_key,
-        SUM(amount) as total_sales,
-        SUM(total) as total_revenue
-      FROM \`Order\`
-      WHERE status = 'completed' 
-        AND createdAt >= DATE_SUB(NOW(), interval 6 MONTH)
-      GROUP BY month, sort_key
-      ORDER BY sort_key DESC
-    `
-    return result.map((row) => ({
-      month: row.month,
-      sales: Number(row.total_sales),
-      revenue: Number(row.total_revenue),
+  async getStatusCount(timePeriod: string) {
+    const rangeQuery = timePeriod !== 'ALL TIME' ? `WHERE o.createdAt >= DATE_SUB(NOW(), ${timePeriod})` : ``
+    const query =
+      this.prisma.$queryRawUnsafe<any[]>(`
+        SELECT status, count(status) as total
+        FROM \`Order\` o
+        ${rangeQuery}
+        GROUP BY status
+        HAVING total > 0
+        ORDER BY total DESC
+      `)
+
+    const result = await query
+    return result.map((row)=> ({
+      name: row.status,
+      value: Number(row.total),
     }))
   }
 
-  async getNewUserThisMonth() {
-    const result = await this.prisma.$queryRaw<any[]>`
+  async getNewUser(timePeriod : string) {
+    const rangeQuery = timePeriod !== 'ALL TIME' ? `WHERE createdAt < DATE_SUB(NOW(), ${timePeriod})` 
+    : `WHERE createdAt > NOW()`
+    const result = await this.prisma.$queryRawUnsafe<any[]>(`
       SELECT COUNT(id) as newuser FROM User
-      UNION
+      UNION ALL
       SELECT COUNT(id) as newuser FROM User
-      WHERE createdAt < DATE_SUB(NOW(), INTERVAL 1 MONTH)
-    `
+      ${rangeQuery}
+    `)
     return result.map((row) => ({
       newUser: Number(row.newuser),
     }))
   }
+
+  async unsastisfyCustomer () {
+    const result = await this.prisma.$queryRaw<any[]>`
+           SELECT u.id as id, u.username as username, 
+      COUNT(IF(r.rating <= 2,1, NULL)) as low_rating, AVG(rating) as avg_rating, 
+      COUNT(IF(o.status = 'Refunded' , 1, NULL)) as refunded_count , COUNT(IF(o.status = 'Refunded' , 1, NULL)) * 100/COUNT(o.status)  as refunded_rate
+      FROM User u 
+      JOIN \`Order\` o ON o.userId = u.id
+      LEFT JOIN Reviews r ON u.id = r.userId and o.productId = r.productId
+      WHERE u.id IN (
+          SELECT u.id FROM User u 
+           	JOIN \`Order\` o ON o.userId = u.id
+      		LEFT JOIN Reviews r ON u.id = r.userId and o.productId = r.productId
+               WHERE (r.rating <= 2 AND o.status = 'Completed')
+      		   OR (o.status = 'Refunded' or o.status = 'Refuding')
+			)
+      GROUP BY u.id
+      ORDER BY refunded_rate DESC, low_rating DESC
+    `
+
+    return result.map((row) => ({
+      id: row.id,
+      username: row.username,
+      low_rating: Number(row.low_rating),
+      avg_rating: Number(row.avg_rating),
+      refunded_count: Number(row.refunded_count),
+      refunded_rate: Number(row.refunded_rate)
+    }))
+  }
+
+  async UnsatisfyProduct(){
+    const result = await this.prisma.$queryRaw<any[]>`
+    SELECT p.id as id, p.name as name,
+	  COUNT(IF(r.rating <= 2,1, NULL)) as low_rating, IFNULL(AVG(rating),0) as avg_rating, 
+    COUNT(IF(o.status = 'Refunded' , 1, NULL)) as refunded_count , COUNT(IF(o.status = 'Refunded' , 1, NULL)) * 100/COUNT(o.status)  as refunded_rate
+    FROM Product p
+    JOIN \`Order\` o ON o.productId = p.id
+    LEFT JOIN Reviews r ON p.id = r.productId
+    WHERE p.id IN (
+          SELECT p.id FROM Product p
+         JOIN \`Order\` o ON o.productId = p.id
+    	LEFT JOIN Reviews r ON p.id = r.productId
+               WHERE (r.rating <= 2 AND o.status = 'Completed')
+      		   OR (o.status = 'Refunded' or o.status = 'Refuding')
+			)
+    GROUP BY p.id
+    ORDER BY refunded_rate DESC, low_rating DESC
+  `
+
+  return result.map((row) => ({
+    id: row.id,
+    name: row.name,
+    low_rating: Number(row.low_rating),
+    avg_rating: Number(row.avg_rating),
+    refunded_count: Number(row.refunded_count),
+    refunded_rate: Number(row.refunded_rate)
+  }))
+  }
+
+
 }
