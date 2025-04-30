@@ -7,25 +7,27 @@ import { AuthGuard } from '@nestjs/passport'
 export class ReportController {
   constructor(private readonly reportService: ReportService) {}
 
-  @Get('reviewed')
+  @Get('admin/reviewed')
   @UseGuards(AuthGuard('jwt'), AdminGuard)
   async getReviewedUsers() {
     return await this.reportService.getReviewedUsers()
   }
 
-  @Get('refunded')
+  @Get('admin/refunded')
   @UseGuards(AuthGuard('jwt'), AdminGuard)
   async getRefundedUsers() {
     return await this.reportService.getRefundedUsers()
   }
 
-  @Get('average_sales')
+  @Get('admin/income-taxes')
   @UseGuards(AuthGuard('jwt'), AdminGuard)
-  async getAverageSalesPrice() {
-    return await this.reportService.getAverageSalesPrice()
+  async getAverageSagetIncomeFromTaxeslesPrice(
+    @Query('timePeriod') timePeriod: string,
+  ) {
+    return await this.reportService.getIncomeFromTaxes(timePeriod)
   }
 
-  @Get('sales')
+  @Get('admin/sales')
   @UseGuards(AuthGuard('jwt'), AdminGuard)
   async getHotProductSales(
     @Query('dataType') dataType: string,
@@ -34,15 +36,29 @@ export class ReportController {
     return await this.reportService.getHotProductSales(dataType, timePeriod)
   }
 
-  @Get('monthly')
+  @Get('admin/status')
   @UseGuards(AuthGuard('jwt'), AdminGuard)
-  async getMonthlySales() {
-    return await this.reportService.getMonthlySales()
+  async getStatusCount(
+    @Query('timePeriod') timePeriod: string,
+  ) {
+    return await this.reportService.getStatusCount(timePeriod)
   }
 
-  @Get('newUser')
+  @Get('admin/newUser')
   @UseGuards(AuthGuard('jwt'), AdminGuard)
-  async getNewUserThisMonth() {
-    return await this.reportService.getNewUserThisMonth()
+  async getNewUser(@Query('timePeriod') timePeriod: string,) {
+    return await this.reportService.getNewUser(timePeriod)
+  }
+
+  @Get('admin/unsastisfyCustomer')
+  @UseGuards(AuthGuard('jwt'), AdminGuard)
+  async unsastisfyCustomer() {
+    return await this.reportService.unsastisfyCustomer()
+  }
+
+  @Get('admin/UnsatisfyProduct')
+  @UseGuards(AuthGuard('jwt'), AdminGuard)
+  async UnsatisfyProduct() {
+    return await this.reportService.UnsatisfyProduct()
   }
 }

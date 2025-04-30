@@ -9,7 +9,7 @@ const MostReviewedUserCard: React.FC = () => {
   const [data, setData] = useState<userReview|null>(null)
  
   const fetchUser = async () => {
-      const {data} = await axiosInstance.get('/report/reviewed')
+      const {data} = await axiosInstance.get('/report/admin/reviewed')
       setData(data[0])
     }
     
