@@ -12,38 +12,28 @@ import {
   DropdownMenuLabel,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@radix-ui/react-dropdown-menu'
 import { Button } from '@/components/ui/button'
 import { ChevronDown, Dot } from 'lucide-react'
 import { isAxiosError } from 'axios'
 import { toast } from 'sonner'
+import { getLabelFromTimePeriod } from '../types/TimePeriod'
 
-const TimePeriod = [
-  { label: '1 day', value: 'INTERVAL 1 DAY' },
-  { label: '1 week', value: 'INTERVAL 1 WEEK' },
-  { label: '1 month', value: 'INTERVAL 1 MONTH' },
-  { label: '3 month', value: 'INTERVAL 3 MONTH' },
-  { label: '6 month', value: 'INTERVAL 6 MONTH' },
-  { label: '1 year', value: 'INTERVAL 1 YEAR' },
-  { label: 'all time', value: 'ALL TIME' },
-]
 const DataType = [
   { label: 'amount', value: 'amount' },
   { label: 'revenue', value: 'total' },
 ]
 
-export const MostSales: React.FC = () => {
+type props = {
+  timePeriod: string
+}
+
+export const MostSales: React.FC<props> = ({timePeriod }: props) => {
   const [loading, setLoading] = useState(true)
-  const [timePeriod, setTimePeriod] = useState('INTERVAL 1 MONTH')
   const [dataType, setDataType] = useState('amount')
   const [data, setSalesData] = useState<SalesData[]>([])
 
-  function getLabelFromTimePeriod(value: string): string | undefined {
-    const item = TimePeriod.find((period) => period.value === value)
-    return item?.label
-  }
   function getLabelFromDataType(value: string): string | undefined {
     const item = DataType.find((type) => type.value === value)
     return item?.label
@@ -52,7 +42,7 @@ export const MostSales: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const { data } = await axiosInstance.get('report/sales', {
+        const { data } = await axiosInstance.get('report/admin/sales', {
           params: {
             dataType,
             timePeriod,
@@ -112,7 +102,7 @@ export const MostSales: React.FC = () => {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="h-10 w-30">
-              Custom
+              {getLabelFromDataType(dataType)}
               <ChevronDown className="ml-2 h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
@@ -120,24 +110,6 @@ export const MostSales: React.FC = () => {
             <DropdownMenuLabel>Data Type</DropdownMenuLabel>
             <DropdownMenuRadioGroup value={dataType} onValueChange={setDataType}>
               {DataType.map((item) => {
-                return (
-                  <DropdownMenuRadioItem
-                    key={item.value}
-                    value={item.value}
-                    className="text-sm py-1 focus:outline-none focus:opacity-50"
-                  >
-                    <DropdownMenuItemIndicator>
-                      <Dot className="rounded-full mx-1 h-[5px] w-[5px] inline-flex bg-white focus:outline-none focus:ring-2 focus:ring-white" />
-                    </DropdownMenuItemIndicator>
-                    {item.label}
-                  </DropdownMenuRadioItem>
-                )
-              })}
-            </DropdownMenuRadioGroup>
-            <DropdownMenuSeparator className="py-1" />
-            <DropdownMenuLabel>Time Period</DropdownMenuLabel>
-            <DropdownMenuRadioGroup value={timePeriod} onValueChange={setTimePeriod}>
-              {TimePeriod.map((item) => {
                 return (
                   <DropdownMenuRadioItem
                     key={item.value}

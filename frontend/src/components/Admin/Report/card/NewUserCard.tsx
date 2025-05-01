@@ -2,21 +2,27 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { axiosInstance } from '@/lib/axios'
 import { User } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
+import { getLabelFromTimePeriod } from '../types/TimePeriod'
+
 
 type newUser = {
     newUser: number
 }
-const NewUserCar: React.FC = () => {
+type props = {
+  timePeriod:string
+}
+const NewUserCar: React.FC<props> = ({timePeriod}: props) => {
   const [data, setData] = useState<newUser[]> ([])
   const totalNewUser = data[0]?.newUser - data[1]?.newUser
+
   const fetchData = async () => {
-    const {data} = await axiosInstance.get('report/newUser')
+    const {data} = await axiosInstance.get('report/admin/newUser', {params:{timePeriod}})
     setData(data)
   }
 
   useEffect(() => {
     fetchData()
-  },[])
+  },[timePeriod])
 
   const increasedPercentage = useMemo(() => {
     let lastMonthUser = data[1]?.newUser
@@ -41,7 +47,8 @@ const NewUserCar: React.FC = () => {
             <h2 className = "text-3xl font-bold flex-wrap">{totalNewUser >= 0 ? '+': ''}{totalNewUser}</h2>
         </div>
         <div className = "flex items-center mt-1">
-          <p className = {`text-sm ${Number(increasedPercentage) >= 0 ? 'text-green-500' : 'text-red-500'}`}>{Number(increasedPercentage) >= 0 ? '+' : ''}{increasedPercentage.toString()}% from last month</p>
+          {timePeriod !== 'ALL TIME' && <p className = {`text-sm ${Number(increasedPercentage) >= 0 ? 'text-green-500' : 'text-red-500'}`}>{Number(increasedPercentage) >= 0 ? '+' : ''}{increasedPercentage.toString()}% from last {getLabelFromTimePeriod(timePeriod)}</p>}
+          {timePeriod === 'ALL TIME' && <p className = 'text-sm text-zinc-400'>All time</p>}
         </div>
         </>
         ) :

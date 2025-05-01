@@ -9,7 +9,7 @@ const MostRefundedUserCard: React.FC = () => {
   const [data, setData] = useState<userRefunded | null> (null)
 
   const fetchData = async () => {
-    const {data} = await axiosInstance.get('report/refunded')
+    const {data} = await axiosInstance.get('report/admin/refunded')
     setData(data[0])
   }
 
