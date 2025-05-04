@@ -20,6 +20,7 @@ import {
   SIGN_UP_PATH,
   USER_INFO_PATH,
   USER_MANAGE_PATH,
+  SELLER_PRODUCT_PATH,
   SELLER_PRODUCT_REVIEWS_PATH,
 } from '@/constants/routes'
 import SignIn from './pages/Auth/SignIn'
@@ -55,6 +56,7 @@ import SellerOrder from './pages/Seller/Order'
 import { Footer } from './components/utils/Footer'
 import OrderConfirmation from './pages/Checkout/OrderConfirmation'
 import Checkout from './pages/Checkout'
+import SellerProduct from './pages/Seller/Products'
 
 const Home = React.lazy(() => import('@/pages/Home'))
 
@@ -118,6 +120,8 @@ function App() {
 
                     <Route path={SELLER_DASHBOARD_PATH} element={<SellerDashboard />} />
                     <Route path={SELLER_ORDER_PATH} element={<SellerOrder />} />
+                    <Route path={SELLER_PRODUCT_PATH} element={<SellerProduct />} />
+                    <Route path={SELLER_PRODUCT_REVIEWS_PATH} element={<ProductReviews />} />
 
                     <Route path={CHECKOUT_PATH} element={<Checkout />} />
                     <Route path={ORDER_CONFIRMATION_PATH} element={<OrderConfirmation />} />
