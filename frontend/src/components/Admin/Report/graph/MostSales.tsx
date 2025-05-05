@@ -36,7 +36,7 @@ export const MostSales: React.FC<props> = ({timePeriod }: props) => {
 
   function getLabelFromDataType(value: string): string | undefined {
     const item = DataType.find((type) => type.value === value)
-    return item?.label
+    return item ? item.label : 'revenue'
   }
 
   useEffect(() => {
@@ -128,7 +128,7 @@ export const MostSales: React.FC<props> = ({timePeriod }: props) => {
         </DropdownMenu>
       </div>
       <CardContent className="max-h-[400px] overflow-auto">
-        {loading ? (
+        {loading || !data ? (
           <div className="text-center py-20">Loading chart...</div>
         ) : (
           <ChartContainer config={chartConfig}>

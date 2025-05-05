@@ -17,7 +17,7 @@ import IncomeFromTaxes from '@/components/Admin/Report/card/IncomeFromTaxes'
 const Report: React.FC = () => {
   const [timePeriod, setTimePeriod] = useState('INTERVAL 1 MONTH')
   const sidebar = useSidebar()
-
+  
   return (
     <div>
       <div className={`transition-all duration-300 ${sidebar?.isSidebarOpen ? 'ml-[260px]' : 'ml-[70px]'}`}>

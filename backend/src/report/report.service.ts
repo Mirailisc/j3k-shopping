@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { PrismaService } from 'src/prisma/prisma.service'
 import { IMPORT_TAX_PERCENTAGE } from '../order/order.service';
 import { Prisma } from '@prisma/client';
+import { WrongTimePeriod } from './entities/TimePeriod';
 
 @Injectable()
 export class ReportService {
@@ -58,7 +59,7 @@ export class ReportService {
       SELECT (sum(total) - ROUND(sum(total) / (1 + ${IMPORT_TAX_PERCENTAGE}), 2)) as total_income
       FROM \`Order\` o
       WHERE status = 'Completed'
-      ${timePeriod === 'ALL TIME' ?  Prisma.empty: Prisma.sql`AND createdAt >= DATE_SUB(NOW(), ${interval})`}
+         ${timePeriod === 'ALL TIME' || WrongTimePeriod(timePeriod) ? Prisma.empty: Prisma.sql`AND createdAt >= DATE_SUB(NOW(), ${interval})`}
     `
     return {
       price: result[0]?.total_income,
@@ -67,14 +68,14 @@ export class ReportService {
 
   async getHotProductSales(dataType: string, timePeriod: string) {
     const interval = Prisma.sql`${Prisma.raw(timePeriod)}`
-    const column = Prisma.sql`${Prisma.raw(dataType)}`
+    const column = (dataType === 'total' || dataType === 'amount') ? Prisma.sql`${Prisma.raw(dataType)}` : Prisma.sql`${Prisma.raw('total')}`
     const query =
         this.prisma.$queryRaw<any[]>`
           SELECT p.name, SUM(o.${column}) as total
           FROM \`Order\` o
           JOIN Product p ON o.productId = p.id
           WHERE o.status = 'Completed'
-          ${timePeriod === 'ALL TIME' ? Prisma.empty : Prisma.sql`AND o.createdAt >= DATE_SUB(NOW(), ${interval})` }
+         ${timePeriod === 'ALL TIME' || WrongTimePeriod(timePeriod) ? Prisma.empty: Prisma.sql`AND o.createdAt >= DATE_SUB(NOW(), ${interval})`}
           GROUP BY p.id
           HAVING total > 0
           ORDER BY total DESC
@@ -94,7 +95,7 @@ export class ReportService {
       this.prisma.$queryRaw<any[]>`
         SELECT status, count(status) as total
         FROM \`Order\` o
-        ${timePeriod === 'ALL TIME' ? Prisma.empty : Prisma.sql`WHERE createdAt >= DATE_SUB(NOW(), ${interval})`}
+         ${timePeriod === 'ALL TIME' || WrongTimePeriod(timePeriod) ? Prisma.empty: Prisma.sql`WHERE createdAt >= DATE_SUB(NOW(), ${interval})`}
         GROUP BY status
         HAVING total > 0
         ORDER BY total DESC
@@ -113,7 +114,7 @@ export class ReportService {
       SELECT COUNT(id) as newuser FROM User
       UNION ALL
       SELECT COUNT(id) as newuser FROM User
-           ${timePeriod === 'ALL TIME' ? Prisma.empty : Prisma.sql`WHERE createdAt < DATE_SUB(NOW(), ${interval})`}
+            ${timePeriod === 'ALL TIME' || WrongTimePeriod(timePeriod) ? Prisma.empty: Prisma.sql`WHERE createdAt < DATE_SUB(NOW(), ${interval})`}
     `
     return result.map((row) => ({
       newUser: Number(row.newuser),

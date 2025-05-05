@@ -32,7 +32,7 @@ import { PaymentModule } from './payment/payment.module'
     ReviewModule,
     SearchModule,
     NotificationModule,
-    PaymentModule,
+    //PaymentModule,
   ],
   controllers: [AppController],
   providers: [AppService],
