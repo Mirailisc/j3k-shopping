@@ -87,7 +87,7 @@ export class ProductService {
 
     return products.map((product) => ({
       ...product,
-      productImg: this.toBase64(product.productImg),
+      productImg:  (product.productImg?this.toBase64(product.productImg):null),
     }))
   }
 
