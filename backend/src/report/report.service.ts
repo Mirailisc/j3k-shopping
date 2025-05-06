@@ -106,7 +106,7 @@ export class ReportService {
       name: row.status,
       value: Number(row.total),
     }))
-  }
+  } 
 
   async getNewUser(timePeriod : string) {
     const interval = Prisma.sql`${Prisma.raw(timePeriod)}`

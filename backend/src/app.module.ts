@@ -15,6 +15,7 @@ import { ReportModule } from './report/report.module'
 import { SearchModule } from './search/search.module'
 import { NotificationModule } from './notification/notification.module'
 import { PaymentModule } from './payment/payment.module'
+import { DashboardModule } from './dashboard/dashboard.module'
 
 @Module({
   imports: [
@@ -32,7 +33,8 @@ import { PaymentModule } from './payment/payment.module'
     ReviewModule,
     SearchModule,
     NotificationModule,
-    //PaymentModule,
+    PaymentModule,
+    DashboardModule,
   ],
   controllers: [AppController],
   providers: [AppService],

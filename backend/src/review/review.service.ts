@@ -12,12 +12,10 @@ import { UpdateReviewDto } from './dto/update-review.dto'
 import { randomUUID } from 'crypto'
 import { ReviewInfo } from './entities/review-info.entity'
 import { ProductService } from 'src/product/product.service'
-//Added PS.I add here since Its keep saying that Prisma doesnt export Order.
 import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
 type Order = PrismaClient['order']
-//End Added
 
 @Injectable()
 export class ReviewService {
@@ -26,7 +24,6 @@ export class ReviewService {
     private readonly productService: ProductService,
   ) {}
   
-  //Added Here after prod : sellerId: string // Incase of We want only Seller to be able to see all their Product Reviews PS:I think everyone should be able to see.
   async getReviewsForSellerProduct(productId: string) {
     const result = await this.prisma.$queryRaw<any[]>`
       SELECT 
@@ -43,17 +40,10 @@ export class ReviewService {
       JOIN User u ON r.userId = u.id
       WHERE r.productId = ${productId}
     `
-    //AND p.userId = ${sellerId} Incase of We want only Seller to be able to see all their Product Reviews PS:I think everyone should be able to see.
-  
-    if (!result.length) {
-      throw new ForbiddenException('Access Denied or no reviews found.')
-    }
   
     return result
   }
-  //End Added
 
-  //Added 2
   async getRatingStats(productId: string) {
     const result = await this.prisma.$queryRaw<any[]>`
       SELECT 
@@ -87,8 +77,6 @@ export class ReviewService {
       breakdown,
     }
   }
-  
-//Ended Added 2  
 
   async getAllReview() {
     const result = await this.prisma.$queryRaw<Review[]>`
