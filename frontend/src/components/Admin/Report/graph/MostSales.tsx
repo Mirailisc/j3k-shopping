@@ -36,7 +36,7 @@ export const MostSales: React.FC<props> = ({timePeriod }: props) => {
 
   function getLabelFromDataType(value: string): string | undefined {
     const item = DataType.find((type) => type.value === value)
-    return item?.label
+    return item ? item.label : 'revenue'
   }
 
   useEffect(() => {

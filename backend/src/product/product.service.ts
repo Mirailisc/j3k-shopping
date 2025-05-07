@@ -87,7 +87,7 @@ export class ProductService {
 
     return products.map((product) => ({
       ...product,
-      productImg: this.toBase64(product.productImg),
+      productImg:  (product.productImg?this.toBase64(product.productImg):null),
     }))
   }
 
@@ -162,7 +162,7 @@ export class ProductService {
     }
     
     await this.prisma.$executeRaw`
-      DELETE FROM Review WHERE productId = ${id}
+      DELETE FROM Reviews WHERE productId = ${id}
     `
 
     return await this.prisma.$executeRaw`
@@ -173,7 +173,7 @@ export class ProductService {
   async deleteProductByAdmin(id: string) {
 
     await this.prisma.$executeRaw`
-      DELETE FROM Review WHERE productId = ${id}
+      DELETE FROM Reviews WHERE productId = ${id}
     `
 
     return await this.prisma.$executeRaw`

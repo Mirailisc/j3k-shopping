@@ -10,5 +10,5 @@ export const TimePeriod = [
 
 export function getLabelFromTimePeriod(value: string): string | undefined {
       const item = TimePeriod.find((period) => period.value === value)
-      return item?.label
+      return item ? item.label : 'All Time'
 }
