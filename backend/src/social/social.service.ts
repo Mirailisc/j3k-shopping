@@ -35,7 +35,8 @@ export class SocialService {
       facebook = ${social.facebook},
       instagram = ${social.instagram},
       tiktok = ${social.tiktok},
-      website = ${social.website}
+      website = ${social.website},
+      updatedAt = CURRENT_TIMESTAMP
       WHERE userId = ${id}
     `
   }

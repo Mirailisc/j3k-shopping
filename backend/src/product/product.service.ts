@@ -137,6 +137,7 @@ export class ProductService {
       await this.prisma.$executeRaw<Product[]>`
       UPDATE Product
       SET name = ${product.name}, description = ${product.description}, price = ${product.price}, quantity = ${product.quantity}
+      , updatedAt = CURRENT_TIMESTAMP
       WHERE id = ${id}
     `
     if (product.productImg){
@@ -154,7 +155,9 @@ export class ProductService {
     await this.prisma.$executeRaw<Product[]>`
       UPDATE Product
       SET name = ${product.name}, description = ${product.description}, price = ${product.price}, quantity = ${product.quantity}
+      , updatedAt = CURRENT_TIMESTAMP
       WHERE id = ${id}
+      
     `
     if (product.productImg){
       await this.prisma.$executeRaw<Product[]>`

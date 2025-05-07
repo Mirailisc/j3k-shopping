@@ -29,9 +29,9 @@ export const LowStockColumns = () => {
 
   return (
     <Card>
-        <CardHeader>Low Stock Procut</CardHeader>
+        <CardHeader>Low Stock Product</CardHeader>
         <CardContent>
-            <Table className = 'max-h-[400px] w-full overflow-auto'>
+            <Table className = 'max-h-[400px] w-full overflow-auto border-1'>
                 <TableHeader>
                     <TableRow>
                     <TableHead>ID</TableHead>

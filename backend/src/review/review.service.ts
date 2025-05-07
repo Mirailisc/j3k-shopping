@@ -200,6 +200,7 @@ export class ReviewService {
     await this.prisma.$executeRaw<Review>`
         UPDATE \`Reviews\`
         SET rating = ${review.rating}, comment = ${review.comment}
+        , updatedAt = CURRENT_TIMESTAMP
         WHERE id = ${id}
       `
 
