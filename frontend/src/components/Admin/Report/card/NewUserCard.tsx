@@ -23,8 +23,8 @@ const NewUserCar: React.FC<props> = ({timePeriod}: props) => {
   },[timePeriod])
 
   const increasedPercentage = useMemo(() => {
-    let lastMonthUser = data[1]?.newUser
-    if(lastMonthUser === 0) lastMonthUser = 1
+    const lastMonthUser = data[1]?.newUser
+    if(lastMonthUser === 0) return 100
     const percentage = ((data[0]?.newUser-lastMonthUser)*100 / lastMonthUser)
     return percentage.toFixed(2)
   }, [data])

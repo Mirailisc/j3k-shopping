@@ -60,8 +60,9 @@ export const TotalRevenue: React.FC = () => {
   }, [range])
 
   const percentageChanges: number = useMemo(() => {
-    const LastSales = Number(chartData[chartData.length - 2]?.revenue || 1)
+    const LastSales = Number(chartData[chartData.length - 2]?.revenue || 0)
     const thisSales = Number(chartData[chartData.length - 1]?.revenue || 0)
+    if (LastSales === 0) return 100
     return ((thisSales - LastSales) * 100) / LastSales
   }, [chartData])
 
