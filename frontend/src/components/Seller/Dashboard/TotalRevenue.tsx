@@ -18,7 +18,7 @@ import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLab
 const chartConfig = {
   sales: {
     label: 'sales',
-    color: '#5a94f2',
+    color: '#12AA34',
   },
   revenue: {
     label: 'revenue',
@@ -52,7 +52,6 @@ export const TotalRevenue: React.FC = () => {
         try{
         const {data} = await axiosInstance.get('dashboard/seller/total', {params: {range}})
         setMonthlyData(data)
-        console.log(data)
         } catch(error){
             console.log(error)
         }

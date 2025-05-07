@@ -17,12 +17,13 @@ import {
   REVIEW_MANAGE_PATH,
   SELLER_DASHBOARD_PATH,
   SELLER_ORDER_PATH,
+  SELLER_PRODUCT_REVIEWS_PATH,
+  SELLER_REPRORT_PATH,
   SELLER_PATH,
   SIGN_IN_PATH,
   SIGN_UP_PATH,
   USER_INFO_PATH,
   USER_MANAGE_PATH,
-  SELLER_PRODUCT_REVIEWS_PATH,
 } from '@/constants/routes'
 import SignIn from './pages/Auth/SignIn'
 import SignUp from './pages/Auth/SignUp'
@@ -61,6 +62,7 @@ import OrderInfo from './pages/Order/OrderInfo'
 import Orders from './pages/Order'
 import { axiosInstance } from './lib/axios'
 import ServerDown from './pages/ServerDown'
+import { SellerReport } from './pages/Seller/Report'
 
 const Home = React.lazy(() => import('@/pages/Home'))
 
@@ -128,14 +130,15 @@ function App() {
               <Route element={<Protected />}>
                 <Route path={PROFILE_PATH} element={<Profile />} />
                 <Route path={SELLER_DASHBOARD_PATH} element={<SellerDashboard />} />
-                <Route path="/seller/inventory/:productId/reviews" element={<ProductReviews />} />
+                <Route path={SELLER_PRODUCT_REVIEWS_PATH} element={<ProductReviews />} />
               </Route>
                   <Route element={<Protected />}>
                     <Route path={PROFILE_PATH} element={<Profile />} />
 
                     <Route path={SELLER_DASHBOARD_PATH} element={<SellerDashboard />} />
                     <Route path={SELLER_ORDER_PATH} element={<SellerOrder />} />
-
+                    <Route path = {SELLER_REPRORT_PATH} element = {<SellerReport />} /> 
+                    
                     <Route path={ORDER_PATH} element={<Orders />} />
                     <Route path={ORDER_INFO_PATH} element={<OrderInfo />} />
 

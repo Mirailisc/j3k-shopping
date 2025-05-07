@@ -10,6 +10,11 @@ const MostRefundedUserCard: React.FC = () => {
 
   const fetchData = async () => {
     const {data} = await axiosInstance.get('report/admin/refunded')
+    if(data === undefined){
+      data[0] = {
+
+      }
+    }
     setData(data[0])
   }
 
@@ -37,7 +42,7 @@ const MostRefundedUserCard: React.FC = () => {
         </div>
         </>
         ) :
-        <p className = "text-sm text-zinc-400">Loading...</p>
+        <p className = "text-sm text-zinc-400">No user got refunded</p>
         }
       </CardContent>
     </Card>

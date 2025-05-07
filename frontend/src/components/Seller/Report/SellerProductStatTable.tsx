@@ -9,7 +9,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-import { ArrowBigDownDash, ArrowUpDown } from "lucide-react"
+import { ArrowUpDown, Search } from "lucide-react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { axiosInstance } from "@/lib/axios"
@@ -19,123 +19,121 @@ import { Button } from "@/components/ui/button"
 
 // Define the type for the data returned from the unsastisfyCustomer query
 export type UnsatisfiedCustomer = {
-  id: string
   name: string
-  low_rating: number
   avg_rating: number
-  refunded_count: number
+  total_order: number
+  amount_sales: number
+  revenue: number
   refunded_rate: number
 }
 
 export const columns: ColumnDef<UnsatisfiedCustomer>[] = [
   {
-    accessorKey: "id",
-    header: "ID",
-    enableSorting: false,
-    cell: ({ row }) => {
-        const value = row.getValue("id") as number
-        return <div className="text-sm text-zinc-400">{value}</div>
-      }
-    
-  },
-  {
     accessorKey: "name",
     header: "name",
     enableSorting: false,
+    cell: ({ row }) => {
+      const value = row.getValue("name") as number
+      return <div className="ml-1 font-bold flex-nowrap">{value}</div>
+    },
   },
   {
-    accessorKey: "low_rating",
+    accessorKey: "total_order",
     header: ({ column }) => {
       return (
         <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Low Ratings
+          Completed Order
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )
     },
     cell: ({ row }) => {
-      const value = row.getValue("low_rating") as number
-      return <div className="text-center font-medium">{value}</div>
+      const value = row.getValue("total_order") as number
+      return <div className="text-center font-medium">{value.toFixed(0)}</div>
     },
   },
   {
-    accessorKey: "avg_rating",
+    accessorKey: "amount_sales",
     header: ({ column }) => {
       return (
         <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Avg Rating
+          Sales Amount
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )
     },
     cell: ({ row }) => {
-      const value = row.getValue("avg_rating") as number
+      const value = row.getValue("amount_sales") as number
+      return <div className="text-center font-medium">{value.toFixed(0)}</div>
+    },
+  },
+  {
+    accessorKey: "revenue",
+    header: ({ column }) => {
+      return (
+        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Total Revenue
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
+    cell: ({ row }) => {
+      const value = row.getValue("revenue") as number
       return <div className="text-center font-medium">{value.toFixed(2)}</div>
     },
   },
-  {
-    accessorKey: "refunded_count",
-    header: ({ column }) => {
-      return (
-        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Refunded Count
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
-    },
-    cell: ({ row }) => {
-      const value = row.getValue("refunded_count") as number
-      return <div className="text-center font-medium">{value}</div>
-    },
-  },
-  {
-    accessorKey: "refunded_rate",
-    header: ({ column }) => {
-      return (
-        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Refund Rate (%)
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
-    },
-    cell: ({ row }) => {
-      const value = row.getValue("refunded_rate") as number
-
-      // Determine badge color based on refund rate
-      let badgeVariant: "default" | "destructive" | "outline" | "secondary" = "outline"
-      if (value > 20) {
-        badgeVariant = "destructive"
-      } else if (value > 10) {
-        badgeVariant = "secondary"
-      }
-
-      return (
-        <div className="text-center">
-          <Badge variant={badgeVariant}>{value.toFixed(2)}%</Badge>
-        </div>
-      )
-    },
-  },
-  {
-      id:'action',
-      enableHiding: false, 
-      cell: ({ row }) => {
-        const value = row.getValue("id") as string
-        return <div className="text-center text-sm text-zinc-400">
-          <Button variant="ghost" onClick ={() => navigator.clipboard.writeText(value)}>copy Product ID</Button>
-        </div>
+    {
+      accessorKey: "refunded_rate",
+      header: ({ column }) => {
+        return (
+          <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+            Refund Rate (%)
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        )
       },
-    }
+      cell: ({ row }) => {
+        const value = row.getValue("refunded_rate") as number
+        let badgeVariant: "default" | "destructive" | "outline" | "secondary" = "outline"
+        if (value > 20) {
+          badgeVariant = "destructive"
+        } else if (value > 10) {
+          badgeVariant = "secondary"
+        }
+  
+        return (
+          <div className="text-center">
+            <Badge variant={badgeVariant}>{value.toFixed(2)}%</Badge>
+          </div>
+        )
+      },
+    },
+  {
+      accessorKey: "avg_rating",
+      header: ({ column }) => {
+        return (
+          <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+            Avg Rating
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        )
+      },
+      cell: ({ row }) => {
+        const value = row.getValue("avg_rating") as number
+        return <div className="text-center font-medium">{value.toFixed(2)}</div>
+      },
+  },
 ]
 
-export function UnsatisfyProductTable() {
+export function SellerProductStatTable() {
   const [data, setData] = useState<UnsatisfiedCustomer[]>([])
   const [sorting, setSorting] = React.useState<SortingState>([
     { id: "refunded_rate", desc: true }, // Default sort by refunded_rate descending
   ])
 
   const fetchData = async () => {
-    const{data} = await axiosInstance('report/admin/UnsatisfyProduct')
+    const{data} = await axiosInstance('report/seller/product')
+    console.log(data)
     setData(data)
   }
   React.useEffect(() => {
@@ -156,9 +154,9 @@ export function UnsatisfyProductTable() {
   return (
     <Card>
     <CardHeader className = "flex flex-row items-center justify-between">
-        <CardTitle className = 'text-sm font-normal text-zinc-400'>Low Quality Products</CardTitle>
+        <CardTitle className = 'text-sm font-normal text-zinc-400'>Products breakdown</CardTitle>
         <div className = "h-8 w-8 flex items-center justify-center">
-          <ArrowBigDownDash   className = "h-5 w-5 text-zinc-400"/>
+          <Search className = "h-5 w-5 text-zinc-400"/>
         </div>
     </CardHeader>
         <CardContent>

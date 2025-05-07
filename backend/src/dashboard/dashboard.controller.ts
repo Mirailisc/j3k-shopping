@@ -58,4 +58,6 @@ export class DashboardController {
   ){
     return await this.dashboardService.GetSalesOverTime(range, req.user.userId)
   }
+
+  
 }

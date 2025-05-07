@@ -21,7 +21,6 @@ export const LowStockColumns = () => {
     const fetchData = async () => {
         const {data} = await axiosInstance.get('dashboard/seller/lowstock/list')
               setData(data)
-              console.log(data)
     }
 
     useEffect(() => {
@@ -38,7 +37,6 @@ export const LowStockColumns = () => {
                     <TableHead>ID</TableHead>
                     <TableHead>Product</TableHead>
                     <TableHead>Amount</TableHead>
-                    <TableHead></TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -47,9 +45,6 @@ export const LowStockColumns = () => {
                             <TableCell>{row.id}</TableCell>
                             <TableCell>{row.name}</TableCell>
                             <TableCell>{row.quantity.toString()}</TableCell>
-                            <TableCell>
-                                {/* will do a button to inventory page */}
-                            </TableCell>
                         </TableRow>
                     ))}
                 </TableBody>

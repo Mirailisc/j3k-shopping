@@ -6,7 +6,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import { useEffect, useMemo, useState } from "react"
 import { axiosInstance } from "@/lib/axios"
-import { getLabelFromTimePeriod } from "../types/TimePeriod"
+import { getLabelFromTimePeriod } from '../Report/types/TimePeriod'
+
 
 const colorPalette = [
   "#1b3da8", // navy-ish blue
@@ -27,7 +28,7 @@ type ChartData = {
 type props = {
     timePeriod: string,
 }
-const StatusCountGraph: React.FC<props> = ({timePeriod}: props) => {
+export const SellerStatusCountGraph: React.FC<props> = ({timePeriod}: props) => {
     const [chartData, setChartData] = useState<ChartData[]>([])
     const [loading, setLoading] = React.useState(true)
 
@@ -35,7 +36,7 @@ const StatusCountGraph: React.FC<props> = ({timePeriod}: props) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const {data} = await axiosInstance.get('report/admin/status',{params: {timePeriod}})
+                const {data} = await axiosInstance.get('report/seller/status',{params: {timePeriod}})
                 setChartData(data)        
             }catch(error) {
                 console.error("failed to fetch product chart data", error)
@@ -60,7 +61,7 @@ const StatusCountGraph: React.FC<props> = ({timePeriod}: props) => {
           chartData.forEach((item) => {
             if(item.name === 'Completed') completed = item.value
           })
-          return (completed *100 / totalOrders).toFixed(2)
+          return (completed*100 / totalOrders).toFixed(2)
     },[chartData, totalOrders])
 
     const chartConfig: ChartConfig = useMemo(() => {
@@ -124,4 +125,3 @@ const StatusCountGraph: React.FC<props> = ({timePeriod}: props) => {
         </Card>
       )
 }
-export default StatusCountGraph

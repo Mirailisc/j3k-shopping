@@ -25,6 +25,7 @@ export const SELLER_PATH = BASE_PATH + 'seller'
 export const SELLER_DASHBOARD_PATH = SELLER_PATH + '/dashboard'
 export const SELLER_PRODUCT_REVIEWS_PATH = SELLER_PATH + '/inventory' + '/:productId' + '/reviews'
 export const SELLER_ORDER_PATH = SELLER_PATH + '/orders'
+export const SELLER_REPRORT_PATH = SELLER_PATH + '/reports'
 
 // Admin
 export const ADMIN_BASE_PATH = BASE_PATH + 'admin/'
