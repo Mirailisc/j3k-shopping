@@ -24,7 +24,7 @@ type Props = {
 
 const formSchema = z.object({
   name: z.string().min(1, 'Name is required'),
-  productImg: z.any().refine((file) => file instanceof File, 'Image is required'),
+  productImg: z.any(),
   description: z.string().min(1, 'Description is required'),
   price: z.string().refine((val) => !isNaN(parseFloat(val)), 'Price must be a number'),
   quantity: z.string().refine((val) => Number.isInteger(Number(val)), 'Quantity must be an integer'),
@@ -37,7 +37,7 @@ export const EditProductForm: React.FC<Props> = ({ open, setOpen, product, data,
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: '',
+      name: product.name,
       productImg: undefined,
       description: '',
       price: '',
@@ -58,7 +58,7 @@ export const EditProductForm: React.FC<Props> = ({ open, setOpen, product, data,
       setPreviewImg(product.productImg)
     }
   }, [product, form])
-
+  console.log(product)
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     const formData = new FormData()
     formData.append('name', values.name)
@@ -66,9 +66,9 @@ export const EditProductForm: React.FC<Props> = ({ open, setOpen, product, data,
     formData.append('price', values.price)
     formData.append('quantity', values.quantity)
     if (values.productImg instanceof File) {
-      formData.append('productImg', values.productImg)
+      formData.set('productImg', values.productImg)
     }
-
+    console.log(formData)
     try {
       const res = await axiosInstance.put(`/product/seller/${targetProduct}`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },

@@ -24,7 +24,7 @@ const TotalSaleCard: React.FC = () => {
       </CardHeader>
       <CardContent>
         {
-        data ? (
+        data >= 0 ? (
         <>
         <div className = "flex items-baseline">
             <h2 className = "text-3xl text-green-500 font-bold flex-wrap">{data.toString()}</h2>

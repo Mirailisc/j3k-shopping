@@ -13,8 +13,8 @@ export class DashboardService {
   async getSellerTotalOrder(id: string){
     const result = await this.prisma.$queryRaw<any>`
       SELECT count(o.id) as total FROM \`Order\` o
-      JOIN Product p ON o.productId = p.id
-      WHERE p.userId = ${id}
+      JOIN Product p ON o.productId = p.id 
+      WHERE p.userId = ${id} and status = 'Completed'
     `
     return Number(result[0]?.total);
   }
@@ -23,7 +23,7 @@ export class DashboardService {
     const result = await this.prisma.$queryRaw<any>`
       SELECT SUM(o.amount) as total FROM \`Order\` o
       JOIN Product p ON o.productId = p.id
-      WHERE p.userId = ${id}
+      WHERE p.userId = ${id} and status = 'Completed'
     `
     return Number(result[0]?.total);
   }

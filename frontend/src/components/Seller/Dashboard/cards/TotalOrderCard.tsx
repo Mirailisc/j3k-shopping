@@ -9,7 +9,6 @@ const TotalOrderCard: React.FC = () => {
     const fetchData = async () => {
       const {data} = await axiosInstance.get('dashboard/seller/totalOrders')
       setData(data)
-      console.log(data)
     }
     useEffect( () => {
         fetchData()
@@ -25,7 +24,7 @@ const TotalOrderCard: React.FC = () => {
       </CardHeader>
       <CardContent>
         {
-        data ? (
+        data >= 0 ? (
         <>
         <div className = "flex items-baseline">
             <h2 className = "text-3xl text-green-500 font-bold flex-wrap">{data.toString()}</h2>

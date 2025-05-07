@@ -8,7 +8,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { Table } from '@tanstack/react-table'
-import { ChevronDown, RefreshCw, Trash } from 'lucide-react'
+import { ChevronDown, Plus, RefreshCw, Trash } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useSelector } from 'react-redux'
 import { RootState } from '@/store/store'
@@ -19,6 +19,7 @@ type Props = {
   table: Table<Product>
   handleRefreshData: () => void
   handleDeleteProduct: () => void
+  handleAddProduct: () => void
 }
 
 const ProductDataController: React.FC<Props> = ({
@@ -26,10 +27,9 @@ const ProductDataController: React.FC<Props> = ({
   table,
   handleRefreshData,
   handleDeleteProduct,
+  handleAddProduct,
 }: Props) => {
-  const user = useSelector((state: RootState) => state.auth.user)
-
-  const isSuperAdmin = user?.isSuperAdmin
+  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated)
 
   return (
     <div className="flex items-center justify-between py-4">
@@ -53,7 +53,7 @@ const ProductDataController: React.FC<Props> = ({
       </div>
 
       <div className="flex items-center gap-2">
-        {selectedCount > 0 && isSuperAdmin && (
+        {selectedCount > 0 && isAuthenticated && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm">
@@ -94,6 +94,18 @@ const ProductDataController: React.FC<Props> = ({
               })}
           </DropdownMenuContent>
         </DropdownMenu>
+        {isAuthenticated ? (
+          <Tooltip>
+            <TooltipTrigger>
+              <Button onClick={handleAddProduct} size="sm">
+                <Plus className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Create Product</p>
+            </TooltipContent>
+          </Tooltip>
+        ) : null}
       </div>
     </div>
   )

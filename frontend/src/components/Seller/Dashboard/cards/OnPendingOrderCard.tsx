@@ -9,7 +9,6 @@ const OnPendingorderCard: React.FC = () => {
     const fetchData = async () => {
       const {data} = await axiosInstance.get('dashboard/seller/pending')
       setData(data)
-      console.log(data)
     }
     useEffect( () => {
         fetchData()

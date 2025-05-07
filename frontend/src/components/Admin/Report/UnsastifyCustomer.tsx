@@ -20,7 +20,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
 // Define the type for the data returned from the unsastisfyCustomer query
 export type UnsatisfiedCustomer = {
-  id: number
+  id: string
   username: string
   low_rating: number
   avg_rating: number

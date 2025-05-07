@@ -13,8 +13,6 @@ const MostReviewedUserCard: React.FC = () => {
       setData(data[0])
     }
     
-  
-
   useEffect(() => {
     fetchUser()
   }, [])
@@ -42,7 +40,7 @@ const MostReviewedUserCard: React.FC = () => {
             </div>
           </>
         ) : (
-          <p className="text-sm text-zinc-400">Loading...</p>
+          <p className="text-sm text-zinc-400">No user got reviewed</p>
         )}
       </CardContent>
     </Card>

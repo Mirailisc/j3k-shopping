@@ -13,8 +13,6 @@ type props = {
 }
 const NewUserCar: React.FC<props> = ({timePeriod}: props) => {
   const [data, setData] = useState<newUser[]> ([])
-  const totalNewUser = data[0]?.newUser - data[1]?.newUser
-
   const fetchData = async () => {
     const {data} = await axiosInstance.get('report/admin/newUser', {params:{timePeriod}})
     setData(data)
@@ -25,12 +23,19 @@ const NewUserCar: React.FC<props> = ({timePeriod}: props) => {
   },[timePeriod])
 
   const increasedPercentage = useMemo(() => {
-    let lastMonthUser = data[1]?.newUser
-    if(lastMonthUser === 0) lastMonthUser = 1
+    const lastMonthUser = data[1]?.newUser
+    if(lastMonthUser === 0) return 100
     const percentage = ((data[0]?.newUser-lastMonthUser)*100 / lastMonthUser)
     return percentage.toFixed(2)
   }, [data])
 
+  const total = useMemo(() => {
+    if(timePeriod === "ALL TIME")
+      return data[0]?.newUser
+    else 
+      return data[0]?.newUser-data[1]?.newUser
+  },[data, timePeriod])
+  
   return (
     <Card>
       <CardHeader className = "pb-2 flex flex-row items-center justify-between">
@@ -44,7 +49,7 @@ const NewUserCar: React.FC<props> = ({timePeriod}: props) => {
         data ? (
         <>
         <div className = "flex items-baseline">
-            <h2 className = "text-3xl font-bold flex-wrap">{totalNewUser >= 0 ? '+': ''}{totalNewUser}</h2>
+            <h2 className = "text-3xl font-bold flex-wrap">{total >= 0 ? '+': ''}{total}</h2>
         </div>
         <div className = "flex items-center mt-1">
           {timePeriod !== 'ALL TIME' && <p className = {`text-sm ${Number(increasedPercentage) >= 0 ? 'text-green-500' : 'text-red-500'}`}>{Number(increasedPercentage) >= 0 ? '+' : ''}{increasedPercentage.toString()}% from last {getLabelFromTimePeriod(timePeriod)}</p>}

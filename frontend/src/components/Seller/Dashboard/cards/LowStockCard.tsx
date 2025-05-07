@@ -9,7 +9,6 @@ const LowStockCard: React.FC = () => {
     const fetchData = async () => {
       const {data} = await axiosInstance.get('dashboard/seller/lowStock')
       setData(data)
-      console.log(data)
     }
     useEffect( () => {
         fetchData()

@@ -1,4 +1,4 @@
-import { Controller, Get, Query, UseGuards } from '@nestjs/common'
+import { Controller, Get, Query, UseGuards, Request } from '@nestjs/common'
 import { ReportService } from './report.service'
 import { AdminGuard } from 'src/auth/admin.guard'
 import { AuthGuard } from '@nestjs/passport'
@@ -58,7 +58,61 @@ export class ReportController {
 
   @Get('admin/UnsatisfyProduct')
   @UseGuards(AuthGuard('jwt'), AdminGuard)
-  async UnsatisfyProduct() {
-    return await this.reportService.UnsatisfyProduct()
+  async UnsastisfyProduct() {
+    return await this.reportService.UnsastisfyProduct()
   }
+
+  @Get('seller/revenue')
+  @UseGuards(AuthGuard('jwt'))
+  async getSellerRevenue(
+    @Request() req,
+    @Query('timePeriod') timePeriod: string,
+  ){
+    return await this.reportService.getSellerRevenue(timePeriod, req.user.userId)
+  }
+
+  @Get('seller/sales')
+  @UseGuards(AuthGuard('jwt'))
+  async getSellerMostSalesProduct(
+    @Request() req,
+    @Query('dataType') dataType: string,
+    @Query('timePeriod') timePeriod: string,
+  ){
+    return await this.reportService.getSellerMostSalesProduct(dataType, timePeriod, req.user.userId)
+  }
+
+  @Get('seller/unsold')
+  @UseGuards(AuthGuard('jwt'))
+  async getSellerUnsoldProductsList(
+      @Request() req,
+      @Query('timePeriod') timePeriod: string,
+  ){
+      return await this.reportService.getSellerUnsoldProductsList(timePeriod, req.user.userId)
+  }
+
+  @Get('seller/status')
+  @UseGuards(AuthGuard('jwt'))
+  async getSellerStatusCount(
+      @Request() req,
+      @Query('timePeriod') timePeriod: string,
+  ){
+      return await this.reportService.getSellerStatusCount(timePeriod, req.user.userId)
+  }
+
+  @Get('seller/rating')
+  @UseGuards(AuthGuard('jwt'))
+  async getAverageSellerReview(
+      @Request() req,
+  ){
+      return await this.reportService.getAverageSellerReview( req.user.userId)
+  }
+
+  @Get('seller/product')
+  @UseGuards(AuthGuard('jwt'))
+  async getSellerProductStat(
+      @Request() req,
+  ){
+      return await this.reportService.getSellerProductStat( req.user.userId)
+  }  
+
 }

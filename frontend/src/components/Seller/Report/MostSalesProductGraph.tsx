@@ -1,7 +1,6 @@
 import * as React from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from '@/components/ui/chart'
-import { SalesData } from '../types/productChartData'
 import { useEffect, useMemo, useState } from 'react'
 import { axiosInstance } from '@/lib/axios'
 import { YAxis, XAxis, Bar, BarChart } from 'recharts'
@@ -18,7 +17,7 @@ import { Button } from '@/components/ui/button'
 import { ChevronDown, Dot } from 'lucide-react'
 import { isAxiosError } from 'axios'
 import { toast } from 'sonner'
-import { getLabelFromTimePeriod } from '../types/TimePeriod'
+import { getLabelFromTimePeriod } from '../Report/types/TimePeriod'
 
 const DataType = [
   { label: 'amount', value: 'amount' },
@@ -29,20 +28,25 @@ type props = {
   timePeriod: string
 }
 
-export const MostSales: React.FC<props> = ({timePeriod }: props) => {
+export type SalesData = {
+    name: string,
+    value: number,
+}
+
+export const MostSalesProductGraphSeller: React.FC<props> = ({timePeriod }: props) => {
   const [loading, setLoading] = useState(true)
   const [dataType, setDataType] = useState('amount')
   const [data, setSalesData] = useState<SalesData[]>([])
 
   function getLabelFromDataType(value: string): string | undefined {
     const item = DataType.find((type) => type.value === value)
-    return item ? item.label : 'revenue'
+    return item?.label
   }
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const { data } = await axiosInstance.get('report/admin/sales', {
+        const { data } = await axiosInstance.get('report/seller/sales', {
           params: {
             dataType,
             timePeriod,
@@ -91,18 +95,18 @@ export const MostSales: React.FC<props> = ({timePeriod }: props) => {
 
     return config
   }, [chartData])
+  
+  const chartHeight = useMemo(() => {
+    const heightPerItem = 50
+    const minHeight = 100
+    const maxHeight = 400
 
-    const chartHeight = useMemo(() => {
-      const heightPerItem = 50
-      const minHeight = 100
-      const maxHeight = 400
-  
-      const calculatedHeight = Math.max(minHeight, Math.min(maxHeight, chartData.length * heightPerItem))
-  
-      return calculatedHeight
-    }, [chartData])
-    
-    return (
+    const calculatedHeight = Math.max(minHeight, Math.min(maxHeight, chartData.length * heightPerItem))
+
+    return calculatedHeight
+  }, [chartData])
+
+  return (
     <Card className="flex flex-col">
       <div className="flex items-center justify-between gap-4 px-3">
         <CardHeader className="pb-0">
@@ -137,39 +141,39 @@ export const MostSales: React.FC<props> = ({timePeriod }: props) => {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-       <CardContent className="flex-1 min-h-[200px]">
-          {data.length === 0 && <div className="text-center py-20">No sales yet</div>}
-          {loading ? (
-            <div className="text-center py-20">Loading chart...</div>
-          ) : (
-            data.length > 0 && (
-              <ChartContainer config={chartConfig} className="w-full">
-                <BarChart
-                  data={chartData}
-                  layout="vertical"
-                  height={chartHeight}
-                  width={500}
-                  margin={{ left: 12, right: 30, top: 10, bottom: 10 }}
-                >
-                  <YAxis
-                    dataKey="name"
-                    type="category"
-                    tickLine={false}
-                    tickMargin={10}
-                    axisLine={false}
-                    width={150}
-                    tickFormatter={(value) => {
-                      const label = chartConfig[value as keyof typeof chartConfig]?.label ?? value
-                      return label.length > 15 ? `${label.substring(0, 15)}...` : label
-                    }}
-                  />
-                  <XAxis type="number" />
-                  <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
-                  <Bar dataKey="value" layout="vertical" radius={4} fill="#185cc9" barSize={18000/chartHeight} />
-                </BarChart>
-              </ChartContainer>
-            )
-          )}
+      <CardContent className="flex-1 min-h-[200px]">
+        {data.length === 0 && <div className="text-center py-20">No sales yet</div>}
+        {loading ? (
+          <div className="text-center py-20">Loading chart...</div>
+        ) : (
+          data.length > 0 && (
+            <ChartContainer config={chartConfig} className="w-full">
+              <BarChart
+                data={chartData}
+                layout="vertical"
+                height={chartHeight}
+                width={500}
+                margin={{ left: 12, right: 30, top: 10, bottom: 10 }}
+              >
+                <YAxis
+                  dataKey="name"
+                  type="category"
+                  tickLine={false}
+                  tickMargin={10}
+                  axisLine={false}
+                  width={150}
+                  tickFormatter={(value) => {
+                    const label = chartConfig[value as keyof typeof chartConfig]?.label ?? value
+                    return label.length > 15 ? `${label.substring(0, 15)}...` : label
+                  }}
+                />
+                <XAxis type="number" />
+                <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+                <Bar dataKey="value" layout="vertical" radius={4} fill="#185cc9" barSize={18000/chartHeight} />
+              </BarChart>
+            </ChartContainer>
+          )
+        )}
       </CardContent>
     </Card>
   )
