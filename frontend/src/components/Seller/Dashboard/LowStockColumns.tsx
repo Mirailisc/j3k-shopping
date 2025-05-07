@@ -28,21 +28,19 @@ export const LowStockColumns = () => {
     }, [])
 
   return (
-    <Card>
+    <Card className = 'text-center'>
         <CardHeader>Low Stock Product</CardHeader>
         <CardContent>
             <Table className = 'max-h-[400px] w-full overflow-auto border-1'>
                 <TableHeader>
                     <TableRow>
-                    <TableHead>ID</TableHead>
-                    <TableHead>Product</TableHead>
-                    <TableHead>Amount</TableHead>
+                    <TableHead className = 'text-center'>Product</TableHead>
+                    <TableHead className = 'text-center'>Amount</TableHead>
                     </TableRow>
                 </TableHeader>
-                <TableBody>
+                <TableBody >
                     {data.map((row) => (
                         <TableRow key = {row.id}>
-                            <TableCell>{row.id}</TableCell>
                             <TableCell>{row.name}</TableCell>
                             <TableCell>{row.quantity.toString()}</TableCell>
                         </TableRow>
