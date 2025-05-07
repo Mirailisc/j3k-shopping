@@ -34,6 +34,6 @@ async function bootstrap() {
     credentials: true,
     optionsSuccessStatus: 204,
   })
-  await app.listen(process.env.PORT ?? DEFAULT_PORT)
+  await app.listen(process.env.PORT ?? DEFAULT_PORT, '0.0.0.0')
 }
 bootstrap()

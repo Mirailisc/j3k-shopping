@@ -8,7 +8,7 @@ export const TimePeriod = [
     { label: 'all time', value: 'ALL TIME' },
   ]
 
-export function getLabelFromTimePeriod(value: string): string | undefined {
-      const item = TimePeriod.find((period) => period.value === value)
-      return item ? item.label : 'All Time'
+export function WrongTimePeriod(value: string): Boolean {
+    const exist = TimePeriod.find((item) => item.value === value)
+    return exist === undefined
 }

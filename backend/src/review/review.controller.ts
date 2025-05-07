@@ -69,4 +69,15 @@ export class ReviewController {
   ) {
     return await this.reviewService.updateReviewByAdmin(id, review)
   }
+
+  @Get('seller/:productId')
+  async getReviewsForSellerProduct(@Param('productId') productId: string) {
+      return this.reviewService.getReviewsForSellerProduct(productId)
+  }
+  @Get('stats/:productId')
+      async getRatingStats(@Param('productId') productId: string) {
+      return this.reviewService.getRatingStats(productId)
+  }
+        //Ended Add
+        
 }

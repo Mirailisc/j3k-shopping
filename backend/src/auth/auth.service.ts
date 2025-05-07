@@ -69,6 +69,7 @@ export class AuthService {
   async me(userId: string) {
     const data = await this.userService.getUserById(userId)
     return {
+      id: data.id,
       username: data.username,
       email: data.email,
       firstName: data.firstName,

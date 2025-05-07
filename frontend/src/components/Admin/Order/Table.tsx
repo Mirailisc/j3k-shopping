@@ -84,7 +84,7 @@ export function OrderDataTable({ data, setData, fetchOrders }: Props) {
     if (deleteTarget?.single) {
       try {
         await axiosInstance.delete(`/order/${deleteTarget.single.id}`)
-        toast.success(`Review ${deleteTarget.single.id} has been deleted`)
+        toast.success(`Order ${deleteTarget.single.id} has been deleted`)
       } catch (error) {
         if (isAxiosError(error)) {
           const errorMessage = error.response?.data?.message || 'Something went wrong'
