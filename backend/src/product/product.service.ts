@@ -134,12 +134,18 @@ export class ProductService {
     if (productInfo.userId !== me) {
       throw new BadRequestException('You are not the owner of this product')
     }
-
-    await this.prisma.$executeRaw<Product[]>`
+      await this.prisma.$executeRaw<Product[]>`
       UPDATE Product
-      SET name = ${product.name}, productImg = ${product.productImg}, description = ${product.description}, price = ${product.price}, quantity = ${product.quantity}
+      SET name = ${product.name}, description = ${product.description}, price = ${product.price}, quantity = ${product.quantity}
       WHERE id = ${id}
     `
+    if (product.productImg){
+    await this.prisma.$executeRaw<Product[]>`
+      UPDATE Product
+      SET  productImg = ${product.productImg}
+      WHERE id = ${id}
+    `
+    }
 
     return await this.getProductById(id)
   }
@@ -147,10 +153,16 @@ export class ProductService {
   async updateProductByAdmin(id: string, product: UpdateProductDto) {
     await this.prisma.$executeRaw<Product[]>`
       UPDATE Product
-      SET name = ${product.name}, productImg = ${product.productImg}, description = ${product.description}, price = ${product.price}, quantity = ${product.quantity}
+      SET name = ${product.name}, description = ${product.description}, price = ${product.price}, quantity = ${product.quantity}
       WHERE id = ${id}
     `
-
+    if (product.productImg){
+      await this.prisma.$executeRaw<Product[]>`
+        UPDATE Product
+        SET  productImg = ${product.productImg}
+        WHERE id = ${id}
+      `
+    }
     return await this.getProductById(id)
   }
 
