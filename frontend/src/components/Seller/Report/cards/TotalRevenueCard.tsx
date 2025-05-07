@@ -30,8 +30,8 @@ export const TotalRevenueCard: React.FC<props> = ({timePeriod} : props) => {
     },[data, timePeriod])
 
     const increasedPercentage = useMemo(() => {
-        let lastMonthUser = data[1] ? data[1].revenue : 0
-        if(lastMonthUser === 0) lastMonthUser = 1
+        const lastMonthUser = data[1] ? data[1].revenue : 0
+        if (lastMonthUser === 0) return 0
         const percentage = ((data[0]?.revenue-lastMonthUser)*100 / lastMonthUser)
         return percentage
       }, [data])

@@ -171,6 +171,7 @@ export class ReviewService {
       INSERT INTO Reviews (id, rating, comment, userId, productId) VALUES
       (${uuid}, ${createReviewDto.rating}, ${createReviewDto.comment}, ${createReviewDto.userId}, ${createReviewDto.productId})
     `
+    return await this.getReviewById(uuid)
   }
 
   async deleteReviewByBuyer(id: string, me: string) {

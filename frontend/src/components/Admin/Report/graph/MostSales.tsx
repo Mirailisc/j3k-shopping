@@ -101,8 +101,8 @@ export const MostSales: React.FC<props> = ({timePeriod }: props) => {
   
       return calculatedHeight
     }, [chartData])
-  console.log(chartHeight)
-  return (
+    
+    return (
     <Card className="flex flex-col">
       <div className="flex items-center justify-between gap-4 px-3">
         <CardHeader className="pb-0">

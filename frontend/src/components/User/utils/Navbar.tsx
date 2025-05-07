@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button'
 import AvatarDropdown from '@/components/utils/AvatarDropdown'
-import { BASE_PATH, PRODUCT_PATH, SIGN_IN_PATH } from '@/constants/routes'
+import { BASE_PATH, PRODUCT_PATH, SELLER_PRODUCT_PATH, SIGN_IN_PATH } from '@/constants/routes'
 import { RootState } from '@/store/store'
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
@@ -48,7 +48,10 @@ const Navbar: React.FC = () => {
         </div>
         <ProductSearchInput />
         <div className="flex gap-4">
-          {isAuthenticated && <Button className="hidden md:block">Sell Something</Button>}
+          {isAuthenticated && 
+          <Link to = {SELLER_PRODUCT_PATH}>
+          <Button className="hidden md:block">Sell Something</Button>
+          </Link>}
           {isAuthenticated && <Notification />}
           {isAuthenticated ? (
             <AvatarDropdown />

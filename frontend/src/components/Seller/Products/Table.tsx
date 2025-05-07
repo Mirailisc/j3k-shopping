@@ -21,6 +21,7 @@ import ProductDataController from './components/Controller'
 import ProductTableAlert from './components/Alert'
 import ProductDataPagination from './components/Pagination'
 import { EditProductForm } from './components/Form/EditProductForm'
+import { CreateSellerProductForm } from './components/Form/CreateSellerProductForm'
 
 type Props = {
   data: Product[]
@@ -37,6 +38,7 @@ export function ProductDataTable({ data, setData, fetchProducts }: Props) {
   const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false)
   const [deleteTarget, setDeleteTarget] = React.useState<{ single?: Product; multiple?: boolean } | null>(null)
 
+    const [openCreateProductDialog, setOpenCreateProductDialog] = React.useState(false)
   const [openEditProductDialog, setOpenEditProductDialog] = React.useState(false)
   const [productToEdit, setProductToEdit] = React.useState<Product | null>(null)
 
@@ -56,6 +58,10 @@ export function ProductDataTable({ data, setData, fetchProducts }: Props) {
       setDeleteTarget({ multiple: true })
     }
     setDeleteDialogOpen(true)
+  }
+
+  const handleAddProduct = () => {
+    setOpenCreateProductDialog(true)
   }
 
   const confirmDelete = async () => {
@@ -143,6 +149,7 @@ export function ProductDataTable({ data, setData, fetchProducts }: Props) {
         table={table}
         handleRefreshData={handleRefreshData}
         handleDeleteProduct={handleDeleteProduct}
+        handleAddProduct={handleAddProduct}
       />
 
       <div className="rounded-sm border">
@@ -179,6 +186,13 @@ export function ProductDataTable({ data, setData, fetchProducts }: Props) {
           </TableBody>
         </Table>
       </div>
+      <CreateSellerProductForm
+              open={openCreateProductDialog}
+              setOpen={setOpenCreateProductDialog}
+              data = {data}
+              setData = {setData}
+            />
+
       {productToEdit && (
         <EditProductForm
           open={openEditProductDialog}

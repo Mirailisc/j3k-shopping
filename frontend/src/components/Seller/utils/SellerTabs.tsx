@@ -21,10 +21,6 @@ const SellerTabs: React.FC = () => {
           Orders
         </Button>
       </Link>
-      <Button variant="outline" className='w-full md:w-auto'>
-        <ShoppingBag size={16} />
-        Products
-      </Button>
       <Link to={SELLER_PRODUCT_PATH} className='w-full md:w-auto'>
         <Button variant="outline" className='w-full md:w-auto'>
           <ShoppingBag size={16} />

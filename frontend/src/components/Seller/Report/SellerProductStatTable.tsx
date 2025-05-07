@@ -133,7 +133,6 @@ export function SellerProductStatTable() {
 
   const fetchData = async () => {
     const{data} = await axiosInstance('report/seller/product')
-    console.log(data)
     setData(data)
   }
   React.useEffect(() => {
