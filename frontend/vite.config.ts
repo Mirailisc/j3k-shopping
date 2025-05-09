@@ -34,7 +34,7 @@ export default defineConfig(({ mode }) => {
         '/api/v2': {
           target: 'http://localhost:4000',
           changeOrigin: true,
-          secure: true,
+          secure: false,
         },
       },
     },

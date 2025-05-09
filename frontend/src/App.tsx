@@ -22,6 +22,8 @@ import {
   SIGN_UP_PATH,
   USER_INFO_PATH,
   USER_MANAGE_PATH,
+  SELLER_PRODUCT_PATH,
+  SELLER_PRODUCT_REVIEWS_PATH,
 } from '@/constants/routes'
 import SignIn from './pages/Auth/SignIn'
 import SignUp from './pages/Auth/SignUp'
@@ -51,6 +53,7 @@ import { useSelector } from 'react-redux'
 import UserInfo from './pages/Profile/UserInfo'
 import Profile from './pages/Profile'
 import ProductInfo from './pages/Product/ProductInfo'
+import ProductReviews from './pages/Seller/ProductReviews'
 import SellerOrder from './pages/Seller/Order'
 import { Footer } from './components/utils/Footer'
 import OrderConfirmation from './pages/Checkout/OrderConfirmation'
@@ -59,6 +62,7 @@ import OrderInfo from './pages/Order/OrderInfo'
 import Orders from './pages/Order'
 import { axiosInstance } from './lib/axios'
 import ServerDown from './pages/ServerDown'
+import SellerProduct from './pages/Seller/Products'
 
 const Home = React.lazy(() => import('@/pages/Home'))
 
@@ -123,11 +127,18 @@ function App() {
                   <Route path={PRODUCT_INFO_PATH} element={<ProductInfo />} />
                   <Route path={USER_INFO_PATH} element={<UserInfo />} />
 
+              <Route element={<Protected />}>
+                <Route path={PROFILE_PATH} element={<Profile />} />
+                <Route path={SELLER_DASHBOARD_PATH} element={<SellerDashboard />} />
+                <Route path="/seller/inventory/:productId/reviews" element={<ProductReviews />} />
+              </Route>
                   <Route element={<Protected />}>
                     <Route path={PROFILE_PATH} element={<Profile />} />
 
                     <Route path={SELLER_DASHBOARD_PATH} element={<SellerDashboard />} />
                     <Route path={SELLER_ORDER_PATH} element={<SellerOrder />} />
+                    <Route path={SELLER_PRODUCT_PATH} element={<SellerProduct />} />
+                    <Route path={SELLER_PRODUCT_REVIEWS_PATH} element={<ProductReviews />} />
 
                     <Route path={ORDER_PATH} element={<Orders />} />
                     <Route path={ORDER_INFO_PATH} element={<OrderInfo />} />

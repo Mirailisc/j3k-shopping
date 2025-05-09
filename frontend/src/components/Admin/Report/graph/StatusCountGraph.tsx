@@ -49,7 +49,7 @@ const StatusCountGraph: React.FC<props> = ({timePeriod}: props) => {
     
     const totalOrders = useMemo(() => {
         let total_order = 0
-        chartData.forEach((item) => {
+        chartData?.forEach((item) => {
             total_order += Number(item.value)
         })
         return total_order
@@ -57,7 +57,7 @@ const StatusCountGraph: React.FC<props> = ({timePeriod}: props) => {
 
     const completedPercentage = useMemo(() => {
           let completed = 0
-          chartData.forEach((item) => {
+          chartData?.forEach((item) => {
             if(item.name === 'Completed') completed = item.value
           })
           return (completed / totalOrders).toFixed(2)
