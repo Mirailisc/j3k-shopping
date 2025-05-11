@@ -53,7 +53,7 @@ export class DashboardService {
   async getSellerTotalOrder(id: string) {
     const result = await this.prisma.$queryRaw<any>`
       SELECT count(o.id) as total FROM \`Order\` o
-      JOIN \`Product\` p ON o.productId = p.id 
+      JOIN \`Products\` p ON o.productId = p.id 
       WHERE p.userId = ${id} and status = 'Completed'
     `
     return Number(result[0]?.total)
@@ -62,7 +62,7 @@ export class DashboardService {
   async getSellerTotalSales(id: string) {
     const result = await this.prisma.$queryRaw<any>`
       SELECT SUM(o.amount) as total FROM \`Order\` o
-      JOIN \`Product\` p ON o.productId = p.id
+      JOIN \`Products\` p ON o.productId = p.id
       WHERE p.userId = ${id} and status = 'Completed'
     `
     return Number(result[0]?.total)
@@ -71,7 +71,7 @@ export class DashboardService {
   async OnPendingOrder(id: string) {
     const result = await this.prisma.$queryRaw<any>`
       SELECT COUNT(o.id) as total FROM \`Order\` o
-      JOIN \`Product\` p ON o.productId = p.id
+      JOIN \`Products\` p ON o.productId = p.id
       WHERE p.userId = ${id} and status = 'Pending'
     `
     return Number(result ? result[0].total : 0)
@@ -79,7 +79,7 @@ export class DashboardService {
 
   async LowStockProduct(id: string) {
     const result = await this.prisma.$queryRaw<any>`
-      SELECT COUNT(id) AS total FROM \`Product\` 
+      SELECT COUNT(id) AS total FROM \`Products\` 
       WHERE quantity <= 5 and userId = ${id}
       GROUP BY userId
     `
@@ -88,7 +88,7 @@ export class DashboardService {
 
   async getLowStockList(id: string) {
     const result = await this.prisma.$queryRaw<any[]>`
-      SELECT id, name, quantity FROM \`Product\` 
+      SELECT id, name, quantity FROM \`Products\` 
       WHERE quantity <= 5 and userId = ${id}
       
     `
@@ -119,7 +119,7 @@ export class DashboardService {
         IFNULL(SUM(o.amount), 0) AS totalSales
       FROM times m
       LEFT JOIN \`Order\` o ON ${range}(o.createdAt) = ${range}(m.time_start)
-      LEFT JOIN \`Product\` p ON p.id = o.productId
+      LEFT JOIN \`Products\` p ON p.id = o.productId
       GROUP BY m.time_start
       ORDER BY m.time_start
     `
@@ -152,7 +152,7 @@ export class DashboardService {
         IFNULL(SUM(IF(p.userId = ${id}, o.amount, NULL)),0) AS totalSales
       FROM times m
       LEFT JOIN \`Order\` o ON ${range}(o.createdAt) = ${range}(m.time_start)
-      LEFT JOIN \`Product\` p ON p.id = o.productId
+      LEFT JOIN \`Products\` p ON p.id = o.productId
       GROUP BY m.time_start
       ORDER BY m.time_start
     `

@@ -24,7 +24,7 @@ model User {
   isSuperAdmin Boolean  @default(false)
   createdAt    DateTime @default(now())
 
-  Product Product[]
+  Product Products[]
   Review  Reviews[]
   Contact Contact?
   Social  Social?
@@ -60,7 +60,7 @@ model Social {
   user      User     @relation(fields: [userId], references: [id])
 }
 
-model Product {
+model Products {
   id          String    @id @default(uuid())
   name        String
   productImg  Bytes
@@ -82,7 +82,7 @@ model Reviews {
   userId    String
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
-  product   Product  @relation(fields: [productId], references: [id])
+  product   Products @relation(fields: [productId], references: [id])
   user      User     @relation(fields: [userId], references: [id])
 }
 

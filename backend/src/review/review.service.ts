@@ -33,7 +33,7 @@ export class ReviewService {
         u.email,
         p.name AS productName
       FROM \`Reviews\` r
-      JOIN \`Product\` p ON r.productId = p.id
+      JOIN \`Products\` p ON r.productId = p.id
       JOIN User u ON r.userId = u.id
       WHERE r.productId = ${productId}
     `
