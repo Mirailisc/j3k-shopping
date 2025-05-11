@@ -18,7 +18,6 @@
     "prisma:push": "npx prisma db push"
   },
   "dependencies": {
-    "@faker-js/faker": "^9.7.0",
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^4.0.1",
     "@nestjs/core": "^10.0.0",
