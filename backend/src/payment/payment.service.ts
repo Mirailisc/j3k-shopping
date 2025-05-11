@@ -23,7 +23,7 @@ export class PaymentService {
     private readonly profileService: ProfileService,
   ) {
     this.stripe = new Stripe(process.env.STRIPE_API_KEY, {
-      apiVersion: '2025-03-31.basil',
+      apiVersion: '2025-04-30.basil',
     })
   }
 
