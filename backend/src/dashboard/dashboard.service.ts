@@ -102,70 +102,61 @@ export class DashboardService {
   async GetSalesOverTimeAdmin(range: string) {
     const validRange = validateRange(range);
     enum Range {
-      'DAY' = '%d',
-      'MONTH' = '%M-%Y',
-      'WEEK' = '%v',
-      'YEAR' = '%y',
+      'DAY'= '%d %M %y',
+    'MONTH'= '%M-%y',
+    'WEEK'= '%v',
+    'YEAR'= '%y',
     }
-    const result = await this.prisma.$queryRaw<any[]>`
-      WITH RECURSIVE times AS (
-        SELECT DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 5 ${Prisma.raw(validRange)}), '%Y-%m-%d') AS time_start
-        UNION ALL
-        SELECT DATE_ADD(time_start, INTERVAL 1 ${Prisma.raw(validRange)})
-        FROM times
-        WHERE time_start < DATE_FORMAT(CURDATE(), '%Y-%m-%d')
-      )
-      SELECT 
-        DATE_FORMAT(m.time_start, ${Range[validRange]}) AS \`range\`,
-        IFNULL(SUM(o.total), 0) AS revenue,
-        IFNULL(SUM(o.amount), 0) AS totalSales
-      FROM times m
-      LEFT JOIN \`Order\` o ON ${Prisma.raw(validRange)}(o.createdAt) = ${Prisma.raw(validRange)}(m.time_start)
-      LEFT JOIN Products p ON p.id = o.productId
-      GROUP BY m.time_start
-      ORDER BY m.time_start
-    `
+    const dateFormat = Range[validRange];
 
-    return result?.map((row) => ({
+    const result = await this.prisma.$queryRaw<any[]>`
+     SELECT 
+      DATE_FORMAT(o.createdAt, '%Y-%m-%d') AS \`orderDate\`,
+      DATE_FORMAT(o.createdAt, ${dateFormat}) AS \`range\`,
+      IFNULL(SUM(IF(1, o.total, NULL)),0) AS revenue,
+      IFNULL(SUM(IF(1, o.amount, NULL)),0) AS totalSales
+    FROM \`Order\` o
+    LEFT JOIN Products p ON p.id = o.productId
+    GROUP BY \`range\`
+    ORDER BY \`orderDate\` DESC
+    LIMIT 10
+  `
+
+    return result?.reverse().map((row) => ({
       range: row.range.toString(),
       revenue: Number(row.revenue),
       sales: Number(row.totalSales),
     }))
   } 
 
-
- async GetSalesOverTime(range: string, id: string) {
-  const validRange = validateRange(range);
+ async GetSalesOverTime(range: string,id: string) {
+    const validRange = validateRange(range);
     enum Range {
-      'DAY' = '%d',
-      'MONTH' = '%M-%Y',
-      'WEEK' = '%v',
-      'YEAR' = '%y',
+      'DAY'= '%d %M %y',
+    'MONTH'= '%M-%y',
+    'WEEK'= '%v',
+    'YEAR'= '%y',
     }
-    const result = await this.prisma.$queryRaw<any[]>`
-      WITH RECURSIVE times AS (
-        SELECT DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 5 ${Prisma.raw(validRange)}), '%Y-%m-%d') AS time_start
-        UNION ALL
-        SELECT DATE_ADD(time_start, INTERVAL 1 ${Prisma.raw(validRange)})
-        FROM times
-        WHERE time_start < DATE_FORMAT(CURDATE(), '%Y-%m-%d')
-      )
-      SELECT 
-        DATE_FORMAT(m.time_start, ${Range[validRange]}) AS \`range\`,
-        IFNULL(SUM(IF(p.userId = ${id}, o.total, NULL)),0) AS revenue,
-        IFNULL(SUM(IF(p.userId = ${id}, o.amount, NULL)),0) AS totalSales
-      FROM times m
-      LEFT JOIN \`Order\` o ON ${Prisma.raw(validRange)}(o.createdAt) = ${Prisma.raw(validRange)}(m.time_start)
-      LEFT JOIN Products p ON p.id = o.productId
-      GROUP BY m.time_start
-      ORDER BY m.time_start
-    `
+    const dateFormat = Range[validRange];
 
-    return result?.map((row) => ({
+    const result = await this.prisma.$queryRaw<any[]>`
+     SELECT 
+      DATE_FORMAT(o.createdAt, '%Y-%m-%d') AS \`orderDate\`,
+      DATE_FORMAT(o.createdAt, ${dateFormat}) AS \`range\`,
+     IFNULL(SUM(IF(1, o.total, NULL)),0) AS revenue,
+      IFNULL(SUM(IF(1, o.amount, NULL)),0) AS totalSales
+    FROM \`Order\` o
+    LEFT JOIN Products p ON p.id = o.productId
+    WHERE p.userId = ${id}
+    GROUP BY \`range\`
+    ORDER BY \`orderDate\` DESC
+    LIMIT 10
+  `
+
+    return result?.reverse().map((row) => ({
       range: row.range.toString(),
       revenue: Number(row.revenue),
       sales: Number(row.totalSales),
     }))
-  }
-
+  } 
 }

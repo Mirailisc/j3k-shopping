@@ -73,12 +73,9 @@ export class ReportService {
 
   async getHotProductSales(dataType: string, timePeriod: string) {
      const startDate = subtractDays(timePeriod);
-    const column = dataType === 'amount' ? 'amount' : 'total'
-    const columnSql = `o.\`${column}\``
 
-
-    const result = await this.prisma.$queryRaw<any[]>`
-      SELECT p.name, SUM(o.${Prisma.raw(column)}) as total
+    const result = dataType === 'amount' ?  await this.prisma.$queryRaw<any[]>`
+      SELECT p.name, SUM(o.amount) as total
       FROM \`Order\` o
       JOIN \`Products\` p ON o.productId = p.id
       WHERE o.status = 'Completed'
@@ -86,8 +83,19 @@ export class ReportService {
       GROUP BY p.id
       HAVING total > 0
       ORDER BY total DESC
-      LIMIT 8
-    `
+      LIMIT 8 
+    ` : await this.prisma.$queryRaw<any[]>`
+      SELECT p.name, SUM(o.total) as total
+      FROM \`Order\` o
+      JOIN \`Products\` p ON o.productId = p.id
+      WHERE o.status = 'Completed'
+      AND o.createdAt >= ${startDate}
+      GROUP BY p.id
+      HAVING total > 0
+      ORDER BY total DESC
+      LIMIT 8 `
+
+    
     return result.map((row) => ({
       name: row.name,
       value: Number(row.total),
@@ -114,7 +122,6 @@ export class ReportService {
 
   async getNewUser(timePeriod: string) {
      const startDate = subtractDays(timePeriod);
-    const interval = Prisma.sql`${Prisma.raw(timePeriod)}`
     const result = await this.prisma.$queryRaw<any[]>`
       SELECT IFNULL(COUNT(id),0) AS newuser FROM User
       UNION ALL
@@ -208,21 +215,26 @@ export class ReportService {
     id: string,
   ) {
      const startDate = subtractDays(timePeriod);
-    const interval = Prisma.sql`${Prisma.raw(timePeriod)}`
-    const column =
-      dataType === 'total' || dataType === 'amount'
-        ? Prisma.sql`${Prisma.raw(dataType)}`
-        : Prisma.sql`${Prisma.raw('total')}`
+  
 
-    const result = await this.prisma.$queryRaw<any[]>`
-      SELECT p.name as name, SUM(o.${column}) as sales FROM \`Order\` o 
+    const result = dataType === 'total' ?  await this.prisma.$queryRaw<any[]>`
+      SELECT p.name as name, SUM(o.amount) as sales FROM \`Order\` o 
       JOIN \`Products\` p on p.id = o.productId
       WHERE p.userId =  ${id} AND o.status = 'Completed'
       AND o.createdAt >= ${startDate}
       GROUP BY p.name
       ORDER BY sales DESC
-      LIMIT 8
+      LIMIT 8 
+    ` : await this.prisma.$queryRaw<any[]>`
+      SELECT p.name as name, SUM(o.total) as sales FROM \`Order\` o 
+      JOIN \`Products\` p on p.id = o.productId
+      WHERE p.userId =  ${id} AND o.status = 'Completed'
+      AND o.createdAt >= ${startDate}
+      GROUP BY p.name
+      ORDER BY sales DESC
+      LIMIT 8 
     `
+
     return result?.map((row) => ({
       name: row.name,
       value: Number(row.sales),

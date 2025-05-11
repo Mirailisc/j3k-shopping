@@ -2,7 +2,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { axiosInstance } from '@/lib/axios'
 import { PiggyBank } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { subtractDays } from '../../../../../../backend/src/report/entities/TimePeriod';
 
 type IncomeTaxes = {
     price:number,
