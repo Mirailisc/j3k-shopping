@@ -1,24 +1,30 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Patch,
-  Post,
-  Query,
-  Request,
-  UploadedFile,
-  UseGuards,
-  UseInterceptors,
-} from '@nestjs/common'
-import { DashboardService } from './dashboard.service'
-import { AuthGuard } from '@nestjs/passport'
+import { Controller, Get, UseGuards, Query, Request } from "@nestjs/common"
+import { AuthGuard } from "@nestjs/passport"
+import { DashboardService } from "./dashboard.service"
+
 
 @Controller('dashboard')
 export class DashboardController {
   constructor(private readonly dashboardService: DashboardService) {}
 
+  @Get('country-total-order')
+  async getCountryTotalOrder() {
+    return await this.dashboardService.CountryTotalOrder()
+  }
+
+  @Get('rating-amount')
+  async getRatingAmount() {
+    return await this.dashboardService.RatingAmount()
+  }
+
+  @Get('rating-count')
+  async getRatingCount() {
+    return await this.dashboardService.RatingCount()
+  }
+
+  @Get('refunded-product')
+  async getRefundedProductName() {
+    return await this.dashboardService.RefundedProductName()}
   @Get('seller/totalOrders')
   @UseGuards(AuthGuard('jwt'))
   async getSellerTotalOrder(@Request() req){
