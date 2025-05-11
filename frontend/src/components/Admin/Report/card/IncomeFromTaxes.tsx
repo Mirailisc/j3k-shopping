@@ -12,7 +12,6 @@ type props = {
   timePeriod: string
 }
 const IncomeFromTaxes: React.FC<props> = ({timePeriod} : props) => {
-  console.log(timePeriod)
   const [data, setData] = useState<IncomeTaxes | null> (null)
 
   const fetchData = async () => {

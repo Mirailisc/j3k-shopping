@@ -11,11 +11,6 @@ const SellerProduct: React.FC = () => {
   const fetchProducts = async () => {
     const response = await axiosInstance.get('/auth/me');
     const { data } = await axiosInstance.get(`/product/seller/${response.data.id}`);
-    if (response?.data?.id) {
-      console.log({ id: response.data.id });
-    } else {
-      console.error('Error: Missing user ID in response');
-    }
     setData(data);
   }
   

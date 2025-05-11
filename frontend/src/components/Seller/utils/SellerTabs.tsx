@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button'
-import { SELLER_DASHBOARD_PATH, SELLER_ORDER_PATH, SELLER_PRODUCT_PATH} from '@/constants/routes'
+import { SELLER_DASHBOARD_PATH, SELLER_ORDER_PATH, SELLER_PRODUCT_PATH, SELLER_REPRORT_PATH} from '@/constants/routes'
 import { ChartArea, CircleGauge, Package, ShoppingBag } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useLocation } from 'react-router-dom'
@@ -27,10 +27,12 @@ const SellerTabs: React.FC = () => {
           Products
         </Button>
       </Link>
-      <Button variant="outline" className='w-full md:w-auto'>
+      <Link to = {SELLER_REPRORT_PATH} className = 'w-full md:w-auto'>
+        <Button variant={location.pathname === SELLER_REPRORT_PATH ? 'default' : 'outline'} className='w-full md:w-auto'>
         <ChartArea size={16} />
         Reports
       </Button>
+      </Link>
     </div>
   )
 }

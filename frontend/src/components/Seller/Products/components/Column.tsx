@@ -52,18 +52,6 @@ export const TableColumns = ({handleEditProduct, handleDeleteProduct }: Props) =
       cell: ({ row }) => <div className="text-xs text-muted-foreground">{row.getValue('id')}</div>,
     },
     {
-      accessorKey: 'userId',
-      header: ({ column }) => {
-        return (
-          <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-            User ID
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        )
-      },
-      cell: ({ row }) => <div className="text-xs text-muted-foreground">{row.getValue('userId')}</div>,
-    },
-    {
       accessorKey: 'name',
       header: 'Name',
       cell: ({ row }) => <div>{row.getValue('name')}</div>,
