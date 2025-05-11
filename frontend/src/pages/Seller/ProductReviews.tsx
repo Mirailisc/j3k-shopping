@@ -100,16 +100,16 @@ const ProductReviews = () => {
       {reviews.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
           {/*Name*/}
-          <div className="bg-zinc-900 p-4 rounded-lg shadow-md border border-zinc-700">
-            <p className="text-zinc-400 text-sm mb-1">Reviews for</p>
-            <h1 className="text-2xl font-bold text-zinc-100">
+          <div className=" p-4 rounded-lg shadow-md border border-zinc-700">
+            <p className="text-sm mb-1">Reviews for</p>
+            <h1 className="text-2xl font-bold">
               {reviews[0]?.productName ?? 'this product'}
             </h1>
           </div>
 
           {/*Stats*/}
-          <div className="bg-zinc-900 p-4 rounded-lg shadow-md border border-zinc-700">
-            <p className="text-zinc-400 text-sm mb-2">Rating Stats</p>
+          <div className="p-4 rounded-lg shadow-md border border-zinc-700">
+            <p className="text-sm mb-2">Rating Stats</p>
             {ratingStats ? (
               <div className="flex flex-row gap-4 items-start">
                 <div className="basis-1/4 flex flex-col justify-start">
@@ -119,7 +119,7 @@ const ProductReviews = () => {
                   <p className="text-zinc-400 text-sm font-normal">
                     ({ratingStats.totalCount} reviews)
                   </p>
-                  <p className="text-sm text-zinc-500 mt-1">
+                  <p className="text-sm mt-1">
                     {(() => {
                       if (ratingStats.average >= 4.5) return 'Mostly Positive'
                       if (ratingStats.average >= 3) return 'Positive'
@@ -130,14 +130,14 @@ const ProductReviews = () => {
                 <div className="basis-3/4 space-y-1">
                   {[5, 4, 3, 2, 1].map((star) => (
                     <div key={star} className="flex items-center gap-2 text-sm">
-                      <span className="w-8 text-right text-zinc-300">{star} ⭐</span>
-                      <div className="flex-1 bg-zinc-700 h-3 rounded">
+                      <span className="w-8 text-right">{star} ⭐</span>
+                      <div className="flex-1 bg-zinc-400 h-3 rounded">
                         <div
                           className="bg-yellow-400 h-3 rounded"
                           style={{ width: `${ratingStats.breakdown[star] ?? 0}%` }}
                         ></div>
                       </div>
-                      <span className="w-10 text-right text-zinc-400">
+                      <span className="w-10 text-right ">
                         {ratingStats.breakdown[star] ?? 0}%
                       </span>
                     </div>
@@ -145,17 +145,17 @@ const ProductReviews = () => {
                 </div>
               </div>
             ) : (
-              <p className="text-sm text-zinc-500">Loading...</p>
+              <p className="text-sm">Loading...</p>
             )}
           </div>
 
           {/*Latest*/}
-          <div className="bg-zinc-900 p-4 rounded-lg shadow-md border border-zinc-700">
-            <p className="text-zinc-400 text-sm mb-2">Latest Review</p>
-            <p className="text-sm text-zinc-100 italic">
+          <div className="p-4 rounded-lg shadow-md border border-zinc-700">
+            <p className="text-sm mb-2">Latest Review</p>
+            <p className="text-sm italic">
               “{reviews[0]?.comment.slice(0, 80)}...”
             </p>
-            <p className="text-xs text-zinc-400 mt-2">
+            <p className="text-xs mt-2">
               — {reviews[0]?.username}
             </p>
             <p className="text-xs text-zinc-400">
@@ -176,7 +176,7 @@ const ProductReviews = () => {
             className={`px-3 py-1 rounded-md border text-sm transition-all ${
               selectedRating === star
                 ? 'bg-yellow-400 text-black font-semibold'
-                : 'bg-zinc-800 text-white border-zinc-600 hover:bg-zinc-700'
+                : ' border-zinc-600 hover:bg-zinc-700'
             }`}
             onClick={() => handleFilter(star)}
           >
@@ -185,16 +185,16 @@ const ProductReviews = () => {
         ))}
         <button
           onClick={resetFilter}
-          className="px-3 py-1 bg-zinc-800 text-white rounded-md text-sm border border-zinc-600 hover:bg-zinc-700"
+          className="px-3 py-1 rounded-md text-sm border border-zinc-600 hover:bg-zinc-700"
         >
           Reset
         </button>
       </div>
       <div className="mb-4 flex justify-end items-center gap-2">
-        <label htmlFor="sort" className="text-sm text-zinc-400">Sort by:</label>
+        <label htmlFor="sort" className="text-sm">Sort by:</label>
         <select
           id="sort"
-          className="bg-zinc-800 text-white text-sm px-2 py-1 rounded border border-zinc-600"
+          className="text-sm px-2 py-1 rounded border border-zinc-600"
           value={sortOption}
           onChange={(e) => setSortOption(e.target.value as any)}>
           <option value="newest">Newest</option>
@@ -206,7 +206,7 @@ const ProductReviews = () => {
 
       {/* Reviews */}
       {paginatedReviews.length === 0 ? (
-        <p className="text-center text-lg sm:text-xl text-zinc-400 py-10 font-medium">
+        <p className="text-center text-lg sm:text-xl py-10 font-medium">
           No reviews yet.
         </p>
       ) : (
@@ -214,16 +214,16 @@ const ProductReviews = () => {
           {paginatedReviews.map((review) => (
             <div
               key={review.id}
-              className="border border-zinc-700 bg-zinc-900 rounded-lg p-4 shadow-sm text-zinc-100"
+              className="border border-zinc-700 rounded-lg p-4 shadow-sm"
             >
               <div className="flex items-center justify-between border-b border-zinc-700 pb-2 mb-2">
                 <div>
-                  <p className="font-semibold text-zinc-100">{review.username}</p>
+                  <p className="font-semibold">{review.username}</p>
                 </div>
                 <p className="text-yellow-400 font-bold text-sm">⭐ {review.rating}</p>
               </div>
-              <p className="text-sm text-zinc-300">{review.comment}</p>
-              <p className="text-xs text-zinc-500 mt-2 text-right">
+              <p className="text-sm ">{review.comment}</p>
+              <p className="text-xs mt-2 text-right">
                 {new Date(review.createdAt).toLocaleString('en-GB', {
                   dateStyle: 'medium',
                   timeStyle: 'short',
@@ -240,17 +240,17 @@ const ProductReviews = () => {
           <button
             onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
             disabled={currentPage === 1}
-            className="px-4 py-1 bg-zinc-800 text-zinc-100 rounded hover:bg-zinc-700 disabled:opacity-50"
+            className="px-4 py-1 bg-zinc-800 rounded hover:bg-zinc-700 disabled:opacity-50"
           >
             Previous
           </button>
-          <span className="text-zinc-400 text-sm">
+          <span className="text-sm">
             Page {currentPage} of {totalPages}
           </span>
           <button
             onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
             disabled={currentPage === totalPages}
-            className="px-4 py-1 bg-zinc-800 text-zinc-100 rounded hover:bg-zinc-700 disabled:opacity-50"
+            className="px-4 py-1 bg-zinc-800 rounded hover:bg-zinc-700 disabled:opacity-50"
           >
             Next
           </button>
