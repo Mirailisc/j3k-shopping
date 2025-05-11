@@ -17,7 +17,7 @@ export class ReportService {
       JOIN Reviews r
       ON (usr.id, r.id) IN (
         SELECT prd.userId, rev.id
-        FROM Product prd
+        FROM \`Product\` prd
         JOIN Reviews rev ON prd.id = rev.productId
       )
       GROUP BY usr.id
@@ -39,7 +39,7 @@ export class ReportService {
         u.username, 
         SUM(CASE WHEN o.status = 'Refunded' THEN 1 ELSE 0 END) as refunded_amount,
         SUM(CASE WHEN o.status = 'Refunded' THEN 1 ELSE 0 END) * 100.0 / COUNT(*) as refunded_percentage
-      FROM Product p
+      FROM \`Product\` p
       JOIN \`Order\` o ON o.productId = p.id
       JOIN User u ON p.userId = u.id
       GROUP BY u.id
@@ -157,11 +157,11 @@ export class ReportService {
     SELECT p.id as id, p.name as name,
 	  COUNT(IF(r.rating <= 2,1, NULL)) as low_rating, IFNULL(AVG(rating),0) as avg_rating, 
     COUNT(IF(o.status = 'Refunded' , 1, NULL)) as refunded_count , COUNT(IF(o.status = 'Refunded' , 1, NULL)) * 100/COUNT(o.status)  as refunded_rate
-    FROM Product p
+    FROM \`Product\` p
     JOIN \`Order\` o ON o.productId = p.id
     LEFT JOIN Reviews r ON p.id = r.productId
     WHERE p.id IN (
-          SELECT p.id FROM Product p
+          SELECT p.id FROM \`Product\` p
          JOIN \`Order\` o ON o.productId = p.id
     	LEFT JOIN Reviews r ON p.id = r.productId
                WHERE (r.rating <= 2 AND o.status = 'Completed')
@@ -226,7 +226,7 @@ export class ReportService {
   async getSellerUnsoldProductsList(timePeriod: string, id: string) {
     const interval = Prisma.sql`${Prisma.raw(timePeriod)}`
     const result = await this.prisma.$queryRaw<any[]>`
-      SELECT IFNULL(COUNT(p.name), 0) as total FROM product p
+      SELECT IFNULL(COUNT(p.name), 0) as total FROM \`Product\` p
       WHERE p.userId = ${id} AND p.id not in
   	  (SELECT p.id as sales FROM \`Order\` o 
       RIGHT JOIN Product p on p.id = o.productId
@@ -242,7 +242,7 @@ export class ReportService {
   async getAverageSellerReview(id: string) {
     const result = await this.prisma.$queryRaw<any[]>`
       SELECT IfNULL(AVG(rating),0) as average_rating 
-      FROM reviews r JOIN product p
+      FROM \`Reviews\` r JOIN product p
       ON r.productId = p.id
       WHERE p.userId = ${id}
       GROUP BY p.userId
@@ -286,10 +286,10 @@ export class ReportService {
         0
       ) AS refunded_rate
 
-    FROM Product p
+    FROM \`Product\` p
     LEFT JOIN (
       SELECT productId, AVG(rating) AS avg_rating
-      FROM Reviews
+      FROM \`Reviews\`
       GROUP BY productId
     ) r ON r.productId = p.id
 

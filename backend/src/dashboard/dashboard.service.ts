@@ -7,7 +7,7 @@ export class DashboardService {
 
   async getAverageRating() {
     const result = await this.prisma.$queryRaw<number>`
-      SELECT AVG(rating) as res FROM Reviews 
+      SELECT AVG(rating) as res FROM \`Reviews\` 
     `
     return Number(result[0]?.res)
   }
@@ -37,7 +37,7 @@ export class DashboardService {
     const result = await this.prisma.$queryRaw<any[]>`
       SELECT r.rating AS rating, 
              COUNT(*) AS count
-      FROM Reviews r
+      FROM \`Reviews\` r
       WHERE r.rating IS NOT NULL
       GROUP BY r.rating
       ORDER BY r.rating DESC
@@ -78,7 +78,7 @@ export class DashboardService {
 
   async LowStockProduct(id: string) {
     const result = await this.prisma.$queryRaw<any>`
-      SELECT COUNT(id) as total FROM product 
+      SELECT COUNT(id) as total FROM \`Product\` 
       WHERE quantity <= 5 and userId = ${id}
       GROUP BY userId
     `
@@ -87,7 +87,7 @@ export class DashboardService {
 
   async getLowStockList(id: string) {
     const result = await this.prisma.$queryRaw<any[]>`
-      SELECT id, name, quantity FROM product 
+      SELECT id, name, quantity FROM \`Product\` 
       WHERE quantity <= 5 and userId = ${id}
       
     `

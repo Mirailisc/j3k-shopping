@@ -32,7 +32,7 @@ export class ReviewService {
         u.username,
         u.email,
         p.name AS productName
-      FROM Reviews r
+      FROM \`Reviews\` r
       JOIN Product p ON r.productId = p.id
       JOIN User u ON r.userId = u.id
       WHERE r.productId = ${productId}
@@ -47,10 +47,10 @@ export class ReviewService {
         r.rating,
         COUNT(*) AS count,
         ROUND(COUNT(*) * 100.0 / t.total, 0) AS percentage
-      FROM Reviews r
+      FROM \`Reviews\` r
       JOIN (
         SELECT COUNT(*) AS total
-        FROM Reviews
+        FROM \`Reviews\`
         WHERE productId = ${productId}
       ) t
       ON 1=1
@@ -63,7 +63,7 @@ export class ReviewService {
 
     const averageResult = await this.prisma.$queryRaw<any[]>`
       SELECT ROUND(AVG(rating), 2) as average
-      FROM Reviews
+      FROM \`Reviews\`
       WHERE productId = ${productId}
     `
 
@@ -84,7 +84,7 @@ export class ReviewService {
   async getAllReview() {
     const result = await this.prisma.$queryRaw<Review[]>`
       SELECT *
-      FROM Reviews
+      FROM \`Reviews\`
     `
     return result
   }
@@ -92,7 +92,7 @@ export class ReviewService {
   async getReviewById(id: string) {
     const review = await this.prisma.$queryRaw<
       Review[]
-    >`SELECT * FROM Reviews WHERE id = ${id}`
+    >`SELECT * FROM \`Reviews\` WHERE id = ${id}`
 
     if (!review || review.length === 0) {
       throw new NotFoundException('Review not found')
@@ -104,7 +104,7 @@ export class ReviewService {
   async getReviewInfo(productId: string) {
     const reviews = await this.prisma.$queryRaw<ReviewInfo[]>`
       SELECT R.id, R.rating, R.comment, R.userId, U.email, CONCAT(U.firstName, ' ', U.lastName) AS fullName, R.createdAt
-      FROM Reviews R
+      FROM \`Reviews\` R
       LEFT JOIN User U ON R.userId = U.id
       WHERE R.productId = ${productId}
     `
@@ -192,7 +192,7 @@ export class ReviewService {
 
   async updateReviewByAdmin(id: string, review: UpdateReviewDto) {
     const existReview = await this.prisma.$queryRaw<Review[]>`
-        SELECT id FROM Reviews
+        SELECT id FROM \`Reviews\`
         WHERE id = ${id}
       `
 
@@ -200,7 +200,6 @@ export class ReviewService {
       throw new BadRequestException("Review doesn't exist")
     }
 
-    // old
     await this.prisma.$executeRaw<Review>`
         UPDATE \`Reviews\`
         SET rating = ${review.rating}, comment = ${review.comment}

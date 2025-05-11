@@ -30,7 +30,7 @@ export class ProductService {
   async getAllProduct() {
     const products = await this.prisma.$queryRaw<Product[]>`
       SELECT *
-      FROM Product
+      FROM \`Product\`
     `
 
     return products.map((product) => ({
@@ -42,7 +42,7 @@ export class ProductService {
   async getProductById(id: string) {
     const product = await this.prisma.$queryRaw<Product[]>`
       SELECT *
-      FROM Product
+      FROM \`Product\`
       WHERE id = ${id}
     `
 
@@ -61,7 +61,7 @@ export class ProductService {
   async getProductInfo(id: string) {
     const product = await this.prisma.$queryRaw<Product[]>`
       SELECT P.id, P.name, P.productImg, P.description, P.price, P.quantity, U.username AS seller,P.createdAt
-      FROM Product P
+      FROM \`Product\` P
       LEFT JOIN User U ON P.userId = U.id
       WHERE P.id = ${id}
     `
@@ -81,7 +81,7 @@ export class ProductService {
   async getProductBySellerId(sellerId: string) {
     const products = await this.prisma.$queryRaw<Product[]>`
       SELECT *
-      FROM Product
+      FROM \`Product\`
       WHERE userId = ${sellerId}
     `
 
@@ -177,21 +177,21 @@ export class ProductService {
     }
 
     await this.prisma.$executeRaw`
-      DELETE FROM Reviews WHERE productId = ${id}
+      DELETE FROM \`Reviews\` WHERE productId = ${id}
     `
 
     return await this.prisma.$executeRaw`
-      DELETE FROM Product WHERE id = ${id}
+      DELETE FROM \`Product\` WHERE id = ${id}
     `
   }
 
   async deleteProductByAdmin(id: string) {
     await this.prisma.$executeRaw`
-      DELETE FROM Reviews WHERE productId = ${id}
+      DELETE FROM \`Reviews\` WHERE productId = ${id}
     `
 
     return await this.prisma.$executeRaw`
-      DELETE FROM Product WHERE id = ${id}
+      DELETE FROM \`Product\` WHERE id = ${id}
     `
   }
 }
