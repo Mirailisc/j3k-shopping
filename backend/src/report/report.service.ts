@@ -69,22 +69,27 @@ export class ReportService {
   }
 
   async getHotProductSales(dataType: string, timePeriod: string) {
-    const interval = Prisma.sql`${Prisma.raw(timePeriod)}`
     const column = dataType === 'amount' ? 'amount' : 'total'
+    const columnSql = `o.\`${column}\``
 
-    const query = this.prisma.$queryRaw<any[]>`
-          SELECT p.name, SUM(o.${column}) as total
-          FROM \`Order\` o
-          JOIN Product p ON o.productId = p.id
-          WHERE o.status = 'Completed'
-         ${timePeriod === 'ALL TIME' || WrongTimePeriod(timePeriod) ? Prisma.empty : Prisma.sql`AND o.createdAt >= DATE_SUB(NOW(), ${interval})`}
-          GROUP BY p.id
-          HAVING total > 0
-          ORDER BY total DESC
-          LIMIT 8
-        `
+    const timeCondition =
+      timePeriod === 'ALL TIME' || WrongTimePeriod(timePeriod)
+        ? ''
+        : `AND o.createdAt >= DATE_SUB(NOW(), INTERVAL ${timePeriod})`
 
-    const result = await query
+    const rawQuery = `
+      SELECT p.name, SUM(${columnSql}) as total
+      FROM \`Order\` o
+      JOIN Product p ON o.productId = p.id
+      WHERE o.status = 'Completed'
+      ${timeCondition}
+      GROUP BY p.id
+      HAVING total > 0
+      ORDER BY total DESC
+      LIMIT 8
+    `
+
+    const result = await this.prisma.$queryRawUnsafe<any[]>(rawQuery)
 
     return result.map((row) => ({
       name: row.name,
