@@ -200,7 +200,7 @@ export class ReportService {
     return result?.map((row) => ({
       revenue: Number(row.revenue),
     }))
-  }
+  } 
 
   async getSellerMostSalesProduct(
     dataType: string,
