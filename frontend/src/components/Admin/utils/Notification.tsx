@@ -5,6 +5,7 @@ import { toast } from 'sonner'
 import { axiosInstance } from '@/lib/axios'
 import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import { isAxiosError } from 'axios'
 
 type Notification = {
   id: string
@@ -21,8 +22,13 @@ const Notification = () => {
     try {
       const response = await axiosInstance.get('/notification')
       setNotifications(response.data)
-    } catch {
-      toast.error('Unable to fetch notifications')
+    } catch (error) {
+      if (isAxiosError(error)) {
+        const errorMessage = error.response?.data?.message || 'Something went wrong'
+        toast.error(errorMessage)
+      } else {
+        toast.error('An unexpected error occurred')
+      }
     }
   }
 
@@ -30,8 +36,13 @@ const Notification = () => {
     try {
       await axiosInstance.patch(`/notification/${id}`)
       fetchNotifications()
-    } catch {
-      toast.error('Unable to mark notification as read')
+    } catch(error) {
+      if (isAxiosError(error)) {
+        const errorMessage = error.response?.data?.message || 'Something went wrong'
+        toast.error(errorMessage)
+      } else {
+        toast.error('An unexpected error occurred')
+      }
     }
   }
 
