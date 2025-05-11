@@ -32,6 +32,7 @@ export class ProfileService {
     WHERE User.id = ${userId}`
     return result[0]
   }
+  
 
   async getProfileByUsername(username: string) {
     const result = await this.prisma.$queryRaw<Profile[]>`
@@ -66,14 +67,13 @@ export class ProfileService {
     User.firstName,
     User.lastName,
     User.email,
-    JSON_OBJECT(
-        'phone', Contact.phone, 
-        'address', Contact.address, 
-        'city', Contact.city, 
-        'province', Contact.province, 
-        'zipCode', Contact.zipCode, 
-        'country', Contact.country
-    ) AS contact
+    Contact.phone, 
+    Contact.address, 
+    Contact.city, 
+    Contact.province, 
+    Contact.zipCode, 
+    Contact.country
+  
     FROM User 
     LEFT JOIN Contact ON Contact.userId = User.id 
     WHERE User.id = ${userId}`
