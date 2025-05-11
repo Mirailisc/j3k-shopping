@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common'
+import { Prisma } from '@prisma/client'
 import { PrismaService } from 'src/prisma/prisma.service'
 
 @Injectable()
@@ -104,26 +105,24 @@ export class DashboardService {
       'WEEK' = '%v',
       'YEAR' = '%y',
     }
-    const query = `
+    const result = await this.prisma.$queryRaw<any[]>`
       WITH RECURSIVE times AS (
-        SELECT DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 5 ${range}), '%Y-%m-%d') AS time_start
+        SELECT DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 5 ${Prisma.raw(range)}), '%Y-%m-%d') AS time_start
         UNION ALL
-        SELECT DATE_ADD(time_start, INTERVAL 1 ${range})
+        SELECT DATE_ADD(time_start, INTERVAL 1 ${Prisma.raw(range)})
         FROM times
         WHERE time_start < DATE_FORMAT(CURDATE(), '%Y-%m-%d')
       )
       SELECT 
-        DATE_FORMAT(m.time_start, '${Range[range]}') AS \`range\`,
+        DATE_FORMAT(m.time_start, ${Range[range]}) AS \`range\`,
         IFNULL(SUM(o.total), 0) AS revenue,
         IFNULL(SUM(o.amount), 0) AS totalSales
       FROM times m
-      LEFT JOIN \`Order\` o ON ${range}(o.createdAt) = ${range}(m.time_start)
-      LEFT JOIN product p ON p.id = o.productId
+      LEFT JOIN \`Order\` o ON ${Prisma.raw(range)}(o.createdAt) = ${Prisma.raw(range)}(m.time_start)
+      LEFT JOIN Product p ON p.id = o.productId
       GROUP BY m.time_start
       ORDER BY m.time_start
     `
-
-    const result = await this.prisma.$queryRawUnsafe<any[]>(query)
 
     return result.map((row) => ({
       range: row.range.toString(),
@@ -139,26 +138,24 @@ export class DashboardService {
       'WEEK' = '%v',
       'YEAR' = '%y',
     }
-    const query = `
+    const result = await this.prisma.$queryRaw<any[]>`
       WITH RECURSIVE times AS (
-        SELECT DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 5 ${range}), '%Y-%m-%d') AS time_start
+        SELECT DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 5 ${Prisma.raw(range)}), '%Y-%m-%d') AS time_start
         UNION ALL
-        SELECT DATE_ADD(time_start, INTERVAL 1 ${range})
+        SELECT DATE_ADD(time_start, INTERVAL 1 ${Prisma.raw(range)})
         FROM times
         WHERE time_start < DATE_FORMAT(CURDATE(), '%Y-%m-%d')
       )
       SELECT 
-        DATE_FORMAT(m.time_start, '${Range[range]}') AS \`range\`,
-        IFNULL(SUM(IF(p.userId = '${id}', o.total, NULL)),0) AS revenue,
-        IFNULL(SUM(IF(p.userId = '${id}', o.amount, NULL)),0) AS totalSales
+        DATE_FORMAT(m.time_start, ${Range[range]}) AS \`range\`,
+        IFNULL(SUM(IF(p.userId = ${id}, o.total, NULL)),0) AS revenue,
+        IFNULL(SUM(IF(p.userId = ${id}, o.amount, NULL)),0) AS totalSales
       FROM times m
-      LEFT JOIN \`Order\` o ON ${range}(o.createdAt) = ${range}(m.time_start)
-      LEFT JOIN product p ON p.id = o.productId
+      LEFT JOIN \`Order\` o ON ${Prisma.raw(range)}(o.createdAt) = ${Prisma.raw(range)}(m.time_start)
+      LEFT JOIN Product p ON p.id = o.productId
       GROUP BY m.time_start
       ORDER BY m.time_start
     `
-
-    const result = await this.prisma.$queryRawUnsafe<any[]>(query)
 
     return result.map((row) => ({
       range: row.range.toString(),
