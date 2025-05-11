@@ -3,7 +3,7 @@ import { axiosInstance } from "@/lib/axios"
 import { DollarSign } from "lucide-react"
 import { useState, useEffect } from "react"
 
-export function TotalRevenueCard() {
+export const TotalRevenueCard: React.FC = () =>  {
   const [data, setData] = useState<number>(0)
 
   useEffect(() => {

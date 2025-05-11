@@ -3,7 +3,7 @@ import { axiosInstance } from "@/lib/axios"
 import { ShoppingCart } from "lucide-react"
 import { useState, useEffect } from "react"
 
-export function TotalOrderCard() {
+export const TotalOrderCard : React.FC = () =>  {
   const [count, setCount] = useState<number>(0)
 
   useEffect(() => {

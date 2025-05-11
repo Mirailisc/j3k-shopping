@@ -3,7 +3,7 @@ import { axiosInstance } from "@/lib/axios"
 import { Star } from "lucide-react"
 import { useState, useEffect } from "react"
 
-export function AverageRatingCard() {
+export const AverageRatingCard: React.FC = () =>  {
   const [average, setAverage] = useState<number>(0)
 
   useEffect(() => {

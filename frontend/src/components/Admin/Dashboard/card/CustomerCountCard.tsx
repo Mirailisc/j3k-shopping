@@ -3,7 +3,7 @@ import { axiosInstance } from "@/lib/axios"
 import { Users } from "lucide-react"
 import { useEffect, useState } from "react"
 
-export function CustomerCountCard() {
+export const CustomerCountCard: React.FC = () =>  {
   const [count, setCount] = useState<number>(0)
 
   useEffect(() => {
