@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { PrismaService } from 'src/prisma/prisma.service'
 import { IMPORT_TAX_PERCENTAGE } from '../order/order.service'
-import { Prisma } from '@prisma/client'
 import { subtractDays } from './entities/TimePeriod'
 
 @Injectable()
