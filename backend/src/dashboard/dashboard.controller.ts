@@ -1,30 +1,51 @@
 import { Controller, Get, UseGuards, Query, Request } from "@nestjs/common"
 import { AuthGuard } from "@nestjs/passport"
 import { DashboardService } from "./dashboard.service"
+import { AdminGuard } from "src/auth/admin.guard"
 
 
 @Controller('dashboard')
 export class DashboardController {
   constructor(private readonly dashboardService: DashboardService) {}
 
-  @Get('country-total-order')
-  async getCountryTotalOrder() {
-    return await this.dashboardService.CountryTotalOrder()
+   @Get('admin/average-rating')
+  @UseGuards(AuthGuard('jwt'),AdminGuard)
+  async getAverageRating() {
+    return await this.dashboardService.getAverageRating()
   }
 
-  @Get('rating-amount')
-  async getRatingAmount() {
-    return await this.dashboardService.RatingAmount()
+    @Get('admin/orders')
+  @UseGuards(AuthGuard('jwt'),AdminGuard)
+  async getTotalOrders() {
+    return await this.dashboardService.getTotalOrders()
   }
 
-  @Get('rating-count')
-  async getRatingCount() {
+  @Get('admin/customer-count')
+  @UseGuards(AuthGuard('jwt'),AdminGuard)
+  async getCustomerCount() {
+    return await this.dashboardService.getCustomerCount()
+  }
+
+  @Get('admin/revenue')
+  @UseGuards(AuthGuard('jwt'),AdminGuard)
+  async getTotalRevenue() {
+    return await this.dashboardService.getTotalRevenue()
+  }
+
+  @Get('admin/total')
+  @UseGuards(AuthGuard('jwt'),AdminGuard)
+  async GetSalesOverTimeAdmin(
+    @Query('range') range: string,
+  ) {
+    return await this.dashboardService.GetSalesOverTimeAdmin(range)
+  }
+
+   @Get('admin/rating-count')
+  @UseGuards(AuthGuard('jwt'),AdminGuard)
+  async RatingCount() {
     return await this.dashboardService.RatingCount()
   }
 
-  @Get('refunded-product')
-  async getRefundedProductName() {
-    return await this.dashboardService.RefundedProductName()}
   @Get('seller/totalOrders')
   @UseGuards(AuthGuard('jwt'))
   async getSellerTotalOrder(@Request() req){

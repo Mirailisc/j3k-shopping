@@ -1,8 +1,11 @@
-import MonthlyTransaction from '@/components/Admin/Dashboard/MonthlyTransaction'
-import TransactionCard from '@/components/Admin/Dashboard/TransactionCard'
-import UserCard from '@/components/Admin/Dashboard/UserCard'
+import { AverageRatingCard } from '@/components/Admin/Dashboard/card/AverageRatingCard'
+import { CustomerCountCard } from '@/components/Admin/Dashboard/card/CustomerCountCard'
+import { TotalRevenueCard } from '@/components/Admin/Dashboard/card/TotalRevenueCard'
 import Sidebar from '@/components/Admin/utils/Sidebar'
+import { TotalRevenue } from '@/components/Admin/Dashboard/graph/TotalRevenue'
 import { useSidebar } from '@/context/hooks/useSidebar'
+import RatingStarGraph from '@/components/Admin/Dashboard/graph/RatingStarGraph'
+import { TotalOrderCard } from '@/components/Admin/Dashboard/card/TotalOrderCard'
 
 const AdminDashboard: React.FC = () => {
   const sidebar = useSidebar()
@@ -15,13 +18,14 @@ const AdminDashboard: React.FC = () => {
         <div className="p-4">
           <h1 className="text-4xl mt-2 font-bold">Dashboard</h1>
           <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-2'>
-            <TransactionCard />
-            <UserCard />
-            <TransactionCard />
-            <UserCard />
+            <CustomerCountCard />
+            <TotalOrderCard />
+            <TotalRevenueCard />
+            <AverageRatingCard/>
           </div>
           <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2'>
-            <MonthlyTransaction />
+            <TotalRevenue />
+            <RatingStarGraph />
           </div>
         </div>
       </div>

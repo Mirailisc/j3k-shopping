@@ -50,7 +50,7 @@ export const TotalRevenue: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
         try{
-        const {data} = await axiosInstance.get('dashboard/seller/total', {params: {range}})
+        const {data} = await axiosInstance.get('dashboard/admin/total', {params: {range}})
         setMonthlyData(data)
         } catch(error){
             console.log(error)
