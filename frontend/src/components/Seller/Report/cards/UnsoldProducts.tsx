@@ -2,7 +2,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { axiosInstance } from '@/lib/axios'
 import { X } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { getLabelFromTimePeriod } from '../types/TimePeriod'
 
 type props = {
   timePeriod: string,
@@ -40,7 +39,7 @@ export const UnsoldProductsCard: React.FC<props> = ({timePeriod} : props) => {
         }
 
         <div className = "flex items-center mt-1 text-sm text-zinc-400">
-                 <p className='text-sm text-zinc-400'>Period: {getLabelFromTimePeriod(timePeriod)}</p>
+                 <p className='text-sm text-zinc-400'>Period: {timePeriod}</p>
         </div>
         
       </CardContent>

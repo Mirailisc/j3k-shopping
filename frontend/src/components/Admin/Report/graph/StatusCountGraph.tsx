@@ -6,7 +6,6 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import { useEffect, useMemo, useState } from "react"
 import { axiosInstance } from "@/lib/axios"
-import { getLabelFromTimePeriod } from "../types/TimePeriod"
 
 const colorPalette = [
   "#1b3da8", // navy-ish blue
@@ -80,7 +79,7 @@ const StatusCountGraph: React.FC<props> = ({timePeriod}: props) => {
         <Card className="flex flex-col">
           <CardHeader className="items-center pb-0">
             <CardTitle>Order Status</CardTitle>
-            <CardDescription>{getLabelFromTimePeriod(timePeriod)}</CardDescription>
+            <CardDescription>{timePeriod}</CardDescription>
           </CardHeader>
           <CardContent className="flex-1 pb-0">
           {chartData.length === 0 && <div className="text-center py-20">No order yet</div>}

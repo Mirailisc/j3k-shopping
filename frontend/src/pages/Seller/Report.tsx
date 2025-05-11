@@ -13,7 +13,7 @@ import { SellerStatusCountGraph } from "@/components/Seller/Report/SellerStatusG
 import { SellerProductStatTable } from "@/components/Seller/Report/SellerProductStatTable";
 
 export const SellerReport: React.FC = () => {
-    const [timePeriod, setTimePeriod] = useState<string>('INTERVAL 1 MONTH')
+    const [timePeriod, setTimePeriod] = useState<string>('1 month')
     
     return (
         <div className="mt-[60px]">
@@ -35,8 +35,8 @@ export const SellerReport: React.FC = () => {
                   {TimePeriod.map((item) => {
                     return (
                       <DropdownMenuRadioItem
-                        key={item.value}
-                        value={item.value}
+                        key={item.label}
+                        value={item.label}
                         className="text-sm focus:outline-none focus:opacity-50"
                       >
                         <DropdownMenuItemIndicator>

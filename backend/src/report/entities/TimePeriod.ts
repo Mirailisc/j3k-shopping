@@ -1,14 +1,23 @@
 export const TimePeriod = [
-  { label: '1 day', value: 'INTERVAL 1 DAY' },
-  { label: '1 week', value: 'INTERVAL 1 WEEK' },
-  { label: '1 month', value: 'INTERVAL 1 MONTH' },
-  { label: '3 months', value: 'INTERVAL 3 MONTH' },
-  { label: '6 months', value: 'INTERVAL 6 MONTH' },
-  { label: '1 year', value: 'INTERVAL 1 YEAR' },
-  { label: 'all time', value: 'ALL TIME' },
+  { label: '1 day', value: 1 },
+  { label: '1 week', value: 7 },
+  { label: '1 month', value: 30 },
+  { label: '3 months', value: 90 },
+  { label: '6 months', value: 180 },
+  { label: '1 year', value: 365 },
+  { label: 'all time', value: 100000000 },
 ]
 
-export function WrongTimePeriod(value: string): boolean {
-  const exist = TimePeriod.find((item) => item.value === value)
-  return exist === undefined
+export function getValueFromLabel(value: string): number {
+  const exist = TimePeriod.find((item) => item.label === value)
+  return exist ? exist?.value : 30
+}
+
+export function subtractDays(label: string): String {
+  const days = getValueFromLabel(label);
+  var date;
+  date = new Date();
+  date.setDate(date.getDate() - days);
+
+  return date.toISOString();;
 }
