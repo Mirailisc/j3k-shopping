@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { Prisma } from '@prisma/client'
 import { PrismaService } from 'src/prisma/prisma.service'
+import { validateRange } from './entities/rangeType'
 
 @Injectable()
 export class DashboardService {
@@ -78,12 +79,12 @@ export class DashboardService {
   }
 
   async LowStockProduct(id: string) {
-    const result = await this.prisma.$queryRaw<any>`
+    const result = await this.prisma.$queryRaw< { total: number }[]>`
       SELECT COUNT(id) AS total FROM \`Product\` 
       WHERE quantity <= 5 and userId = ${id}
       GROUP BY userId
     `
-    return Number(result ? result[0].total : 0)
+    return result.length > 0 ? Number(result[0]?.total) : 0
   }
 
   async getLowStockList(id: string) {
@@ -99,6 +100,7 @@ export class DashboardService {
     }))
   }
   async GetSalesOverTimeAdmin(range: string) {
+    const validRange = validateRange(range);
     enum Range {
       'DAY' = '%d',
       'MONTH' = '%M-%Y',
@@ -107,18 +109,18 @@ export class DashboardService {
     }
     const result = await this.prisma.$queryRaw<any[]>`
       WITH RECURSIVE times AS (
-        SELECT DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 5 ${Prisma.raw(range)}), '%Y-%m-%d') AS time_start
+        SELECT DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 5 ${Prisma.raw(validRange)}), '%Y-%m-%d') AS time_start
         UNION ALL
-        SELECT DATE_ADD(time_start, INTERVAL 1 ${Prisma.raw(range)})
+        SELECT DATE_ADD(time_start, INTERVAL 1 ${Prisma.raw(validRange)})
         FROM times
         WHERE time_start < DATE_FORMAT(CURDATE(), '%Y-%m-%d')
       )
       SELECT 
-        DATE_FORMAT(m.time_start, ${Range[range]}) AS \`range\`,
+        DATE_FORMAT(m.time_start, ${Range[validRange]}) AS \`range\`,
         IFNULL(SUM(o.total), 0) AS revenue,
         IFNULL(SUM(o.amount), 0) AS totalSales
       FROM times m
-      LEFT JOIN \`Order\` o ON ${Prisma.raw(range)}(o.createdAt) = ${Prisma.raw(range)}(m.time_start)
+      LEFT JOIN \`Order\` o ON ${Prisma.raw(validRange)}(o.createdAt) = ${Prisma.raw(validRange)}(m.time_start)
       LEFT JOIN Product p ON p.id = o.productId
       GROUP BY m.time_start
       ORDER BY m.time_start
@@ -129,9 +131,11 @@ export class DashboardService {
       revenue: Number(row.revenue),
       sales: Number(row.totalSales),
     }))
-  }
+  } 
 
-  async GetSalesOverTime(range: string, id: string) {
+
+ async GetSalesOverTime(range: string, id: string) {
+  const validRange = validateRange(range);
     enum Range {
       'DAY' = '%d',
       'MONTH' = '%M-%Y',
@@ -140,18 +144,18 @@ export class DashboardService {
     }
     const result = await this.prisma.$queryRaw<any[]>`
       WITH RECURSIVE times AS (
-        SELECT DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 5 ${Prisma.raw(range)}), '%Y-%m-%d') AS time_start
+        SELECT DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 5 ${Prisma.raw(validRange)}), '%Y-%m-%d') AS time_start
         UNION ALL
-        SELECT DATE_ADD(time_start, INTERVAL 1 ${Prisma.raw(range)})
+        SELECT DATE_ADD(time_start, INTERVAL 1 ${Prisma.raw(validRange)})
         FROM times
         WHERE time_start < DATE_FORMAT(CURDATE(), '%Y-%m-%d')
       )
       SELECT 
-        DATE_FORMAT(m.time_start, ${Range[range]}) AS \`range\`,
+        DATE_FORMAT(m.time_start, ${Range[validRange]}) AS \`range\`,
         IFNULL(SUM(IF(p.userId = ${id}, o.total, NULL)),0) AS revenue,
         IFNULL(SUM(IF(p.userId = ${id}, o.amount, NULL)),0) AS totalSales
       FROM times m
-      LEFT JOIN \`Order\` o ON ${Prisma.raw(range)}(o.createdAt) = ${Prisma.raw(range)}(m.time_start)
+      LEFT JOIN \`Order\` o ON ${Prisma.raw(validRange)}(o.createdAt) = ${Prisma.raw(validRange)}(m.time_start)
       LEFT JOIN Product p ON p.id = o.productId
       GROUP BY m.time_start
       ORDER BY m.time_start
@@ -163,4 +167,5 @@ export class DashboardService {
       sales: Number(row.totalSales),
     }))
   }
+
 }

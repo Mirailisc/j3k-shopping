@@ -33,7 +33,7 @@ export class DashboardController {
 
   @Get('admin/total')
   @UseGuards(AuthGuard('jwt'), AdminGuard)
-  async GetSalesOverTimeAdmin(@Query('range') range: string) {
+  async GetSalesOverTimeAdmin(@Query('range') range: 'DAY' | 'WEEK' | 'MONTH' | 'YEAR') {
     return await this.dashboardService.GetSalesOverTimeAdmin(range)
   }
 
@@ -74,7 +74,7 @@ export class DashboardController {
 
   @Get('seller/total')
   @UseGuards(AuthGuard('jwt'))
-  async GetSalesOverTime(@Request() req, @Query('range') range: string) {
+  async GetSalesOverTime(@Request() req, @Query('range') range: 'DAY' | 'WEEK' | 'MONTH' | 'YEAR') {
     return await this.dashboardService.GetSalesOverTime(range, req.user.userId)
   }
 }
