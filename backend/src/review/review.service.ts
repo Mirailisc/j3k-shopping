@@ -44,13 +44,19 @@ export class ReviewService {
   async getRatingStats(productId: string) {
     const result = await this.prisma.$queryRaw<any[]>`
       SELECT 
-        rating,
+        r.rating,
         COUNT(*) AS count,
-        ROUND(COUNT(*) * 100.0 / SUM(COUNT(*)) OVER(), 0) AS percentage
-      FROM Reviews
-      WHERE productId = ${productId}
-      GROUP BY rating
-      ORDER BY rating DESC
+        ROUND(COUNT(*) * 100.0 / t.total, 0) AS percentage
+      FROM Reviews r
+      JOIN (
+        SELECT COUNT(*) AS total
+        FROM Reviews
+        WHERE productId = ${productId}
+      ) t
+      ON 1=1
+      WHERE r.productId = ${productId}
+      GROUP BY r.rating, t.total
+      ORDER BY r.rating DESC
     `
 
     const totalCount = result.reduce((sum, row) => sum + Number(row.count), 0)

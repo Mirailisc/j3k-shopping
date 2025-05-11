@@ -78,5 +78,4 @@ export class ReviewController {
   async getRatingStats(@Param('productId') productId: string) {
     return this.reviewService.getRatingStats(productId)
   }
-  // Ended Add
 }

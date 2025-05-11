@@ -44,12 +44,12 @@ export default function CheckoutPage() {
       setShipping({
         firstName: response.data.firstName,
         lastName: response.data.lastName,
-        phone: response.data.contact.phone,
-        address: response.data.contact.address,
-        city: response.data.contact.city,
-        province: response.data.contact.province,
-        zipCode: response.data.contact.zipCode,
-        country: response.data.contact.country,
+        phone: response.data.phone,
+        address: response.data.address,
+        city: response.data.city,
+        province: response.data.province,
+        zipCode: response.data.zipCode,
+        country: response.data.country,
       })
     } catch (error) {
       if (isAxiosError(error)) {
@@ -88,12 +88,12 @@ export default function CheckoutPage() {
       setShipping({
         firstName: response.data.firstName,
         lastName: response.data.lastName,
-        phone: response.data.contact.phone,
-        address: response.data.contact.address,
-        city: response.data.contact.city,
-        province: response.data.contact.province,
-        zipCode: response.data.contact.zipCode,
-        country: response.data.contact.country,
+        phone: response.data.phone,
+        address: response.data.address,
+        city: response.data.city,
+        province: response.data.province,
+        zipCode: response.data.zipCode,
+        country: response.data.country,
       })
       toast.success('Shipping information updated')
     } catch (error) {

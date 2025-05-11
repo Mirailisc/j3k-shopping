@@ -15,9 +15,6 @@ export function Footer() {
               </div>
               <span className="text-xl font-bold">TUN9</span>
             </div>
-            <p className="text-sm text-muted-foreground">
-              Your one-stop destination for quality products at competitive prices.
-            </p>
             <div className="space-y-2">
               <div className="flex items-center text-sm">
                 <Phone className="h-4 w-4 mr-2 text-emerald-600" />

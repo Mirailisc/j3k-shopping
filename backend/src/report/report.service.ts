@@ -34,15 +34,17 @@ export class ReportService {
 
   async getRefundedUsers() {
     const result = await this.prisma.$queryRaw<any[]>`
-    SELECT  u.id, u.username, 
-            SUM(o.status = 'Refunded') as refunded_amount, 
-            AVG(o.status = 'Refunded') * 100 as refunded_percentage
-    FROM Product p
-    JOIN \`Order\` o ON o.productId = p.id
-    JOIN User u ON p.userId = u.id
-    GROUP BY u.id
-    HAVING refunded_amount > 0                            
-    ORDER BY refunded_amount DESC, refunded_percentage DESC                                     
+      SELECT  
+        u.id, 
+        u.username, 
+        SUM(CASE WHEN o.status = 'Refunded' THEN 1 ELSE 0 END) as refunded_amount,
+        SUM(CASE WHEN o.status = 'Refunded' THEN 1 ELSE 0 END) * 100.0 / COUNT(*) as refunded_percentage
+      FROM Product p
+      JOIN \`Order\` o ON o.productId = p.id
+      JOIN User u ON p.userId = u.id
+      GROUP BY u.id
+      HAVING refunded_amount > 0
+      ORDER BY refunded_amount DESC, refunded_percentage DESC
     `
 
     return result.map((row) => ({
@@ -68,10 +70,8 @@ export class ReportService {
 
   async getHotProductSales(dataType: string, timePeriod: string) {
     const interval = Prisma.sql`${Prisma.raw(timePeriod)}`
-    const column =
-      dataType === 'total' || dataType === 'amount'
-        ? Prisma.sql`${Prisma.raw(dataType)}`
-        : Prisma.sql`${Prisma.raw('total')}`
+    const column = dataType === 'amount' ? 'amount' : 'total'
+
     const query = this.prisma.$queryRaw<any[]>`
           SELECT p.name, SUM(o.${column}) as total
           FROM \`Order\` o
