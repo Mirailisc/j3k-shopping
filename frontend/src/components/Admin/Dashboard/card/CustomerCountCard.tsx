@@ -20,7 +20,7 @@ export const CustomerCountCard: React.FC = () =>  {
       </CardHeader>
       <CardContent>
          <div className = 'flex items-baseline'>
-          <h2 className="text-3xl font-bold">{count}</h2>
+          <h2 className="text-3xl font-bold">{count ? count : 'loading'}</h2>
         </div>  
         <div className="flex items-center mt-1">
             <p className="text-sm text-zinc-400">accounts</p>  
