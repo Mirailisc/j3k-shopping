@@ -8,28 +8,28 @@ export class DashboardService {
 
   async getAverageRating() {
     const result = await this.prisma.$queryRaw<number>`
-      SELECT AVG(rating) as res FROM \`Reviews\` 
+      SELECT AVG(rating) AS res FROM \`Reviews\` 
     `
     return Number(result[0]?.res)
   }
 
   async getTotalOrders() {
     const result = await this.prisma.$queryRaw<number>`
-      SELECT COUNT(id) as res FROM \`Order\` 
+      SELECT COUNT(id) AS res FROM \`Order\` 
     `
     return Number(result[0]?.res)
   }
 
   async getCustomerCount() {
     const result = await this.prisma.$queryRaw<number>`
-      SELECT Count(DISTINCT userId) as res FROM \`Order\` 
+      SELECT Count(DISTINCT userId) AS res FROM \`Order\` 
     `
     return Number(result[0]?.res)
   }
 
   async getTotalRevenue() {
     const result = await this.prisma.$queryRaw<number>`
-      SELECT Sum(total) as res FROM \`Order\` 
+      SELECT Sum(total) AS res FROM \`Order\` 
     `
     return Number(result[0]?.res)
   }
@@ -44,7 +44,7 @@ export class DashboardService {
       ORDER BY r.rating DESC
     `
 
-    return result.map((row) => ({
+    return result?.map((row) => ({
       name: Number(row.rating),
       value: Number(row.count),
     }))
@@ -52,7 +52,7 @@ export class DashboardService {
 
   async getSellerTotalOrder(id: string) {
     const result = await this.prisma.$queryRaw<any>`
-      SELECT count(o.id) as total FROM \`Order\` o
+      SELECT count(o.id) AS total FROM \`Order\` o
       JOIN Product p ON o.productId = p.id 
       WHERE p.userId = ${id} and status = 'Completed'
     `
@@ -61,7 +61,7 @@ export class DashboardService {
 
   async getSellerTotalSales(id: string) {
     const result = await this.prisma.$queryRaw<any>`
-      SELECT SUM(o.amount) as total FROM \`Order\` o
+      SELECT SUM(o.amount) AS total FROM \`Order\` o
       JOIN Product p ON o.productId = p.id
       WHERE p.userId = ${id} and status = 'Completed'
     `
@@ -70,7 +70,7 @@ export class DashboardService {
 
   async OnPendingOrder(id: string) {
     const result = await this.prisma.$queryRaw<any>`
-      SELECT COUNT(o.id) as total FROM \`Order\` o
+      SELECT COUNT(o.id) AS total FROM \`Order\` o
       JOIN Product p ON o.productId = p.id
       WHERE p.userId = ${id} and status = 'Pending'
     `
@@ -79,7 +79,7 @@ export class DashboardService {
 
   async LowStockProduct(id: string) {
     const result = await this.prisma.$queryRaw<any>`
-      SELECT COUNT(id) as total FROM \`Product\` 
+      SELECT COUNT(id) AS total FROM \`Product\` 
       WHERE quantity <= 5 and userId = ${id}
       GROUP BY userId
     `
@@ -92,7 +92,7 @@ export class DashboardService {
       WHERE quantity <= 5 and userId = ${id}
       
     `
-    return result.map((row) => ({
+    return result?.map((row) => ({
       id: row.id,
       name: row.name,
       quantity: Number(row.quantity),
@@ -124,7 +124,7 @@ export class DashboardService {
       ORDER BY m.time_start
     `
 
-    return result.map((row) => ({
+    return result?.map((row) => ({
       range: row.range.toString(),
       revenue: Number(row.revenue),
       sales: Number(row.totalSales),
@@ -157,7 +157,7 @@ export class DashboardService {
       ORDER BY m.time_start
     `
 
-    return result.map((row) => ({
+    return result?.map((row) => ({
       range: row.range.toString(),
       revenue: Number(row.revenue),
       sales: Number(row.totalSales),
