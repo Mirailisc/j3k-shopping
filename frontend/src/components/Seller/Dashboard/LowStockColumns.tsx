@@ -31,7 +31,7 @@ export const LowStockColumns = () => {
     <Card className = 'text-center'>
         <CardHeader>Low Stock Product</CardHeader>
         <CardContent>
-            <Table className = 'max-h-[400px] w-full overflow-auto border-1'>
+           { data.length > 0 ? <Table className = 'max-h-[400px] w-full overflow-auto border-1'>
                 <TableHeader>
                     <TableRow>
                     <TableHead className = 'text-center'>Product</TableHead>
@@ -46,7 +46,9 @@ export const LowStockColumns = () => {
                         </TableRow>
                     ))}
                 </TableBody>
-            </Table>
+            </Table> :
+            <p className = " py-10 text-center">no low stock items.</p>
+            }
         </CardContent>
     </Card>
   )
