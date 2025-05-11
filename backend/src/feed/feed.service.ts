@@ -23,7 +23,7 @@ export class FeedService {
   async allProductFeed() {
     const products = await this.prisma.$queryRaw<ProductFeed[]>`
       SELECT P.id, P.name, P.productImg, P.price, P.quantity, U.username
-      FROM \`Product\` P
+      FROM \`Products\` P
       JOIN User U ON P.userId = U.id
       WHERE P.quantity > 0
     `
@@ -37,7 +37,7 @@ export class FeedService {
   async recentProductFeed() {
     const products = await this.prisma.$queryRaw<ProductFeed[]>`
       SELECT P.id, P.name, P.productImg, P.price, P.quantity, U.username
-      FROM \`Product\` P
+      FROM \`Products\` P
       JOIN User U ON P.userId = U.id
       WHERE P.quantity > 0
       ORDER BY P.createdAt DESC
@@ -53,7 +53,7 @@ export class FeedService {
   async searchProductsByName(query: string) {
     const products = await this.prisma.$queryRaw<ProductFeed[]>`
       SELECT P.id, P.name, P.productImg, P.price, U.username
-      FROM \`Product\` P
+      FROM \`Products\` P
       JOIN User U ON P.userId = U.id
       WHERE P.quantity > 0
       AND P.name LIKE ${`%${query}%`}
@@ -69,7 +69,7 @@ export class FeedService {
   async stats() {
     const totalProduct = await this.prisma.$queryRaw<any[]>`
       SELECT COUNT(*) as totalProduct
-      FROM \`Product\`
+      FROM \`Products\`
     `
     const totalUser = await this.prisma.$queryRaw<any[]>`
       SELECT COUNT(*) as totalUser
@@ -82,7 +82,7 @@ export class FeedService {
     `
     const totalInStock = await this.prisma.$queryRaw<any[]>`
       SELECT SUM(quantity) as totalInStock
-      FROM \`Product\`
+      FROM \`Products\`
       WHERE quantity > 0
     `
 

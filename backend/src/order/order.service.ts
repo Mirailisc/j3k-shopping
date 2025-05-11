@@ -75,7 +75,7 @@ export class OrderService {
         'country', C.country
       ) AS contact
       FROM \`Order\` O
-      LEFT JOIN Product P ON O.productId = P.id 
+      LEFT JOIN \`Products\` P ON O.productId = P.id 
       LEFT JOIN User U ON O.userId = U.id
       LEFT JOIN Contact C ON U.id = C.userId
       WHERE P.userId = ${id}

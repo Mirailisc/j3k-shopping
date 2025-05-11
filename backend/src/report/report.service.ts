@@ -17,7 +17,7 @@ export class ReportService {
       JOIN Reviews r
       ON (usr.id, r.id) IN (
         SELECT prd.userId, rev.id
-        FROM \`Product\` prd
+        FROM \`Products\` prd
         JOIN Reviews rev ON prd.id = rev.productId
       )
       GROUP BY usr.id
@@ -39,7 +39,7 @@ export class ReportService {
         u.username, 
         SUM(CASE WHEN o.status = 'Refunded' THEN 1 ELSE 0 END) AS refunded_amount,
         SUM(CASE WHEN o.status = 'Refunded' THEN 1 ELSE 0 END) * 100.0 / COUNT(*) AS refunded_percentage
-      FROM \`Product\` p
+      FROM \`Products\` p
       JOIN \`Order\` o ON o.productId = p.id
       JOIN User u ON p.userId = u.id
       GROUP BY u.id
@@ -68,32 +68,34 @@ export class ReportService {
     }
   }
 
-  
-    async getHotProductSales(dataType: string, timePeriod: string) {
-      const interval = Prisma.raw(timePeriod)
-      const column =
-        dataType === 'total' || dataType === 'amount'
-          ? Prisma.raw(dataType)
-          : Prisma.raw('total');
-  
-      const query = this.prisma.$queryRaw<any[]>`
-            SELECT p.name, SUM(o.${column}) AS total
-            FROM \`Order\` o
-            JOIN Product p ON o.productId = p.id
-            WHERE o.status = 'Completed'
-           ${timePeriod === 'ALL TIME' || WrongTimePeriod(timePeriod) ? Prisma.empty : Prisma.sql`AND o.createdAt >= DATE_SUB(NOW(), ${interval})`}
-            GROUP BY p.id
-            HAVING total > 0
-            ORDER BY total DESC
-            LIMIT 8
-          `
-      const result = await query
-  
-      return result?.map((row) => ({
-        name: row.name,
-        value: Number(row.total),
-      }))
-    }
+  async getHotProductSales(dataType: string, timePeriod: string) {
+    const column = dataType === 'amount' ? 'amount' : 'total'
+    const columnSql = `o.\`${column}\``
+
+    const timeCondition =
+      timePeriod === 'ALL TIME' || WrongTimePeriod(timePeriod)
+        ? ''
+        : `AND o.createdAt >= DATE_SUB(NOW(), INTERVAL ${timePeriod})`
+
+    const rawQuery = `
+      SELECT p.name, SUM(${columnSql}) as total
+      FROM \`Order\` o
+      JOIN \`Products\` p ON o.productId = p.id
+      WHERE o.status = 'Completed'
+      ${timeCondition}
+      GROUP BY p.id
+      HAVING total > 0
+      ORDER BY total DESC
+      LIMIT 8
+    `
+
+    const result = await this.prisma.$queryRawUnsafe<any[]>(rawQuery)
+
+    return result.map((row) => ({
+      name: row.name,
+      value: Number(row.total),
+    }))
+  }
 
   async getStatusCount(timePeriod: string) {
     const interval = Prisma.sql`${Prisma.raw(timePeriod)}`
@@ -160,11 +162,11 @@ export class ReportService {
     SELECT p.id AS id, p.name AS name,
 	  COUNT(IF(r.rating <= 2,1, NULL)) AS low_rating, IFNULL(AVG(rating),0) AS avg_rating, 
     COUNT(IF(o.status = 'Refunded' , 1, NULL)) AS refunded_count , COUNT(IF(o.status = 'Refunded' , 1, NULL)) * 100/COUNT(o.status)  AS refunded_rate
-    FROM \`Product\` p
+    FROM \`Products\` p
     JOIN \`Order\` o ON o.productId = p.id
     LEFT JOIN Reviews r ON p.id = r.productId
     WHERE p.id IN (
-          SELECT p.id FROM \`Product\` p
+          SELECT p.id FROM \`Products\` p
          JOIN \`Order\` o ON o.productId = p.id
     	LEFT JOIN Reviews r ON p.id = r.productId
                WHERE (r.rating <= 2 AND o.status = 'Completed')
@@ -187,12 +189,12 @@ export class ReportService {
   async getSellerRevenue(timePeriod: string, id: string) {
     const interval = Prisma.sql`${Prisma.raw(timePeriod)}`
     const result = await this.prisma.$queryRaw<any>`
-      SELECT IFNULL(SUM(o.total),0) AS revenue FROM \`Order\` o 
-      JOIN Product p on p.id = o.productId
+      SELECT IFNULL(SUM(o.total),0) as revenue FROM \`Order\` o 
+      JOIN \`Products\` p on p.id = o.productId
       WHERE p.userId = ${id} AND o.status = 'Completed'
       UNION ALL
-      SELECT IFNULL(SUM(o.total),0) AS revenue FROM \`Order\` o 
-      JOIN Product p on p.id = o.productId
+      SELECT IFNULL(SUM(o.total),0) as revenue FROM \`Order\` o 
+      JOIN \`Products\` p on p.id = o.productId
       WHERE p.userId = ${id} AND o.status = 'Completed'
       ${timePeriod === 'ALL TIME' || WrongTimePeriod(timePeriod) ? Prisma.empty : Prisma.sql`AND o.createdAt < DATE_SUB(NOW(), ${interval})`}
     `
@@ -212,8 +214,8 @@ export class ReportService {
         ? Prisma.sql`${Prisma.raw(dataType)}`
         : Prisma.sql`${Prisma.raw('total')}`
     const result = await this.prisma.$queryRaw<any[]>`
-      SELECT p.name AS name, SUM(o.${column}) AS sales FROM \`Order\` o 
-      JOIN Product p on p.id = o.productId
+      SELECT p.name as name, SUM(o.${column}) as sales FROM \`Order\` o 
+      JOIN \`Products\` p on p.id = o.productId
       WHERE p.userId =  ${id} AND o.status = 'Completed'
        ${timePeriod === 'ALL TIME' || WrongTimePeriod(timePeriod) ? Prisma.empty : Prisma.sql`AND o.createdAt >= DATE_SUB(NOW(), ${interval})`}
       GROUP BY p.name
@@ -229,10 +231,10 @@ export class ReportService {
   async getSellerUnsoldProductsList(timePeriod: string, id: string) {
     const interval = Prisma.sql`${Prisma.raw(timePeriod)}`
     const result = await this.prisma.$queryRaw<any[]>`
-      SELECT IFNULL(COUNT(p.name), 0) AS total FROM \`Product\` p
+      SELECT IFNULL(COUNT(p.name), 0) AS total FROM \`Products\` p
       WHERE p.userId = ${id} AND p.id not in
-  	  (SELECT p.id AS sales FROM \`Order\` o 
-      RIGHT JOIN Product p on p.id = o.productId
+  	  (SELECT p.id as sales FROM \`Order\` o 
+      RIGHT JOIN \`Products\` p on p.id = o.productId
       WHERE p.userId =  ${id} AND o.status = 'Completed'
       ${timePeriod === 'ALL TIME' || WrongTimePeriod(timePeriod) ? Prisma.empty : Prisma.sql`AND o.createdAt >= DATE_SUB(NOW(), ${interval})`}
       GROUP BY p.name)
@@ -245,7 +247,7 @@ export class ReportService {
   async getAverageSellerReview(id: string) {
     const result = await this.prisma.$queryRaw<any[]>`
       SELECT IFNULL(AVG(rating),0) AS average_rating 
-      FROM \`Reviews\` r JOIN Product p
+      FROM \`Reviews\` r JOIN Products p
       ON r.productId = p.id
       WHERE p.userId = ${id}
       GROUP BY p.userId
@@ -260,7 +262,7 @@ export class ReportService {
     const query = this.prisma.$queryRaw<any[]>`
         SELECT status, count(status) AS total
         FROM \`Order\` o
-        JOIN Product p 
+        JOIN \`Products\` p 
         ON p.id = o.productId
         WHERE p.userId = ${id}
          ${timePeriod === 'ALL TIME' || WrongTimePeriod(timePeriod) ? Prisma.empty : Prisma.sql`AND o.createdAt >= DATE_SUB(NOW(), ${interval})`}
@@ -289,7 +291,7 @@ export class ReportService {
         0
       ) AS refunded_rate
 
-    FROM \`Product\` p
+    FROM \`Products\` p
     LEFT JOIN (
       SELECT productId, AVG(rating) AS avg_rating
       FROM \`Reviews\`
