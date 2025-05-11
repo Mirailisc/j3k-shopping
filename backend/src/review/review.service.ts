@@ -12,7 +12,6 @@ import { ReviewInfo } from './entities/review-info.entity'
 import { ProductService } from 'src/product/product.service'
 import { PrismaClient } from '@prisma/client'
 
-const prisma = new PrismaClient()
 type Order = PrismaClient['order']
 
 @Injectable()
@@ -21,7 +20,7 @@ export class ReviewService {
     private readonly prisma: PrismaService,
     private readonly productService: ProductService,
   ) {}
-  
+
   async getReviewsForSellerProduct(productId: string) {
     const result = await this.prisma.$queryRaw<any[]>`
       SELECT 
@@ -38,7 +37,7 @@ export class ReviewService {
       JOIN User u ON r.userId = u.id
       WHERE r.productId = ${productId}
     `
-  
+
     return result
   }
 
@@ -53,22 +52,22 @@ export class ReviewService {
       GROUP BY rating
       ORDER BY rating DESC
     `
-  
+
     const totalCount = result.reduce((sum, row) => sum + Number(row.count), 0)
-  
+
     const averageResult = await this.prisma.$queryRaw<any[]>`
       SELECT ROUND(AVG(rating), 2) as average
       FROM Reviews
       WHERE productId = ${productId}
     `
-  
+
     const average = averageResult[0]?.average ?? 0
-  
+
     const breakdown: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
     for (const row of result) {
       breakdown[row.rating] = row.percentage
     }
-  
+
     return {
       average: Number(average),
       totalCount,
@@ -116,8 +115,7 @@ export class ReviewService {
       createReviewDto.productId,
     )
     const existingReview = await this.getReviewInfo(createReviewDto.productId)
-    const existingOrder = await this.prisma.$queryRaw<Order[]>
-    `SELECT id
+    const existingOrder = await this.prisma.$queryRaw<Order[]>`SELECT id
       FROM \`Order\` o
       WHERE o.userId = ${userId} AND o.productId = ${createReviewDto.productId}
     `

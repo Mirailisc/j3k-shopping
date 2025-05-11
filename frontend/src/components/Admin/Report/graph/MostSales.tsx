@@ -127,7 +127,7 @@ export const MostSales: React.FC<props> = ({timePeriod }: props) => {
                     className="text-sm py-1 focus:outline-none focus:opacity-50"
                   >
                     <DropdownMenuItemIndicator>
-                      <Dot className="rounded-full mx-1 h-[5px] w-[5px] inline-flex bg-white focus:outline-none focus:ring-2 focus:ring-white" />
+                      <Dot className="rounded-full mx-1 h-[5px] w-[5px] inline-flex bg-current focus:outline-none focus:ring-2 focus:ring-white" />
                     </DropdownMenuItemIndicator>
                     {item.label}
                   </DropdownMenuRadioItem>

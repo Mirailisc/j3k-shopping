@@ -37,20 +37,30 @@ const Profile: React.FC = () => {
   const { user } = useSelector((state: RootState) => state.auth)
 
   const getProfile = async () => {
-    try {
-      const response = await axiosInstance.get('/profile')
-      setInfo(response.data)
-    } catch (error) {
-      if (isAxiosError(error)) {
-        const errorMessage = error.response?.data?.message || 'Something went wrong'
-        toast.error(errorMessage)
-      } else {
-        toast.error('An unexpected error occurred')
-      }
-    } finally {
-      setLoading(false)
+  try {
+    const response = await axiosInstance.get('/profile')
+    const rawData = response.data
+
+    // Parse the `social` field if it's a string
+    const parsedSocial =
+      typeof rawData.social === 'string' ? JSON.parse(rawData.social) : rawData.social
+
+    // Safely assign the parsed data
+    setInfo({
+      ...rawData,
+      social: parsedSocial,
+    })
+  } catch (error) {
+    if (isAxiosError(error)) {
+      const errorMessage = error.response?.data?.message || 'Something went wrong'
+      toast.error(errorMessage)
+    } else {
+      toast.error('An unexpected error occurred')
     }
+  } finally {
+    setLoading(false)
   }
+}
 
   const getShippingInfo = async () => {
     try {
@@ -58,12 +68,12 @@ const Profile: React.FC = () => {
       setShipping({
         firstName: response.data.firstName,
         lastName: response.data.lastName,
-        phone: response.data.contact.phone,
-        address: response.data.contact.address,
-        city: response.data.contact.city,
-        province: response.data.contact.province,
-        zipCode: response.data.contact.zipCode,
-        country: response.data.contact.country,
+        phone: response.data.phone,
+        address: response.data.address,
+        city: response.data.city,
+        province: response.data.province,
+        zipCode: response.data.zipCode,
+        country: response.data.country,
       })
     } catch (error) {
       if (isAxiosError(error)) {

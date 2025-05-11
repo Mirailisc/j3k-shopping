@@ -38,15 +38,13 @@ export class ReportController {
 
   @Get('admin/status')
   @UseGuards(AuthGuard('jwt'), AdminGuard)
-  async getStatusCount(
-    @Query('timePeriod') timePeriod: string,
-  ) {
+  async getStatusCount(@Query('timePeriod') timePeriod: string) {
     return await this.reportService.getStatusCount(timePeriod)
   }
 
   @Get('admin/newUser')
   @UseGuards(AuthGuard('jwt'), AdminGuard)
-  async getNewUser(@Query('timePeriod') timePeriod: string,) {
+  async getNewUser(@Query('timePeriod') timePeriod: string) {
     return await this.reportService.getNewUser(timePeriod)
   }
 
@@ -67,8 +65,11 @@ export class ReportController {
   async getSellerRevenue(
     @Request() req,
     @Query('timePeriod') timePeriod: string,
-  ){
-    return await this.reportService.getSellerRevenue(timePeriod, req.user.userId)
+  ) {
+    return await this.reportService.getSellerRevenue(
+      timePeriod,
+      req.user.userId,
+    )
   }
 
   @Get('seller/sales')
@@ -77,42 +78,47 @@ export class ReportController {
     @Request() req,
     @Query('dataType') dataType: string,
     @Query('timePeriod') timePeriod: string,
-  ){
-    return await this.reportService.getSellerMostSalesProduct(dataType, timePeriod, req.user.userId)
+  ) {
+    return await this.reportService.getSellerMostSalesProduct(
+      dataType,
+      timePeriod,
+      req.user.userId,
+    )
   }
 
   @Get('seller/unsold')
   @UseGuards(AuthGuard('jwt'))
   async getSellerUnsoldProductsList(
-      @Request() req,
-      @Query('timePeriod') timePeriod: string,
-  ){
-      return await this.reportService.getSellerUnsoldProductsList(timePeriod, req.user.userId)
+    @Request() req,
+    @Query('timePeriod') timePeriod: string,
+  ) {
+    return await this.reportService.getSellerUnsoldProductsList(
+      timePeriod,
+      req.user.userId,
+    )
   }
 
   @Get('seller/status')
   @UseGuards(AuthGuard('jwt'))
   async getSellerStatusCount(
-      @Request() req,
-      @Query('timePeriod') timePeriod: string,
-  ){
-      return await this.reportService.getSellerStatusCount(timePeriod, req.user.userId)
+    @Request() req,
+    @Query('timePeriod') timePeriod: string,
+  ) {
+    return await this.reportService.getSellerStatusCount(
+      timePeriod,
+      req.user.userId,
+    )
   }
 
   @Get('seller/rating')
   @UseGuards(AuthGuard('jwt'))
-  async getAverageSellerReview(
-      @Request() req,
-  ){
-      return await this.reportService.getAverageSellerReview( req.user.userId)
+  async getAverageSellerReview(@Request() req) {
+    return await this.reportService.getAverageSellerReview(req.user.userId)
   }
 
   @Get('seller/product')
   @UseGuards(AuthGuard('jwt'))
-  async getSellerProductStat(
-      @Request() req,
-  ){
-      return await this.reportService.getSellerProductStat( req.user.userId)
-  }  
-
+  async getSellerProductStat(@Request() req) {
+    return await this.reportService.getSellerProductStat(req.user.userId)
+  }
 }

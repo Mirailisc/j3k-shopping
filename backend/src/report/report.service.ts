@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import { PrismaService } from 'src/prisma/prisma.service'
-import { IMPORT_TAX_PERCENTAGE } from '../order/order.service';
-import { Prisma } from '@prisma/client';
-import { WrongTimePeriod } from './entities/TimePeriod';
+import { IMPORT_TAX_PERCENTAGE } from '../order/order.service'
+import { Prisma } from '@prisma/client'
+import { WrongTimePeriod } from './entities/TimePeriod'
 
 @Injectable()
 export class ReportService {
@@ -53,13 +53,13 @@ export class ReportService {
     }))
   }
 
-  async getIncomeFromTaxes(timePeriod : string) {
+  async getIncomeFromTaxes(timePeriod: string) {
     const interval = Prisma.sql`${Prisma.raw(timePeriod)}`
     const result = await this.prisma.$queryRaw<any>`
       SELECT IFNULL((sum(total) - ROUND(sum(total) / (1 + ${IMPORT_TAX_PERCENTAGE}), 2)),0) as total_income
       FROM \`Order\` o
       WHERE status = 'Completed'
-         ${timePeriod === 'ALL TIME' || WrongTimePeriod(timePeriod) ? Prisma.empty: Prisma.sql`AND createdAt >= DATE_SUB(NOW(), ${interval})`}
+         ${timePeriod === 'ALL TIME' || WrongTimePeriod(timePeriod) ? Prisma.empty : Prisma.sql`AND createdAt >= DATE_SUB(NOW(), ${interval})`}
     `
     return {
       price: result[0]?.total_income,
@@ -68,14 +68,16 @@ export class ReportService {
 
   async getHotProductSales(dataType: string, timePeriod: string) {
     const interval = Prisma.sql`${Prisma.raw(timePeriod)}`
-    const column = (dataType === 'total' || dataType === 'amount') ? Prisma.sql`${Prisma.raw(dataType)}` : Prisma.sql`${Prisma.raw('total')}`
-    const query =
-        this.prisma.$queryRaw<any[]>`
+    const column =
+      dataType === 'total' || dataType === 'amount'
+        ? Prisma.sql`${Prisma.raw(dataType)}`
+        : Prisma.sql`${Prisma.raw('total')}`
+    const query = this.prisma.$queryRaw<any[]>`
           SELECT p.name, SUM(o.${column}) as total
           FROM \`Order\` o
           JOIN Product p ON o.productId = p.id
           WHERE o.status = 'Completed'
-         ${timePeriod === 'ALL TIME' || WrongTimePeriod(timePeriod) ? Prisma.empty: Prisma.sql`AND o.createdAt >= DATE_SUB(NOW(), ${interval})`}
+         ${timePeriod === 'ALL TIME' || WrongTimePeriod(timePeriod) ? Prisma.empty : Prisma.sql`AND o.createdAt >= DATE_SUB(NOW(), ${interval})`}
           GROUP BY p.id
           HAVING total > 0
           ORDER BY total DESC
@@ -92,37 +94,36 @@ export class ReportService {
 
   async getStatusCount(timePeriod: string) {
     const interval = Prisma.sql`${Prisma.raw(timePeriod)}`
-    const query =
-      this.prisma.$queryRaw<any[]>`
+    const query = this.prisma.$queryRaw<any[]>`
         SELECT status, count(status) as total
         FROM \`Order\` o
-         ${timePeriod === 'ALL TIME' || WrongTimePeriod(timePeriod) ? Prisma.empty: Prisma.sql`WHERE createdAt >= DATE_SUB(NOW(), ${interval})`}
+         ${timePeriod === 'ALL TIME' || WrongTimePeriod(timePeriod) ? Prisma.empty : Prisma.sql`WHERE createdAt >= DATE_SUB(NOW(), ${interval})`}
         GROUP BY status
         HAVING total > 0
         ORDER BY total DESC
       `
 
     const result = await query
-    return result.map((row)=> ({
+    return result.map((row) => ({
       name: row.status,
       value: Number(row.total),
     }))
   }
 
-  async getNewUser(timePeriod : string) {
+  async getNewUser(timePeriod: string) {
     const interval = Prisma.sql`${Prisma.raw(timePeriod)}`
     const result = await this.prisma.$queryRaw<any[]>`
       SELECT IFNULL(COUNT(id),0) as newuser FROM User
       UNION ALL
       SELECT IFNULL(COUNT(id),0) as newuser FROM User
-            ${timePeriod === 'ALL TIME' || WrongTimePeriod(timePeriod) ? Prisma.empty: Prisma.sql`WHERE createdAt < DATE_SUB(NOW(), ${interval})`}
+            ${timePeriod === 'ALL TIME' || WrongTimePeriod(timePeriod) ? Prisma.empty : Prisma.sql`WHERE createdAt < DATE_SUB(NOW(), ${interval})`}
     `
     return result.map((row) => ({
       newUser: Number(row.newuser),
     }))
   }
 
-  async unsastisfyCustomer () {
+  async unsastisfyCustomer() {
     const result = await this.prisma.$queryRaw<any[]>`
            SELECT u.id as id, u.username as username, 
       COUNT(IF(r.rating <= 2,1, NULL)) as low_rating, AVG(rating) as avg_rating, 
@@ -147,11 +148,11 @@ export class ReportService {
       low_rating: Number(row.low_rating),
       avg_rating: Number(row.avg_rating),
       refunded_count: Number(row.refunded_count),
-      refunded_rate: Number(row.refunded_rate)
+      refunded_rate: Number(row.refunded_rate),
     }))
   }
 
-  async UnsastisfyProduct(){
+  async UnsastisfyProduct() {
     const result = await this.prisma.$queryRaw<any[]>`
     SELECT p.id as id, p.name as name,
 	  COUNT(IF(r.rating <= 2,1, NULL)) as low_rating, IFNULL(AVG(rating),0) as avg_rating, 
@@ -170,17 +171,17 @@ export class ReportService {
     ORDER BY refunded_rate DESC, low_rating DESC
   `
 
-  return result.map((row) => ({
-    id: row.id,
-    name: row.name,
-    low_rating: Number(row.low_rating),
-    avg_rating: Number(row.avg_rating),
-    refunded_count: Number(row.refunded_count),
-    refunded_rate: Number(row.refunded_rate)
-  }))
+    return result.map((row) => ({
+      id: row.id,
+      name: row.name,
+      low_rating: Number(row.low_rating),
+      avg_rating: Number(row.avg_rating),
+      refunded_count: Number(row.refunded_count),
+      refunded_rate: Number(row.refunded_rate),
+    }))
   }
 
-  async getSellerRevenue(timePeriod : string, id: string) {
+  async getSellerRevenue(timePeriod: string, id: string) {
     const interval = Prisma.sql`${Prisma.raw(timePeriod)}`
     const result = await this.prisma.$queryRaw<any>`
       SELECT IFNULL(SUM(o.total),0) as revenue FROM \`Order\` o 
@@ -190,21 +191,28 @@ export class ReportService {
       SELECT IFNULL(SUM(o.total),0) as revenue FROM \`Order\` o 
       JOIN Product p on p.id = o.productId
       WHERE p.userId = ${id} AND o.status = 'Completed'
-      ${timePeriod === 'ALL TIME' || WrongTimePeriod(timePeriod) ? Prisma.empty: Prisma.sql`AND o.createdAt < DATE_SUB(NOW(), ${interval})`}
+      ${timePeriod === 'ALL TIME' || WrongTimePeriod(timePeriod) ? Prisma.empty : Prisma.sql`AND o.createdAt < DATE_SUB(NOW(), ${interval})`}
     `
-    return result.map((row)=> ({
-      revenue: Number(row.revenue)
+    return result.map((row) => ({
+      revenue: Number(row.revenue),
     }))
   }
 
-  async getSellerMostSalesProduct(dataType:string, timePeriod: string, id: string){
-    const interval =  Prisma.sql`${Prisma.raw(timePeriod)}`
-     const column = (dataType === 'total' || dataType === 'amount') ? Prisma.sql`${Prisma.raw(dataType)}` : Prisma.sql`${Prisma.raw('total')}`
+  async getSellerMostSalesProduct(
+    dataType: string,
+    timePeriod: string,
+    id: string,
+  ) {
+    const interval = Prisma.sql`${Prisma.raw(timePeriod)}`
+    const column =
+      dataType === 'total' || dataType === 'amount'
+        ? Prisma.sql`${Prisma.raw(dataType)}`
+        : Prisma.sql`${Prisma.raw('total')}`
     const result = await this.prisma.$queryRaw<any[]>`
       SELECT p.name as name, SUM(o.${column}) as sales FROM \`Order\` o 
       JOIN Product p on p.id = o.productId
       WHERE p.userId =  ${id} AND o.status = 'Completed'
-       ${timePeriod === 'ALL TIME' || WrongTimePeriod(timePeriod) ? Prisma.empty: Prisma.sql`AND o.createdAt >= DATE_SUB(NOW(), ${interval})`}
+       ${timePeriod === 'ALL TIME' || WrongTimePeriod(timePeriod) ? Prisma.empty : Prisma.sql`AND o.createdAt >= DATE_SUB(NOW(), ${interval})`}
       GROUP BY p.name
       ORDER BY sales DESC
       LIMIT 8
@@ -215,15 +223,15 @@ export class ReportService {
     }))
   }
 
-  async getSellerUnsoldProductsList(timePeriod: string, id: string){
-    const interval =  Prisma.sql`${Prisma.raw(timePeriod)}`
+  async getSellerUnsoldProductsList(timePeriod: string, id: string) {
+    const interval = Prisma.sql`${Prisma.raw(timePeriod)}`
     const result = await this.prisma.$queryRaw<any[]>`
       SELECT IFNULL(COUNT(p.name), 0) as total FROM product p
       WHERE p.userId = ${id} AND p.id not in
   	  (SELECT p.id as sales FROM \`Order\` o 
       RIGHT JOIN Product p on p.id = o.productId
       WHERE p.userId =  ${id} AND o.status = 'Completed'
-      ${timePeriod === 'ALL TIME' || WrongTimePeriod(timePeriod) ? Prisma.empty: Prisma.sql`AND o.createdAt >= DATE_SUB(NOW(), ${interval})`}
+      ${timePeriod === 'ALL TIME' || WrongTimePeriod(timePeriod) ? Prisma.empty : Prisma.sql`AND o.createdAt >= DATE_SUB(NOW(), ${interval})`}
       GROUP BY p.name)
     `
     return result.map((row) => ({
@@ -231,7 +239,7 @@ export class ReportService {
     }))
   }
 
-  async getAverageSellerReview(id: string){
+  async getAverageSellerReview(id: string) {
     const result = await this.prisma.$queryRaw<any[]>`
       SELECT IfNULL(AVG(rating),0) as average_rating 
       FROM reviews r JOIN product p
@@ -246,27 +254,26 @@ export class ReportService {
 
   async getSellerStatusCount(timePeriod: string, id: string) {
     const interval = Prisma.sql`${Prisma.raw(timePeriod)}`
-    const query =
-      this.prisma.$queryRaw<any[]>`
+    const query = this.prisma.$queryRaw<any[]>`
         SELECT status, count(status) as total
         FROM \`Order\` o
         JOIN Product p 
         ON p.id = o.productId
         WHERE p.userId = ${id}
-         ${timePeriod === 'ALL TIME' || WrongTimePeriod(timePeriod) ? Prisma.empty: Prisma.sql`AND o.createdAt >= DATE_SUB(NOW(), ${interval})`}
+         ${timePeriod === 'ALL TIME' || WrongTimePeriod(timePeriod) ? Prisma.empty : Prisma.sql`AND o.createdAt >= DATE_SUB(NOW(), ${interval})`}
         GROUP BY status
         HAVING total > 0
         ORDER BY total DESC
       `
 
     const result = await query
-    return result.map((row)=> ({
+    return result.map((row) => ({
       name: row.status,
       value: Number(row.total),
     }))
   }
 
-  async getSellerProductStat(id: string){
+  async getSellerProductStat(id: string) {
     const result = await this.prisma.$queryRaw<any[]>`
       SELECT 
       p.name AS name,
@@ -292,13 +299,13 @@ export class ReportService {
     ORDER BY revenue DESC, amount_sales DESC
   `
 
-  return result.map((row) => ({
-    name: row.name,
-    total_order: Number(row.total_order),
-    revenue: Number(row.revenue),
-    avg_rating: Number(row.avg_rating),
-    amount_sales: Number(row.amount_sales),
-    refunded_rate: Number(row.refunded_rate)
-  }))
+    return result.map((row) => ({
+      name: row.name,
+      total_order: Number(row.total_order),
+      revenue: Number(row.revenue),
+      avg_rating: Number(row.avg_rating),
+      amount_sales: Number(row.amount_sales),
+      refunded_rate: Number(row.refunded_rate),
+    }))
   }
 }
