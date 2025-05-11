@@ -72,12 +72,11 @@ export class ReviewController {
 
   @Get('seller/:productId')
   async getReviewsForSellerProduct(@Param('productId') productId: string) {
-      return this.reviewService.getReviewsForSellerProduct(productId)
+    return this.reviewService.getReviewsForSellerProduct(productId)
   }
   @Get('stats/:productId')
-      async getRatingStats(@Param('productId') productId: string) {
-      return this.reviewService.getRatingStats(productId)
+  async getRatingStats(@Param('productId') productId: string) {
+    return this.reviewService.getRatingStats(productId)
   }
-        //Ended Add
-        
+  // Ended Add
 }

@@ -20,5 +20,4 @@ import { ContactService } from 'src/contact/contact.service'
     ContactService,
   ],
 })
-
 export class PaymentModule {}

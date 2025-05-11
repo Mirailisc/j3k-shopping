@@ -87,7 +87,7 @@ export class ProductService {
 
     return products.map((product) => ({
       ...product,
-      productImg:  (product.productImg?this.toBase64(product.productImg):null),
+      productImg: product.productImg ? this.toBase64(product.productImg) : null,
     }))
   }
 
@@ -134,14 +134,14 @@ export class ProductService {
     if (productInfo.userId !== me) {
       throw new BadRequestException('You are not the owner of this product')
     }
-      await this.prisma.$executeRaw<Product[]>`
+    await this.prisma.$executeRaw<Product[]>`
       UPDATE Product
       SET name = ${product.name}, description = ${product.description}, price = ${product.price}, quantity = ${product.quantity}
       , updatedAt = CURRENT_TIMESTAMP
       WHERE id = ${id}
     `
-    if (product.productImg){
-    await this.prisma.$executeRaw<Product[]>`
+    if (product.productImg) {
+      await this.prisma.$executeRaw<Product[]>`
       UPDATE Product
       SET  productImg = ${product.productImg}
       WHERE id = ${id}
@@ -159,7 +159,7 @@ export class ProductService {
       WHERE id = ${id}
       
     `
-    if (product.productImg){
+    if (product.productImg) {
       await this.prisma.$executeRaw<Product[]>`
         UPDATE Product
         SET  productImg = ${product.productImg}
@@ -175,7 +175,7 @@ export class ProductService {
     if (product.userId !== me) {
       throw new BadRequestException('You are not the owner of this product')
     }
-    
+
     await this.prisma.$executeRaw`
       DELETE FROM Reviews WHERE productId = ${id}
     `
@@ -186,7 +186,6 @@ export class ProductService {
   }
 
   async deleteProductByAdmin(id: string) {
-
     await this.prisma.$executeRaw`
       DELETE FROM Reviews WHERE productId = ${id}
     `
