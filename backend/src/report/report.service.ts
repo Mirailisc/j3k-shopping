@@ -246,8 +246,8 @@ export class ReportService {
 
   async getAverageSellerReview(id: string) {
     const result = await this.prisma.$queryRaw<any[]>`
-      SELECT IfNULL(AVG(rating),0) as average_rating 
-      FROM \`Reviews\` r JOIN \`Products\` p
+      SELECT IFNULL(AVG(rating),0) AS average_rating 
+      FROM \`Reviews\` r JOIN Products p
       ON r.productId = p.id
       WHERE p.userId = ${id}
       GROUP BY p.userId
