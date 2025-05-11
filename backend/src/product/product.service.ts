@@ -97,7 +97,7 @@ export class ProductService {
   ) {
     const uuid = randomUUID()
     await this.prisma.$executeRaw<Product[]>`
-      INSERT INTO Product (id, name, productImg, description, price, quantity, userId)
+      INSERT INTO Products (id, name, productImg, description, price, quantity, userId)
       VALUES (${uuid}, ${product.name}, ${product.productImg}, ${product.description}, ${product.price}, ${product.quantity}, ${sellerId})
     `
 
@@ -117,7 +117,7 @@ export class ProductService {
     }
 
     await this.prisma.$executeRaw<Product[]>`
-      INSERT INTO Product (id, name, productImg, description, price, quantity, userId)
+      INSERT INTO Products (id, name, productImg, description, price, quantity, userId)
       VALUES (${uuid}, ${product.name}, ${product.productImg}, ${product.description}, ${product.price}, ${product.quantity}, ${product.userId})
     `
 
@@ -135,14 +135,14 @@ export class ProductService {
       throw new BadRequestException('You are not the owner of this product')
     }
     await this.prisma.$executeRaw<Product[]>`
-      UPDATE Product
+      UPDATE Products
       SET name = ${product.name}, description = ${product.description}, price = ${product.price}, quantity = ${product.quantity}
       , updatedAt = CURRENT_TIMESTAMP
       WHERE id = ${id}
     `
     if (product.productImg) {
       await this.prisma.$executeRaw<Product[]>`
-      UPDATE Product
+      UPDATE Products
       SET  productImg = ${product.productImg}
       WHERE id = ${id}
     `
@@ -153,7 +153,7 @@ export class ProductService {
 
   async updateProductByAdmin(id: string, product: UpdateProductDto) {
     await this.prisma.$executeRaw<Product[]>`
-      UPDATE Product
+      UPDATE Products
       SET name = ${product.name}, description = ${product.description}, price = ${product.price}, quantity = ${product.quantity}
       , updatedAt = CURRENT_TIMESTAMP
       WHERE id = ${id}
@@ -161,7 +161,7 @@ export class ProductService {
     `
     if (product.productImg) {
       await this.prisma.$executeRaw<Product[]>`
-        UPDATE Product
+        UPDATE Products
         SET  productImg = ${product.productImg}
         WHERE id = ${id}
       `
