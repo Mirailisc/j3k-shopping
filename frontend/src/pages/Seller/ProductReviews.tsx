@@ -194,7 +194,7 @@ const ProductReviews = () => {
         <label htmlFor="sort" className="text-sm">Sort by:</label>
         <select
           id="sort"
-          className="text-sm px-2 py-1 rounded border border-zinc-600"
+          className="text-sm px-2 py-1 rounded border border-zinc-600 bg-background"
           value={sortOption}
           onChange={(e) => setSortOption(e.target.value as any)}>
           <option value="newest">Newest</option>
