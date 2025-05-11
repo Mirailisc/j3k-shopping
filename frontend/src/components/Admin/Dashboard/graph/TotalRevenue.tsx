@@ -14,6 +14,8 @@ import { useEffect, useMemo, useState } from 'react'
 import { axiosInstance } from '@/lib/axios'
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuItemIndicator } from '@radix-ui/react-dropdown-menu'
+import { isAxiosError } from 'axios'
+import { toast } from 'sonner'
 
 const chartConfig = {
   sales: {
@@ -53,7 +55,12 @@ export const TotalRevenue: React.FC = () => {
         const {data} = await axiosInstance.get('dashboard/admin/total', {params: {range}})
         setMonthlyData(data)
         } catch(error){
-            console.log(error)
+          if (isAxiosError(error)) {
+            const errorMessage = error.response?.data?.message || 'Something went wrong'
+            toast.error(errorMessage)
+          } else {
+            toast.error('An unexpected error occurred')
+          }
         }
     }
     fetchData()

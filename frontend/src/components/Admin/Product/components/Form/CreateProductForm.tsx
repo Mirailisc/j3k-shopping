@@ -25,7 +25,7 @@ type Props = {
 const formSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   productImg: z.any().refine((file) => file instanceof File, 'Product image is required'),
-  description: z.string().min(1, 'Description is required'),
+  description: z.string().min(1, 'Description is required').max(255, 'Description must be less than 255 characters'),
   price: z.string().refine((val) => !isNaN(parseFloat(val)), 'Price must be a number'),
   quantity: z.string().refine((val) => Number.isInteger(Number(val)), 'Quantity must be an integer'),
   userId: z.string().min(1, 'User ID is required'),

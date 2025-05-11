@@ -18,7 +18,7 @@ import {
 } from '@/constants/routes'
 import { logout } from '@/store/slice/authSlice'
 import { RootState, useAppDispatch } from '@/store/store'
-import { ChevronDown, Github, HomeIcon, LayoutDashboard, LucideLogOut, Package, Receipt, ShoppingBag } from 'lucide-react'
+import { ChevronDown, Github, HomeIcon, LayoutDashboard, LucideLogOut, Package, ShoppingBag } from 'lucide-react'
 import { useCookies } from 'react-cookie'
 import Gravatar from 'react-gravatar'
 import { useSelector } from 'react-redux'
@@ -94,10 +94,6 @@ const AvatarDropdown: React.FC = () => {
             Orders
           </DropdownMenuItem>
         </Link>
-        <DropdownMenuItem>
-          <Receipt />
-          Billing
-        </DropdownMenuItem>
         <DropdownMenuSeparator />
         {user.isAdmin || user.isSuperAdmin ? (
           <Link to={ADMIN_DASHBOARD_PATH}>
