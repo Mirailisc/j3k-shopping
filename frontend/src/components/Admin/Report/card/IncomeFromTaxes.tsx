@@ -2,7 +2,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { axiosInstance } from '@/lib/axios'
 import { PiggyBank } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { getLabelFromTimePeriod } from '../types/TimePeriod'
 
 type IncomeTaxes = {
     price:number,
@@ -44,7 +43,7 @@ const IncomeFromTaxes: React.FC<props> = ({timePeriod} : props) => {
         <p className = "text-sm text-zinc-400">Loading...</p>
         }
         <div className = 'flex items-center mt-1'>
-          <p className = 'text-sm text-zinc-400'>period: {getLabelFromTimePeriod(timePeriod)}</p>
+          <p className = 'text-sm text-zinc-400'>period: {timePeriod}</p>
         </div>
       </CardContent>
     </Card>

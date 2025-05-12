@@ -15,7 +15,7 @@ import StatusCountGraph from '@/components/Admin/Report/graph/StatusCountGraph'
 import IncomeFromTaxes from '@/components/Admin/Report/card/IncomeFromTaxes'
 
 const Report: React.FC = () => {
-  const [timePeriod, setTimePeriod] = useState('INTERVAL 1 MONTH')
+  const [timePeriod, setTimePeriod] = useState('1 month')
   const sidebar = useSidebar()
   
   return (
@@ -40,8 +40,8 @@ const Report: React.FC = () => {
                   {TimePeriod.map((item) => {
                     return (
                       <DropdownMenuRadioItem
-                        key={item.value}
-                        value={item.value}
+                        key={item.label}
+                        value={item.label}
                         className="text-sm focus:outline-none focus:opacity-50"
                       >
                         <DropdownMenuItemIndicator>

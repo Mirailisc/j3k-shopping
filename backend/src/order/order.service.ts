@@ -147,7 +147,7 @@ export class OrderService {
     `
 
     await this.prisma.$executeRawUnsafe(`
-      UPDATE Product
+      UPDATE Products
       SET quantity = quantity + ${-createOrderDto.amount}
       WHERE id = '${createOrderDto.productId}'
     `)
@@ -187,7 +187,7 @@ export class OrderService {
     `
 
     await this.prisma.$executeRawUnsafe(`
-      UPDATE Product
+      UPDATE Products
       SET quantity = quantity + ${-createOrderDto.amount}
       WHERE id = '${createOrderDto.productId}'
     `)
@@ -206,7 +206,7 @@ export class OrderService {
 
     const stockUpdate = async (change: number) => {
       await this.prisma.$executeRawUnsafe(`
-        UPDATE Product
+        UPDATE Products
         SET quantity = quantity + ${change}
         WHERE id = '${product.id}'
       `)

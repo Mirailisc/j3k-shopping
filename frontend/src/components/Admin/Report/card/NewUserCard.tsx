@@ -2,8 +2,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { axiosInstance } from '@/lib/axios'
 import { User } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
-import { getLabelFromTimePeriod } from '../types/TimePeriod'
-
 
 type newUser = {
     newUser: number
@@ -52,7 +50,7 @@ const NewUserCar: React.FC<props> = ({timePeriod}: props) => {
             <h2 className = "text-3xl font-bold flex-wrap">{total >= 0 ? '+': ''}{total}</h2>
         </div>
         <div className = "flex items-center mt-1">
-          {timePeriod !== 'ALL TIME' && <p className = {`text-sm ${Number(increasedPercentage) >= 0 ? 'text-green-500' : 'text-red-500'}`}>{Number(increasedPercentage) >= 0 ? '+' : ''}{increasedPercentage.toString()}% from last {getLabelFromTimePeriod(timePeriod)}</p>}
+          {timePeriod !== 'ALL TIME' && <p className = {`text-sm ${Number(increasedPercentage) >= 0 ? 'text-green-500' : 'text-red-500'}`}>{Number(increasedPercentage) >= 0 ? '+' : ''}{increasedPercentage.toString()}% from last {timePeriod}</p>}
           {timePeriod === 'ALL TIME' && <p className = 'text-sm text-zinc-400'>All time</p>}
         </div>
         </>

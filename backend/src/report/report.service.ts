@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { PrismaService } from 'src/prisma/prisma.service'
 import { IMPORT_TAX_PERCENTAGE } from '../order/order.service'
-import { Prisma } from '@prisma/client'
-import { WrongTimePeriod } from './entities/TimePeriod'
+import { subtractDays } from './entities/TimePeriod'
 
 @Injectable()
 export class ReportService {
@@ -56,41 +55,46 @@ export class ReportService {
   }
 
   async getIncomeFromTaxes(timePeriod: string) {
-    const interval = Prisma.sql`${Prisma.raw(timePeriod)}`
-    const result = await this.prisma.$queryRaw<any>`
-      SELECT IFNULL((sum(total) - ROUND(sum(total) / (1 + ${IMPORT_TAX_PERCENTAGE}), 2)),0) AS total_income
-      FROM \`Order\` o
-      WHERE status = 'Completed'
-         ${timePeriod === 'ALL TIME' || WrongTimePeriod(timePeriod) ? Prisma.empty : Prisma.sql`AND createdAt >= DATE_SUB(NOW(), ${interval})`}
-    `
-    return {
-      price: result[0]?.total_income,
-    }
-  }
+  const startDate = subtractDays(timePeriod); 
+
+  const result = await this.prisma.$queryRaw<any>`
+    SELECT IFNULL((SUM(total) - ROUND(SUM(total) / (1 + ${IMPORT_TAX_PERCENTAGE}), 2)), 0) AS total_income
+    FROM \`Order\` o
+    WHERE status = 'Completed'
+    AND createdAt >= ${startDate}
+  `;
+
+  return {
+    price: result[0]?.total_income,
+  };
+}
+
 
   async getHotProductSales(dataType: string, timePeriod: string) {
-    const column = dataType === 'amount' ? 'amount' : 'total'
-    const columnSql = `o.\`${column}\``
+     const startDate = subtractDays(timePeriod);
 
-    const timeCondition =
-      timePeriod === 'ALL TIME' || WrongTimePeriod(timePeriod)
-        ? ''
-        : `AND o.createdAt >= DATE_SUB(NOW(), INTERVAL ${timePeriod})`
-
-    const rawQuery = `
-      SELECT p.name, SUM(${columnSql}) as total
+    const result = dataType === 'amount' ?  await this.prisma.$queryRaw<any[]>`
+      SELECT p.name, SUM(o.amount) as total
       FROM \`Order\` o
       JOIN \`Products\` p ON o.productId = p.id
       WHERE o.status = 'Completed'
-      ${timeCondition}
+      AND o.createdAt >= ${startDate}
       GROUP BY p.id
       HAVING total > 0
       ORDER BY total DESC
-      LIMIT 8
-    `
+      LIMIT 8 
+    ` : await this.prisma.$queryRaw<any[]>`
+      SELECT p.name, SUM(o.total) as total
+      FROM \`Order\` o
+      JOIN \`Products\` p ON o.productId = p.id
+      WHERE o.status = 'Completed'
+      AND o.createdAt >= ${startDate}
+      GROUP BY p.id
+      HAVING total > 0
+      ORDER BY total DESC
+      LIMIT 8 `
 
-    const result = await this.prisma.$queryRawUnsafe<any[]>(rawQuery)
-
+    
     return result.map((row) => ({
       name: row.name,
       value: Number(row.total),
@@ -98,11 +102,11 @@ export class ReportService {
   }
 
   async getStatusCount(timePeriod: string) {
-    const interval = Prisma.sql`${Prisma.raw(timePeriod)}`
+     const startDate = subtractDays(timePeriod);
     const query = this.prisma.$queryRaw<any[]>`
         SELECT status, count(status) AS total
         FROM \`Order\` o
-         ${timePeriod === 'ALL TIME' || WrongTimePeriod(timePeriod) ? Prisma.empty : Prisma.sql`WHERE createdAt >= DATE_SUB(NOW(), ${interval})`}
+        WHERE o.createdAt >= ${startDate} 
         GROUP BY status
         HAVING total > 0
         ORDER BY total DESC
@@ -116,13 +120,13 @@ export class ReportService {
   }
 
   async getNewUser(timePeriod: string) {
-    const interval = Prisma.sql`${Prisma.raw(timePeriod)}`
+     const startDate = subtractDays(timePeriod);
     const result = await this.prisma.$queryRaw<any[]>`
       SELECT IFNULL(COUNT(id),0) AS newuser FROM User
       UNION ALL
       SELECT IFNULL(COUNT(id),0) AS newuser FROM User
-            ${timePeriod === 'ALL TIME' || WrongTimePeriod(timePeriod) ? Prisma.empty : Prisma.sql`WHERE createdAt < DATE_SUB(NOW(), ${interval})`}
-    `
+      WHERE createdAt < ${startDate}
+      `
     return result?.map((row) => ({
       newUser: Number(row.newuser),
     }))
@@ -187,7 +191,8 @@ export class ReportService {
   }
 
   async getSellerRevenue(timePeriod: string, id: string) {
-    const interval = Prisma.sql`${Prisma.raw(timePeriod)}`
+     const startDate = subtractDays(timePeriod);
+  
     const result = await this.prisma.$queryRaw<any>`
       SELECT IFNULL(SUM(o.total),0) as revenue FROM \`Order\` o 
       JOIN \`Products\` p on p.id = o.productId
@@ -196,32 +201,39 @@ export class ReportService {
       SELECT IFNULL(SUM(o.total),0) as revenue FROM \`Order\` o 
       JOIN \`Products\` p on p.id = o.productId
       WHERE p.userId = ${id} AND o.status = 'Completed'
-      ${timePeriod === 'ALL TIME' || WrongTimePeriod(timePeriod) ? Prisma.empty : Prisma.sql`AND o.createdAt < DATE_SUB(NOW(), ${interval})`}
+      AND o.createdAt < ${startDate}
     `
     return result?.map((row) => ({
       revenue: Number(row.revenue),
     }))
-  }
+  } 
 
   async getSellerMostSalesProduct(
     dataType: string,
     timePeriod: string,
     id: string,
   ) {
-    const interval = Prisma.sql`${Prisma.raw(timePeriod)}`
-    const column =
-      dataType === 'total' || dataType === 'amount'
-        ? Prisma.sql`${Prisma.raw(dataType)}`
-        : Prisma.sql`${Prisma.raw('total')}`
-    const result = await this.prisma.$queryRaw<any[]>`
-      SELECT p.name as name, SUM(o.${column}) as sales FROM \`Order\` o 
+     const startDate = subtractDays(timePeriod);
+  
+
+    const result = dataType === 'total' ?  await this.prisma.$queryRaw<any[]>`
+      SELECT p.name as name, SUM(o.amount) as sales FROM \`Order\` o 
       JOIN \`Products\` p on p.id = o.productId
       WHERE p.userId =  ${id} AND o.status = 'Completed'
-       ${timePeriod === 'ALL TIME' || WrongTimePeriod(timePeriod) ? Prisma.empty : Prisma.sql`AND o.createdAt >= DATE_SUB(NOW(), ${interval})`}
+      AND o.createdAt >= ${startDate}
       GROUP BY p.name
       ORDER BY sales DESC
-      LIMIT 8
+      LIMIT 8 
+    ` : await this.prisma.$queryRaw<any[]>`
+      SELECT p.name as name, SUM(o.total) as sales FROM \`Order\` o 
+      JOIN \`Products\` p on p.id = o.productId
+      WHERE p.userId =  ${id} AND o.status = 'Completed'
+      AND o.createdAt >= ${startDate}
+      GROUP BY p.name
+      ORDER BY sales DESC
+      LIMIT 8 
     `
+
     return result?.map((row) => ({
       name: row.name,
       value: Number(row.sales),
@@ -229,14 +241,14 @@ export class ReportService {
   }
 
   async getSellerUnsoldProductsList(timePeriod: string, id: string) {
-    const interval = Prisma.sql`${Prisma.raw(timePeriod)}`
+     const startDate = subtractDays(timePeriod);
     const result = await this.prisma.$queryRaw<any[]>`
       SELECT IFNULL(COUNT(p.name), 0) AS total FROM \`Products\` p
       WHERE p.userId = ${id} AND p.id not in
   	  (SELECT p.id as sales FROM \`Order\` o 
       RIGHT JOIN \`Products\` p on p.id = o.productId
       WHERE p.userId =  ${id} AND o.status = 'Completed'
-      ${timePeriod === 'ALL TIME' || WrongTimePeriod(timePeriod) ? Prisma.empty : Prisma.sql`AND o.createdAt >= DATE_SUB(NOW(), ${interval})`}
+      AND o.createdAt >= ${startDate}
       GROUP BY p.name)
     `
     return result?.map((row) => ({
@@ -258,14 +270,14 @@ export class ReportService {
   }
 
   async getSellerStatusCount(timePeriod: string, id: string) {
-    const interval = Prisma.sql`${Prisma.raw(timePeriod)}`
-    const query = this.prisma.$queryRaw<any[]>`
+     const startDate = subtractDays(timePeriod);
+     const query = this.prisma.$queryRaw<any[]>`
         SELECT status, count(status) AS total
         FROM \`Order\` o
         JOIN \`Products\` p 
         ON p.id = o.productId
         WHERE p.userId = ${id}
-         ${timePeriod === 'ALL TIME' || WrongTimePeriod(timePeriod) ? Prisma.empty : Prisma.sql`AND o.createdAt >= DATE_SUB(NOW(), ${interval})`}
+        AND o.createdAt >= ${startDate}
         GROUP BY status
         HAVING total > 0
         ORDER BY total DESC
@@ -314,3 +326,4 @@ export class ReportService {
     }))
   }
 }
+

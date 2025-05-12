@@ -18,7 +18,6 @@ import { Button } from '@/components/ui/button'
 import { ChevronDown, Dot } from 'lucide-react'
 import { isAxiosError } from 'axios'
 import { toast } from 'sonner'
-import { getLabelFromTimePeriod } from '../types/TimePeriod'
 
 const DataType = [
   { label: 'amount', value: 'amount' },
@@ -107,7 +106,7 @@ export const MostSales: React.FC<props> = ({timePeriod }: props) => {
       <div className="flex items-center justify-between gap-4 px-3">
         <CardHeader className="pb-0">
           <CardTitle>Most sales {getLabelFromDataType(dataType)} product</CardTitle>
-          <CardDescription>period: {getLabelFromTimePeriod(timePeriod)}</CardDescription>
+          <CardDescription>period: {timePeriod}</CardDescription>
         </CardHeader>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
