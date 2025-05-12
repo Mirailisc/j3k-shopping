@@ -10,5 +10,7 @@
   "author": "Mirailisc",
   "private": true,
   "license": "ISC",
-  "dependencies": {}
+  "dependencies": {
+    "stripe": "^18.1.0"
+  }
 }

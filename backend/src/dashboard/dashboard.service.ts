@@ -98,47 +98,61 @@ export class DashboardService {
       quantity: Number(row.quantity),
     }))
   }
-  async GetSalesOverTimeAdmin() {
-    const result = await this.prisma.$queryRaw<any[]>`
-     SELECT 
-      DATE_FORMAT(o.createdAt, '%Y-%m-%d') AS \`orderDate\`,
-      DATE_FORMAT(o.createdAt, '%d %M %y') AS \`range\`,
-      IFNULL(SUM(IF(1, o.total, NULL)),0) AS revenue,
-      IFNULL(SUM(IF(1, o.amount, NULL)),0) AS totalSales
+ async GetSalesOverTimeAdmin() {
+  const result = await this.prisma.$queryRaw<any[]>`
+    SELECT 
+      DATE(o.createdAt) AS orderDate,
+      IFNULL(SUM(o.total), 0) AS revenue,
+      IFNULL(SUM(o.amount), 0) AS totalSales
     FROM \`Order\` o
-    LEFT JOIN Products p ON p.id = o.productId
-    GROUP BY orderDate
-    ORDER BY \`orderDate\` DESC
+    GROUP BY DATE(o.createdAt)
+    ORDER BY orderDate DESC
     LIMIT 10
   `
 
-    return result?.reverse().map((row) => ({
-      range: row.range.toString(),
+  return result.reverse().map((row) => {
+    const date = new Date(row.orderDate);
+    const range = date.toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: 'long',
+      year: '2-digit',
+    });
+
+    return {
+      range,
       revenue: Number(row.revenue),
       sales: Number(row.totalSales),
-    }))
-  } 
+    };
+  });
+}
 
  async GetSalesOverTime(id: string) {
-
-    const result = await this.prisma.$queryRaw<any[]>`
-     SELECT 
-      DATE_FORMAT(o.createdAt, '%Y-%m-%d') AS \`orderDate\`,
-      DATE_FORMAT(o.createdAt, '%d %M %y') AS \`range\`,
-     IFNULL(SUM(IF(1, o.total, NULL)),0) AS revenue,
-      IFNULL(SUM(IF(1, o.amount, NULL)),0) AS totalSales
-    FROM \`Order\` o
-    LEFT JOIN Products p ON p.id = o.productId
+  const result = await this.prisma.$queryRaw<any[]>`
+    SELECT 
+      DATE(o.createdAt) AS orderDate,
+      IFNULL(SUM(o.total), 0) AS revenue,
+      IFNULL(SUM(o.amount), 0) AS totalSales
+    FROM \`Order\` o JOIN Products p 
+    ON p.id = o.productId
     WHERE p.userId = ${id}
-    GROUP BY \`orderDate\`
-    ORDER BY \`orderDate\` DESC
+    GROUP BY DATE(o.createdAt)
+    ORDER BY orderDate DESC
     LIMIT 10
   `
 
-    return result?.reverse().map((row) => ({
-      range: row.range.toString(),
+  return result.reverse().map((row) => {
+    const date = new Date(row.orderDate);
+    const range = date.toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: 'long',
+      year: '2-digit',
+    });
+
+    return {
+      range,
       revenue: Number(row.revenue),
       sales: Number(row.totalSales),
-    }))
-  } 
+    };
+  });
+}
 }
