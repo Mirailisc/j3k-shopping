@@ -98,25 +98,16 @@ export class DashboardService {
       quantity: Number(row.quantity),
     }))
   }
-  async GetSalesOverTimeAdmin(range: string) {
-    const validRange = validateRange(range);
-    enum Range {
-      'DAY'= '%d %M %y',
-    'MONTH'= '%M-%y',
-    'WEEK'= '%v',
-    'YEAR'= '%y',
-    }
-    const dateFormat = Range[validRange];
-
+  async GetSalesOverTimeAdmin() {
     const result = await this.prisma.$queryRaw<any[]>`
      SELECT 
       DATE_FORMAT(o.createdAt, '%Y-%m-%d') AS \`orderDate\`,
-      DATE_FORMAT(o.createdAt, ${dateFormat}) AS \`range\`,
+      DATE_FORMAT(o.createdAt, '%d %M %y') AS \`range\`,
       IFNULL(SUM(IF(1, o.total, NULL)),0) AS revenue,
       IFNULL(SUM(IF(1, o.amount, NULL)),0) AS totalSales
     FROM \`Order\` o
     LEFT JOIN Products p ON p.id = o.productId
-    GROUP BY \`range\`
+    GROUP BY orderDate
     ORDER BY \`orderDate\` DESC
     LIMIT 10
   `
@@ -128,26 +119,18 @@ export class DashboardService {
     }))
   } 
 
- async GetSalesOverTime(range: string,id: string) {
-    const validRange = validateRange(range);
-    enum Range {
-      'DAY'= '%d %M %y',
-    'MONTH'= '%M-%y',
-    'WEEK'= '%v',
-    'YEAR'= '%y',
-    }
-    const dateFormat = Range[validRange];
+ async GetSalesOverTime(id: string) {
 
     const result = await this.prisma.$queryRaw<any[]>`
      SELECT 
       DATE_FORMAT(o.createdAt, '%Y-%m-%d') AS \`orderDate\`,
-      DATE_FORMAT(o.createdAt, ${dateFormat}) AS \`range\`,
+      DATE_FORMAT(o.createdAt, '%d %M %y') AS \`range\`,
      IFNULL(SUM(IF(1, o.total, NULL)),0) AS revenue,
       IFNULL(SUM(IF(1, o.amount, NULL)),0) AS totalSales
     FROM \`Order\` o
     LEFT JOIN Products p ON p.id = o.productId
     WHERE p.userId = ${id}
-    GROUP BY \`range\`
+    GROUP BY \`orderDate\`
     ORDER BY \`orderDate\` DESC
     LIMIT 10
   `

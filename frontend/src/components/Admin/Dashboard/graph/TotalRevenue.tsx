@@ -9,11 +9,9 @@ import {
   ChartTooltipContent,
 } from '@/components/ui/chart'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { ChevronDown, Dot, TrendingDown, TrendingUp } from 'lucide-react'
+import { TrendingDown, TrendingUp } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { axiosInstance } from '@/lib/axios'
-import { Button } from '@/components/ui/button'
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuItemIndicator } from '@radix-ui/react-dropdown-menu'
 import { isAxiosError } from 'axios'
 import { toast } from 'sonner'
 
@@ -34,25 +32,13 @@ type MonthlyData = {
     revenue: number,
 }
 
-const timeRange = [
-    {label:'Daily', value: 'DAY'},
-    {label:'Weekly', value: 'WEEK'},
-    {label:'Monthly', value: 'MONTH'},
-    {label:'Yearly', value: 'YEAR'},
-]
 export const TotalRevenue: React.FC = () => {
   const [chartData, setMonthlyData] = useState<MonthlyData[]>([])
-  const [range, setRange] = useState<string>('MONTH')
-
-  function getLabelFromTimeRange(value: string): string | undefined {
-    const item = timeRange.find((range) => range.value === value)
-    return item?.label
-  }
 
   useEffect(() => {
     const fetchData = async () => {
         try{
-        const {data} = await axiosInstance.get('dashboard/admin/total', {params: {range}})
+        const {data} = await axiosInstance.get('dashboard/admin/total')
         setMonthlyData(data)
         } catch(error){
           if (isAxiosError(error)) {
@@ -64,7 +50,7 @@ export const TotalRevenue: React.FC = () => {
         }
     }
     fetchData()
-  }, [range])
+  }, [])
 
   const percentageChanges: number = useMemo(() => {
     const LastSales = Number(chartData[chartData.length - 2]?.revenue || 0)
@@ -78,35 +64,8 @@ export const TotalRevenue: React.FC = () => {
       <div className='flex items-center justify-between gap-4 px-3'>
       <CardHeader className='pb-0'>
         <CardTitle>Sales and Revenue graph</CardTitle>
-        <CardDescription>{getLabelFromTimeRange(range)} data</CardDescription>
+        <CardDescription>Daily Data</CardDescription>
       </CardHeader>
-      <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="h-10 w-30">
-              {getLabelFromTimeRange(range)}
-              <ChevronDown className="ml-2 h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="mt-[5px] px-2 py-2 border border-black/20 dark:border-white/10 rounded-sm w-30 z-1 bg-zinc-100 dark:bg-zinc-900">
-            <DropdownMenuLabel>Time range</DropdownMenuLabel>
-            <DropdownMenuRadioGroup value={range} onValueChange={setRange}>
-              {timeRange.map((item) => {
-                return (
-                  <DropdownMenuRadioItem
-                    key={item.value}
-                    value={item.value}
-                    className="text-sm py-1 focus:outline-none focus:opacity-50"
-                  >
-                    <DropdownMenuItemIndicator>
-                      <Dot className="rounded-full mx-1 h-[5px] w-[5px] inline-flex bg-current focus:outline-none focus:ring-2 focus:ring-white" />
-                    </DropdownMenuItemIndicator>
-                    {item.label}
-                  </DropdownMenuRadioItem>
-                )
-              })}
-            </DropdownMenuRadioGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
         </div>
             <CardContent>
               <ChartContainer config={chartConfig} className="max-h-[400px] w-full">
@@ -152,8 +111,9 @@ export const TotalRevenue: React.FC = () => {
             </CardContent>
             <CardFooter className="flex-col gap-2 text-sm">
               <div className="flex items-center gap-2 font-medium leading-none">
-                {percentageChanges >= 0 ? `Gain ` : 'loss '}
-                revenue by {percentageChanges.toFixed(2)}% this {range.toLowerCase()}
+                revenue
+                {percentageChanges >= 0 ? ` gain ` : ' loss '}
+                by {Math.abs(percentageChanges).toFixed(2)}% today
                 {percentageChanges >= 0 ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
               </div>
             </CardFooter>
